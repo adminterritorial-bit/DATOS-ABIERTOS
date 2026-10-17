@@ -1,0 +1,29 @@
+/** Shared ICET catalog to evidence mapping. Contextual data do not prove full indicator. */
+export const ICET_DIRECTAS:Record<number,string>={
+ 9:'DOC-ICET-09-2023',
+ 12:'DOC-FURAG-12-2021',
+ 16:'TERRI-001',
+ 18:'DOC-EDU-18-2023',
+ 21:'DOC-EDU-21-2023',
+ 22:'DOC-EDU-22-2023',
+ 23:'TERRI-021',
+ 24:'DOC-CNPV-24-2018',
+ 25:'DOC-CNPV-25-2018',
+ 26:'OFI-ICET-26-2018',
+ 32:'EXT-ICET-32-PENTA-2016',
+ 38:'DER-ICET-38-2023',
+ 43:'SALUD-DA-d65385a58-2017',
+ 44:'SALUD-DA-d153e100b-2011',
+ 36:'TERRI-014',
+ 41:'TERRI-015',
+ 45:'TERRI-012',
+ 46:'TERRI-016',
+ 54:'OFI-FOR-ICET54-2023',
+ 55:'DER-ICET-55-2023',
+ 57:'DER-ICET-57-2025',
+ 58:'OFI-FOR-ICET58-2023',
+ 61:'OFI-FOR-ICET61-2024',
+ 65:'UPME-ICEE-TOTAL-2024'
+};
+
+export const ICET_VINCULOS:Record<number,string>={...ICET_RELACIONADAS,...ICET_DIRECTAS};

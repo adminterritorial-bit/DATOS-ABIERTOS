@@ -44,12 +44,21 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   await page.locator('.g4-console .g4-record').first().click();
   await page.getByRole('dialog',{name:/Ficha de/}).waitFor({timeout:10000});
   await page.getByRole('button',{name:'Cerrar ventana'}).click();
-  await page.getByRole('button',{name:'Lugares 7'}).click().catch(()=>{});
+  await page.locator('.n5-place-list').waitFor({timeout:17000});
   const firstPlace=page.locator('.n5-place-list button').first();
   if(await firstPlace.count()){await firstPlace.click();await page.getByRole('dialog',{name:/Información del lugar/}).waitFor({timeout:10000});await page.getByRole('button',{name:'Cerrar información del lugar'}).click()}
   await page.locator('.g4-map-viewport').screenshot({path:'artifacts/visual/geo-'+viewport.name+'.png'});
 
 
+  if(viewport.name==='desktop'){
+    await page.goto('http://localhost:3000/DATOS-ABIERTOS/temas/',{waitUntil:'domcontentloaded',timeout:70000});
+    await page.locator('.n5-themes-grid .n5-tile').first().waitFor({timeout:16000});
+    if(await page.locator('.n5-themes-grid .n5-tile').count()!==14)errors.push('theme explorer: expected fourteen topic cards');
+    await page.getByRole('button',{name:/Educación y aprendizaje/}).first().click();
+    if(await page.locator('.n5-data-panel').count()!==5)errors.push('theme explorer: five charts did not remain stable');
+    await page.screenshot({path:'artifacts/visual/topics-desktop.png',fullPage:true});
+    await page.goto('http://localhost:3000/DATOS-ABIERTOS/',{waitUntil:'domcontentloaded',timeout:70000});
+  }
   if(viewport.name==='mobile'){
    await page.getByRole('button',{name:'Abrir navegación'}).click();
    if(!await page.locator('.xp-side.is-open').count())errors.push('mobile sidebar cannot open');
@@ -60,4 +69,4 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
 }
 await browser.close();
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}
-console.log('PASS: redesigned observatory, 14 category tiles, chart/cat/map tabs, mobile navigation and no overflow');
+console.log('PASS: 4:1 timed carousel, 5 charts, 14 separate topic cards, ArcGIS popup, mobile folder sidebar and no page overflow');

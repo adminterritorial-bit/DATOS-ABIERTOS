@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import './dashboard.css';
 import './citizen.css';
+import './experience.css';
 import GlobalNavigation from '@/components/GlobalNavigation';
 export const metadata:Metadata={
  title:'Observatorio Territorial | Alcaldía de San Pedro',

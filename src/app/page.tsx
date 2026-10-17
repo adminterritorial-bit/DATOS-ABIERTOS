@@ -1,7 +1,2 @@
-'use client';
-import TerritorialDashboard from '@/components/TerritorialDashboard';
-import {usePublicFeed} from '@/lib/usePublicFeed';
-export default function Page(){
- const {feed,error,loading}=usePublicFeed();
- return <TerritorialDashboard feed={feed} error={loading?undefined:error}/>;
-}
+import ObservatoryExperience from '@/components/experience/ObservatoryExperience';
+export default function Page(){return <ObservatoryExperience/>}

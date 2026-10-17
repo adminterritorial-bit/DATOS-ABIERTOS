@@ -12,6 +12,7 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
   await page.locator('.n5-navigation').waitFor();
   await page.locator('.n5-banner-frame').waitFor();
+  await page.locator('.n5-data-panel').first().waitFor({state:'visible',timeout:45000});
   if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': expected exactly five stable chart panels');
   const over=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3);
   if(over)errors.push(viewport.name+': horizontal overflow');

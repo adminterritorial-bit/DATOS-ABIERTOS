@@ -10,6 +10,9 @@ on:
       - 'scripts/extraer_fuentes_76670.py'
       - 'scripts/extraer_sspd_anexos_2024.py'
       - '.github/workflows/extraer-fuentes-76670.yml'
+concurrency:
+  group: municipal-extract-${{ github.ref }}
+  cancel-in-progress: false
 permissions:
   contents: write
 jobs:
@@ -37,6 +40,7 @@ jobs:
             echo "Sin cambios en los registros"
           else
             git commit -m 'data(auto): actualizar observaciones municipales 76670 desde fuentes públicas'
+            git pull --rebase origin feat/icet-recuperacion-documental
             git push origin HEAD:feat/icet-recuperacion-documental
           fi
       - name: Conservar salida municipal estructurada para ingesta posterior

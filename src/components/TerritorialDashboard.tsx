@@ -7,6 +7,8 @@ import type {FeedPublico,ObservacionPublica} from '@/lib/publicFeed';
 import {encontrar,formatear,reducirSerie} from '@/lib/publicFeed';
 import LineChart from '@/components/charts/LineChart';
 import BarChart from '@/components/charts/BarChart';
+import ICETHighlights from '@/components/ICETHighlights';
+import SectorStatistics from '@/components/SectorStatistics';
 
 const SECTORES=['Panorama','Demografía','Educación','Salud','Economía','Servicios públicos','Seguridad','Finanzas públicas','Víctimas','Gestión municipal','Ordenamiento','Innovación'];
 const SOURCES=['DANE / PPED','TerriData / DNP'];
@@ -61,7 +63,7 @@ export default function TerritorialDashboard({feed,error}:Props){
    <p className="ot-side-caption">INTELIGENCIA TERRITORIAL</p>
    <nav className="ot-nav">{SECTORES.map(navItem)}</nav>
    <p className="ot-side-caption ot-side-secondary">GESTIÓN DE INFORMACIÓN</p>
-   <nav className="ot-nav"><Link className="ot-nav-item" href="/poblacion" onClick={()=>setMenu(false)}><Users2 size={18}/><span>Series demográficas</span></Link><Link className="ot-nav-item" href="/catalogo" onClick={()=>setMenu(false)}><Database size={18}/><span>Catálogo de datos</span></Link></nav>
+   <nav className="ot-nav"><Link className="ot-nav-item" href="/poblacion" onClick={()=>setMenu(false)}><Users2 size={18}/><span>Series demográficas</span></Link><Link className="ot-nav-item" href="/icet" onClick={()=>setMenu(false)}><BookOpen size={18}/><span>Indicadores ICET</span></Link><Link className="ot-nav-item" href="/seguridad" onClick={()=>setMenu(false)}><ShieldCheck size={18}/><span>Seguridad 2025</span></Link><Link className="ot-nav-item" href="/catalogo" onClick={()=>setMenu(false)}><Database size={18}/><span>Catálogo de datos</span></Link></nav>
    <div className="ot-side-bottom"><div className="ot-secure"><span className="ot-led"/> <span>Datos oficiales documentados<small>DIVIPOLA 76670</small></span></div><p>Información estadística agregada con vigencia y procedencia identificables.</p></div>
   </aside>
   {menu&&<button className="ot-menu-mask" aria-label="Cerrar navegación" onClick={()=>setMenu(false)}/>}
@@ -72,6 +74,8 @@ export default function TerritorialDashboard({feed,error}:Props){
     {!feed&&<div className="ot-error" role="status"><Info size={18}/><div><b>No fue posible consultar la base de datos ahora mismo.</b><p>{error||'Intenta actualizar la página más tarde. No se presentan cifras de ejemplo.'}</p></div></div>}
     <div className="ot-heading-strip"><div><span className="ot-small-heading">VISIÓN GENERAL</span><h2>{seccion==='Panorama'?'Panorama territorial':seccion}</h2><p>Indicadores con período de referencia explícito. Selecciona el año para actualizar las cifras disponibles.</p></div><div className="ot-control-group"><label className="ot-select-label">Vigencia <select aria-label="Vigencia" value={anio} onChange={e=>setAnio(Number(e.target.value))}>{years.map(y=><option key={y} value={y}>{y}</option>)}</select><ChevronDown size={14}/></label></div></div>
     <div className="ot-kpis"><article className="ot-kpi"><div className="ot-kpi-top">Población proyectada <span className="ot-kpi-icon"><Users2 size={19}/></span></div><strong>{valorConUnidad(poblacion)}</strong><small>Habitantes · {anio} · DANE</small><span className="ot-kpi-bottom">Proyección anual oficial</span></article><article className="ot-kpi"><div className="ot-kpi-top">Cabecera municipal <span className="ot-kpi-icon"><MapPinned size={19}/></span></div><strong>{valorConUnidad(cabecera)}</strong><small>Habitantes · {anio} · DANE</small><span className="ot-kpi-bottom">Población en cabecera</span></article><article className="ot-kpi"><div className="ot-kpi-top">Centros poblados y rural <span className="ot-kpi-icon"><Globe2 size={19}/></span></div><strong>{valorConUnidad(rural)}</strong><small>Habitantes · {anio} · DANE</small><span className="ot-kpi-bottom">Población fuera de cabecera</span></article><article className="ot-kpi"><div className="ot-kpi-top">Internet fijo <span className="ot-kpi-icon"><Activity size={19}/></span></div><strong>{internet?valorConUnidad(internet)+' %':'—'}</strong><small>Penetración municipal · {anio}</small><span className="ot-kpi-bottom">Fuente: TerriData / MinTIC</span></article></div>
+    <ICETHighlights feed={feed}/>
+    <SectorStatistics feed={feed}/>
     <div className="ot-visual-grid">
       <section className="ot-panel ot-pop-panel"><div className="ot-panel-head"><div><span className="ot-small-heading">EVOLUCIÓN DEMOGRÁFICA</span><h3>Una mirada a la población</h3><p>Serie 2018–2026 · proyecciones de población DANE</p></div><span className="ot-pill"><TrendingUp size={14}/> Serie histórica</span></div><LineChart series={series}/></section>
       <section className="ot-panel ot-territory-panel"><div className="ot-panel-head"><div><span className="ot-small-heading">COMPOSICIÓN TERRITORIAL</span><h3>Distribución poblacional</h3><p>Cabecera frente a centros poblados y rural disperso</p></div></div>

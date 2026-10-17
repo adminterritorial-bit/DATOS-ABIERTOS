@@ -5,9 +5,10 @@ export interface ObservacionPublica {
  anio: number; valor: number; unidad: string; pagina: number | null;
  fuente: string; fuente_url: string; tipo: string; nota: string;
 }
+export interface VinculoICET {codigo:string;fuente_codigo:string;equivalencia:'directa'|'derivada';justificacion:string}
 export interface FeedPublico {
  municipio: string; departamento: string; divipola: string; aviso: string;
- actualizado_consulta: string; registros: ObservacionPublica[];
+ actualizado_consulta: string; registros: ObservacionPublica[]; vinculos_icet?: VinculoICET[];
 }
 export async function obtenerFeed(): Promise<FeedPublico> {
  const response = await fetch(PUBLIC_FEED_URL, {next: { revalidate: 300 }, headers: { accept: 'application/json' }});

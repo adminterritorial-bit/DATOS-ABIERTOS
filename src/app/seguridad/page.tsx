@@ -1,17 +1,27 @@
-'use client';
 import Link from 'next/link';
 import {reportePolicial2025 as p} from '@/lib/policia2025Draft';
-import {ArrowLeft,ShieldAlert,ExternalLink} from 'lucide-react';
-export default function Seguridad2025(){
- const total=p.conteos.reduce((n,r)=>n+r.filas,0);
- return <main style={{maxWidth:1100,margin:'auto',padding:'35px 22px'}}>
- <Link href="/" style={{color:'#0967d5',display:'inline-flex',gap:8,alignItems:'center'}}><ArrowLeft size={16}/> Volver al observatorio</Link>
- <p style={{color:'#0d6bcf',fontWeight:800,letterSpacing:2,fontSize:10,marginTop:32}}>FUENTE NACIONAL · SEGURIDAD Y DEFENSA</p>
- <h1 style={{fontSize:'clamp(27px,4vw,40px)',margin:'9px 0'}}>Delitos registrados en 2025</h1>
- <p style={{color:'#7188a1',maxWidth:850,lineHeight:1.8}}>Conteo exploratorio de filas del archivo de información de delitos a nivel de registro de la Policía Nacional, filtrado por municipio San Pedro y departamento Valle del Cauca. No confundir filas con víctimas o hechos estadísticos únicos.</p>
- <section style={{display:'flex',flexWrap:'wrap',gap:13,margin:'24px 0'}}><article style={{padding:21,background:'white',borderRadius:13,flex:'1 1 220px',border:'1px solid #e6edf5'}}><small>Filas del archivo</small><h2 style={{fontSize:32,margin:'11px 0 3px'}}>{total}</h2><small>Vigencia del archivo: 2025</small></article><article style={{padding:21,background:'white',borderRadius:13,flex:'1 1 220px',border:'1px solid #e6edf5'}}><small>Tipos reportados</small><h2 style={{fontSize:32,margin:'11px 0 3px'}}>{p.conteos.length}</h2><small>Clasificación de conductas</small></article></section>
- <div style={{padding:16,display:'flex',gap:11,background:'#fff8e9',border:'1px solid #ffeac1',borderRadius:12,marginBottom:24}}><ShieldAlert color="#bd821c" size={23}/><div><strong>Advertencia metodológica</strong><p style={{fontSize:12,color:'#816b49',lineHeight:1.7,margin:'5px 0'}}>Estas cifras NO son todavía las cantidades definitivas del DANE ICET. Debe comprobarse el campo de cantidad, definición, duplicados, tentativas y unidad de análisis. El registro no representa directamente tasas.</p></div></div>
- <section style={{background:'white',borderRadius:14,border:'1px solid #e6eef7',overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',minWidth:550}}><thead><tr style={{background:'#eef5ff'}}><th style={{padding:16,textAlign:'left'}}>Categoría (ICCS A.C. / Policía)</th><th style={{padding:16,textAlign:'right'}}>Filas</th></tr></thead><tbody>{p.conteos.map(r=><tr key={r.tipo}><td style={{padding:14,borderBottom:'1px solid #e9eff6',fontSize:12}}>{r.tipo}</td><td style={{padding:14,borderBottom:'1px solid #e9eff6',textAlign:'right',fontWeight:800,color:'#0667d3'}}>{r.filas}</td></tr>)}</tbody></table></section>
- <div style={{marginTop:22,fontSize:12,color:'#70849c'}}><p><strong>Integridad:</strong> SHA256 de archivo descargado: <code>{p.hash}</code></p><p><strong>Fecha consulta:</strong> {p.fechaConsulta} · Fuente 2025.</p><a href="https://www.policia.gov.co/index.php/estadistica-delictiva" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',gap:7,alignItems:'center',color:'#0968d6',fontWeight:700}}>Ver publicación de Policía Nacional <ExternalLink size={15}/></a></div>
- <p style={{margin:'25px 0',fontSize:12}}><Link href="/icet" style={{color:'#0968d6'}}>Ver los nueve indicadores ICET de Seguridad y Defensa →</Link></p></main>
+import {ArrowLeft,ExternalLink,Shield,FileSpreadsheet} from 'lucide-react';
+import {formatear} from '@/lib/publicFeed';
+const clases=p.conteos.map(r=>({...r,nombre:r.tipo.replace(/^\(\d+\)\s*/,'' )}));
+const total=clases.reduce((n,r)=>n+r.filas,0);
+const max=Math.max(...clases.map(x=>x.filas),1);
+export default function Seguridad(){
+ const robo=clases.filter(x=>/HURTO A AUTOMOTORES|HURTO A MOTOCICLETAS/.test(x.nombre)).reduce((n,r)=>n+r.filas,0);
+ const personas=clases.find(x=>x.nombre==='HURTO A PERSONAS')?.filas||0;
+ const homicidio=clases.find(x=>x.nombre==='HOMICIDIO INTENCIONAL')?.filas||0;
+ return <main className="ot-app" style={{display:'block',minHeight:'100vh'}}><div className="ot-main" style={{maxWidth:1160}}>
+ <Link href="/" style={{color:'#0e6edf',display:'inline-flex',gap:8,alignItems:'center',fontWeight:800,fontSize:12}}><ArrowLeft size={17}/> Volver al Observatorio</Link>
+ <div className="ot-heading-strip"><div><span className="ot-small-heading">SEGURIDAD CIUDADANA · POLICÍA NACIONAL</span><h1 style={{font:'800 32px Manrope',margin:'8px 0'}}>Registro de conductas · 2025</h1><p>Distribución de registros delictivos del municipio de San Pedro. Las cifras expresan filas del archivo, no víctimas o hechos únicos.</p></div><Shield color="#1273d6" size={28}/></div>
+ <div className="ot-kpis"><article className="ot-kpi"><div className="ot-kpi-top">Registros territoriales <FileSpreadsheet size={17}/></div><strong>{formatear(total,0)}</strong><small>Filas en el archivo 2025</small></article><article className="ot-kpi"><div className="ot-kpi-top">Hurtos a automotores y motos</div><strong>{robo}</strong><small>Filas, dos categorías distintas</small></article><article className="ot-kpi"><div className="ot-kpi-top">Hurto a personas</div><strong>{personas}</strong><small>Filas de esta clasificación</small></article><article className="ot-kpi"><div className="ot-kpi-top">Homicidio intencional</div><strong>{homicidio}</strong><small>Filas; no tasa ICET 57</small></article></div>
+ <section className="ot-panel"><div className="ot-panel-head"><div><span className="ot-small-heading">DISTRIBUCIÓN POR CONDUCTA</span><h2 style={{font:'800 19px Manrope',margin:'7px 0'}}>Categorías del registro 2025</h2><p>{clases.length} categorías · lectura directa de archivo oficial filtrado a San Pedro, Valle</p></div></div>
+ <div style={{display:'grid',gap:15}}>{[...clases].sort((a,b)=>b.filas-a.filas).map(r=><div key={r.tipo} style={{display:'grid',gridTemplateColumns:'minmax(160px,1.25fr) minmax(70px,1fr) 48px',gap:12,alignItems:'center',fontSize:11}}>
+ <span style={{color:'#58718f',lineHeight:1.5}}>{r.nombre.charAt(0)+r.nombre.slice(1).toLocaleLowerCase('es-CO')}</span><span style={{height:11,borderRadius:12,background:'#edf2f9',overflow:'hidden'}}><span style={{height:'100%',width:(r.filas/max*100)+'%',display:'block',borderRadius:12,background:'linear-gradient(90deg,#146bd2,#36b0cd)'}}/></span><strong style={{textAlign:'right',color:'#0c67c8'}}>{r.filas}</strong></div>)}</div>
+ <div style={{marginTop:25,display:'flex',gap:12,flexWrap:'wrap',fontSize:11,color:'#69839a'}}>
+ <span>Vigencia: {p.anio}</span><span>Fuente: Policía Nacional</span><span>Unidad: filas de registro</span>
+ </div></section>
+ <section className="ot-panel" style={{marginTop:18}}><span className="ot-small-heading">TRAZABILIDAD DOCUMENTAL</span><h3 style={{font:'800 18px Manrope',margin:'10px 0'}}>Procedencia y unidad estadística</h3><p style={{fontSize:12,color:'#617c98',lineHeight:1.85}}>Las 209 filas del archivo de registro no se homologan automáticamente a hechos, personas víctimas, robos únicos ni tasas de criminalidad. La extracción permite calcular por separado la columna CANTIDAD cuando está disponible y es válida para todas las filas de una categoría. Hasta contar con ese consolidado comprobado, el portal muestra únicamente filas, sin inflar indicadores ICET.</p>
+ <p style={{fontSize:11,color:'#7a8da5'}}>SHA256 del archivo fuente: <code style={{overflowWrap:'anywhere'}}>{p.hash}</code> · Consulta: {p.fechaConsulta.slice(0,10)}</p>
+ <a className="ot-btn ot-export" href="https://www.policia.gov.co/index.php/estadistica-delictiva" target="_blank" rel="noopener noreferrer">Fuente Policía Nacional <ExternalLink size={15}/></a>
+ </section>
+ </div></main>;
 }

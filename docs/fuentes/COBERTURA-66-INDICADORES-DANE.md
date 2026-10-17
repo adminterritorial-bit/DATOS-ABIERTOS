@@ -1,98 +1,98 @@
-# Cobertura efectiva de los 66 indicadores ICET para el Observatorio de San Pedro
+# Auditoría de cobertura documental de 66 indicadores ICET — municipio 76670
 
-**Inventario generado en la rama de recuperación documental, corte 16 octubre 2026.** Esta auditoría NO constituye respuesta certificada de disponibilidad municipal ICET 2025; mide exclusivamente existencia de una cifra histórica municipal utilizable en el dashboard.
+**Corte operativo:** 16 de octubre de 2026. Este archivo sirve para **alimentar el dashboard web**, no para certificar retroactivamente que las estadísticas estuvieron publicadas en el portal municipal en la vigencia ICET 2025.
 
-**21 de 66 definiciones** tienen al menos un dato documental, publicado o matemáticamente calculado que puede vincularse con control metodológico. **45 de 66** siguen sin componente estadístico equivalente recuperado. No completar éstos con ceros ficticios.
+**Indicadores definidos:** 66.
+**Con cifra asociada a la definición, histórica o calculada:** 24.
+**Con estadística relacionada pero de otro alcance:** 14.
+**Sin cifra equivalente ni proxy seleccionado:** 28.
 
-Véanse `src/app/icet/ICETDashboard.tsx` (correspondencias), `src/lib/indicadoresCalculados.ts` (fórmulas), `src/lib/observacionesFuentesExternas.ts` (fuentes), `/api/icet/documentados` (JSON) y `docs/fuentes/CALCULOS-ICET-REPRODUCIBLES.md` (metodología).
+**Importante:** los valores calculados, históricos, unidades en verificación y los valores relacionados NO deben presentarse como resultados oficiales recientes; cada ficha detalla método, fuente, período y limitaciones. "Completar la pantalla" no habilita atribuir resultados departamentales a San Pedro.
 
-| ICET | Indicador | Evidencia disponible o ruta de recuperación |
-|---:|---|---|
-| 1 | Porcentaje de aguas residuales urbanas tratadas | Buscar exacto: CVC / SSPD SUI / IDEAM RESPEL / UNGRD / PGIRS |
-| 2 | Tasa de personas afectadas a causa de eventos recurrentes | Buscar exacto: CVC / SSPD SUI / IDEAM RESPEL / UNGRD / PGIRS |
-| 3 | Negocios verdes verificados | Buscar exacto: CVC / SSPD SUI / IDEAM RESPEL / UNGRD / PGIRS |
-| 4 | Porcentaje de residuos sólidos efectivamente aprovechados | Buscar exacto: CVC / SSPD SUI / IDEAM RESPEL / UNGRD / PGIRS |
-| 5 | Porcentaje de residuos sólidos urbanos dispuestos adecuadamente | Buscar exacto: CVC / SSPD SUI / IDEAM RESPEL / UNGRD / PGIRS |
-| 6 | Residuos peligrosos aprovechados y tratados | Buscar exacto: CVC / SSPD SUI / IDEAM RESPEL / UNGRD / PGIRS |
-| 7 | Hectáreas de pequeña y mediana propiedad rural, formalizadas | Buscar exacto: IGAC/ANT/UPRA; CUIPO-CHIP; RUNT |
-| 8 | Vocación de uso del suelo (caracterización y zonificación) | Buscar exacto: IGAC/ANT/UPRA; CUIPO-CHIP; RUNT |
-| 9 | Valor agregado por municipio | Cifra asociada: Ficha TerriData 2023, sectores y suma |
-| 10 | Porcentaje de presupuesto municipal financiado con recursos propios | Buscar exacto: IGAC/ANT/UPRA; CUIPO-CHIP; RUNT |
-| 11 | Parque automotor por municipio (particular, oficial, público) incluyendo motocicletas | Buscar exacto: IGAC/ANT/UPRA; CUIPO-CHIP; RUNT |
-| 12 | Índice de desempeño institucional | Cifra asociada: FURAG informe gestión 2021 |
-| 13 | Porcentaje de mujeres en cargos directivos del Estado Colombiano | Buscar exacto: Función Pública/empleo; IGAC; DANE vitales |
-| 14 | Predios del país con catastro multipropósito formado y/o actualizado total o parcialmente | Buscar exacto: Función Pública/empleo; IGAC; DANE vitales |
-| 15 | La esperanza de vida al nacer (total, hombre, mujer) | Buscar exacto: Función Pública/empleo; IGAC; DANE vitales |
-| 16 | Total población | Cifra asociada: DANE TerriData 2026 |
-| 17 | Brecha entre cobertura neta urbano-rural en educación preescolar, básica y media | Buscar exacto: MEN SIMAT/SINEB/PAE; DANE CNPV |
-| 18 | Cobertura en educación superior | Cifra asociada: Informe de gestión, educación 2023 |
-| 19 | Porcentaje de matrícula oficial con conexión a internet | Buscar exacto: MEN SIMAT/SINEB/PAE; DANE CNPV |
-| 20 | Tasa de analfabetismo para la población de 15 años y más | Buscar exacto: MEN SIMAT/SINEB/PAE; DANE CNPV |
-| 21 | Tasa de cobertura bruta en educación media | Cifra asociada: Informe gestión, media 2023 |
-| 22 | Tasa de cobertura bruta en transición | Cifra asociada: Informe gestión, transición 2023 |
-| 23 | Tasa de deserción intra-anual del sector oficial en educación básica y media | Cifra asociada: TerriData deserción 2024 |
-| 24 | Hogares urbanos con déficit cualitativo de vivienda (CNPV 2018) | Cifra asociada: Ficha TerriData, déficit urbano CNPV 2018 |
-| 25 | Hogares urbanos con déficit cuantitativo de vivienda (CNPV 2018) | Cifra asociada: Ficha TerriData, déficit urbano CNPV 2018 |
-| 26 | Medida de pobreza multidimensional Censal | Cifra asociada: Plan Territorial de Salud, IPM CNPV 2018 |
-| 27 | Incidencia de la hepatitis B por cada 100.000 habitantes | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 28 | Incidencia de malaria | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 29 | Incidencia de tuberculosis | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 30 | Letalidad por dengue | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 31 | Número de médicos | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 32 | Porcentaje de menores de 1 año con tercera dosis de pentavalente | Cifra asociada: PDT 2020–2023, pentavalente 2016 |
-| 33 | Porcentaje de mujeres de 15 a 19 años con embarazo subsiguiente | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 34 | Porcentaje de mujeres de 15 a 19 años que son madres o están embarazadas de su primer hijo | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 35 | Porcentaje de niñas y niños en primera infancia que cuentan con las atenciones priorizadas en el marco de la atención integral | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 36 | Porcentaje de partos atendidos por personal calificado | Cifra asociada: TerriData, partos 2024 |
-| 37 | Porcentaje de personas con criterio de tratamiento y diagnóstico de hepatitis C crónica a quienes se les inicia el tratamiento | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 38 | Porcentaje de población afiliada al sistema de seguridad social en salud | Cifra asociada: OGEN BDUA 2020 y cálculo afiliados 2023 |
-| 39 | Porcentaje de transmisión materno-infantil de la hepatitis B | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 40 | Porcentaje niños y niñas de 1 año con vacunación de triple viral | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 41 | Razón de mortalidad materna (42 días) | Cifra asociada: TerriData, mortalidad materna 2021 |
-| 42 | Tasa de cobertura del Programa de Alimentación Escolar | Buscar exacto: MEN SIMAT/SINEB/PAE; DANE CNPV |
-| 43 | Tasa de fecundidad específica en mujeres adolescentes de 15 a 19 años | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 44 | Tasa de mortalidad de niños menores de 5 años | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 45 | Tasa de mortalidad infantil | Cifra asociada: TerriData 2024 e histórico 2017 |
-| 46 | Tasa de mortalidad neonatal | Cifra asociada: TerriData, mortalidad neonatal 2022 |
-| 47 | Tasa de mortalidad por desnutrición en menores de 5 años | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 48 | Tasa de mortalidad por tumores malignos en menores de 18 años | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 49 | Tasa de mortalidad por VIH/SIDA | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 50 | Tasa de mortalidad prematura de las enfermedades crónicas de las vías respiratorias inferiores | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 51 | Tasa de mortalidad prematura por cáncer de mama, cuello uterino, colon y recto, pulmón, próstata, estómago, linfoma no Hodgkin y Leucemia en adultos | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 52 | Tasa de mortalidad prematura por diabetes | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 53 | Tasa de mortalidad prematura por enfermedades no transmisibles en población entre 30 y hasta 70 años | Buscar exacto: SISPRO/SIVIGILA/RUAF/PAI/MinSalud/DANE |
-| 54 | Tasa General de mortalidad por accidentes de tránsito terrestre | Cifra asociada: Forensis 2023–2024, transporte (corroborar ámbito terrestre) |
-| 55 | Número de robos de vehículos motorizados | Cifra asociada: PTS Policía 2023, hurtos automotores y motos sumados |
-| 56 | Tasa de feminicidio (homicidios de mujeres asesinadas por razones de género, por cada 100.000 mujeres) | Buscar exacto: Policía CANTIDAD, Medicina Legal, RUV/RNI/UARIV/PAPSIVI |
-| 57 | Tasa de homicidios | Cifra asociada: Forensis 2023–2024, tasa homicidios; cálculo 2025 por sexo |
-| 58 | Tasa de mortalidad por lesiones autoinfligidas intencionalmente | Cifra asociada: Forensis 2023–2024, suicidios |
-| 59 | Tasa de víctimas directas de homicidio y desaparición forzada registradas en RUV | Buscar exacto: Policía CANTIDAD, Medicina Legal, RUV/RNI/UARIV/PAPSIVI |
-| 60 | Tasa de victimización de hurto a personas | Buscar exacto: Policía CANTIDAD, Medicina Legal, RUV/RNI/UARIV/PAPSIVI |
-| 61 | Tasa de violencia interpersonal | Cifra asociada: Forensis 2023–2024, tasa de violencia interpersonal |
-| 62 | Víctimas con atención o acompañamiento psicosocial individual, familiar, comunitaria y/o grupal | Buscar exacto: Policía CANTIDAD, Medicina Legal, RUV/RNI/UARIV/PAPSIVI |
-| 63 | Víctimas que superaron la situación de vulnerabilidad (nueva medición) | Buscar exacto: Policía CANTIDAD, Medicina Legal, RUV/RNI/UARIV/PAPSIVI |
-| 64 | Acceso a agua potable adecuado | Buscar exacto: UPME ICEE municipal; SSPD SUI; prestadores; DANE CNPV |
-| 65 | Cobertura de energía eléctrica | Buscar exacto: UPME ICEE municipal; SSPD SUI; prestadores; DANE CNPV |
-| 66 | Porcentaje de la población con acceso a métodos de saneamiento adecuados | Buscar exacto: UPME ICEE municipal; SSPD SUI; prestadores; DANE CNPV |
+## Cruce revisado directamente contra el código operativo
 
-## Criterios no negociables de derivación
+| # | Indicador oficial | Uso de la cifra | ID de observación del dashboard | Productor / documento |
+|---:|---|---|---|---|
+| 1 | Porcentaje de aguas residuales urbanas tratadas | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 2 | Tasa de personas afectadas a causa de eventos recurrentes | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 3 | Negocios verdes verificados | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 4 | Porcentaje de residuos sólidos efectivamente aprovechados | Estadística relacionada | SSPD-APROVECHAMIENTO-PROPORCION-2024 | SSPD anexos 2024 |
+| 5 | Porcentaje de residuos sólidos urbanos dispuestos adecuadamente | Estadística relacionada | SSPD-DISPOSICION-TOTAL-2024 | SSPD anexos 2024 |
+| 6 | Residuos peligrosos aprovechados y tratados | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 7 | Hectáreas de pequeña y mediana propiedad rural, formalizadas | Estadística relacionada | TERRI-055 | DNP ficha TerriData |
+| 8 | Vocación de uso del suelo (caracterización y zonificación) | Estadística relacionada | GOB-AGRO-SIEMBRA-2023 | Gobernación del Valle |
+| 9 | Valor agregado por municipio | Valor publicado o calculado | DOC-ICET-09-2023 | Documento municipal |
+| 10 | Porcentaje de presupuesto municipal financiado con recursos propios | Estadística relacionada | DER-FIN-TRIBUTARIOS-2025 | Cálculo reproducible |
+| 11 | Parque automotor por municipio (particular, oficial, público) incluyendo motocicletas | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 12 | Índice de desempeño institucional | Valor publicado o calculado | DOC-FURAG-12-2021 | Documento municipal |
+| 13 | Porcentaje de mujeres en cargos directivos del Estado Colombiano | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 14 | Predios del país con catastro multipropósito formado y/o actualizado total o parcialmente | Estadística relacionada | DER-CAT-PREDIOS-2024 | Cálculo reproducible |
+| 15 | La esperanza de vida al nacer (total, hombre, mujer) | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 16 | Total población | Valor publicado o calculado | TERRI-001 | DNP ficha TerriData |
+| 17 | Brecha entre cobertura neta urbano-rural en educación preescolar, básica y media | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 18 | Cobertura en educación superior | Valor publicado o calculado | DOC-EDU-18-2023 | Documento municipal |
+| 19 | Porcentaje de matrícula oficial con conexión a internet | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 20 | Tasa de analfabetismo para la población de 15 años y más | Estadística relacionada | OFI-ANALF-HOG-2018 | Fuente trazada por ID |
+| 21 | Tasa de cobertura bruta en educación media | Valor publicado o calculado | DOC-EDU-21-2023 | Documento municipal |
+| 22 | Tasa de cobertura bruta en transición | Valor publicado o calculado | DOC-EDU-22-2023 | Documento municipal |
+| 23 | Tasa de deserción intra-anual del sector oficial en educación básica y media | Valor publicado o calculado | TERRI-021 | DNP ficha TerriData |
+| 24 | Hogares urbanos con déficit cualitativo de vivienda (CNPV 2018) | Valor publicado o calculado | DOC-CNPV-24-2018 | Documento municipal |
+| 25 | Hogares urbanos con déficit cuantitativo de vivienda (CNPV 2018) | Valor publicado o calculado | DOC-CNPV-25-2018 | Documento municipal |
+| 26 | Medida de pobreza multidimensional Censal | Valor publicado o calculado | OFI-ICET-26-2018 | Fuente trazada por ID |
+| 27 | Incidencia de la hepatitis B por cada 100.000 habitantes | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 28 | Incidencia de malaria | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 29 | Incidencia de tuberculosis | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 30 | Letalidad por dengue | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 31 | Número de médicos | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 32 | Porcentaje de menores de 1 año con tercera dosis de pentavalente | Valor publicado o calculado | EXT-ICET-32-PENTA-2016 | Fuente trazada por ID |
+| 33 | Porcentaje de mujeres de 15 a 19 años con embarazo subsiguiente | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 34 | Porcentaje de mujeres de 15 a 19 años que son madres o están embarazadas de su primer hijo | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 35 | Porcentaje de niñas y niños en primera infancia que cuentan con las atenciones priorizadas en el marco de la atención integral | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 36 | Porcentaje de partos atendidos por personal calificado | Valor publicado o calculado | TERRI-014 | DNP ficha TerriData |
+| 37 | Porcentaje de personas con criterio de tratamiento y diagnóstico de hepatitis C crónica a quienes se les inicia el tratamiento | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 38 | Porcentaje de población afiliada al sistema de seguridad social en salud | Valor publicado o calculado | DER-ICET-38-2023 | Cálculo reproducible |
+| 39 | Porcentaje de transmisión materno-infantil de la hepatitis B | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 40 | Porcentaje niños y niñas de 1 año con vacunación de triple viral | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 41 | Razón de mortalidad materna (42 días) | Valor publicado o calculado | TERRI-015 | DNP ficha TerriData |
+| 42 | Tasa de cobertura del Programa de Alimentación Escolar | Estadística relacionada | DOC-PAE-BENEFICIARIOS-2025 | Documento municipal |
+| 43 | Tasa de fecundidad específica en mujeres adolescentes de 15 a 19 años | Valor publicado o calculado | SALUD-DA-d65385a58-2017 | Salud Datos Abiertos |
+| 44 | Tasa de mortalidad de niños menores de 5 años | Valor publicado o calculado | SALUD-DA-d153e100b-2011 | Salud Datos Abiertos |
+| 45 | Tasa de mortalidad infantil | Valor publicado o calculado | TERRI-012 | DNP ficha TerriData |
+| 46 | Tasa de mortalidad neonatal | Valor publicado o calculado | TERRI-016 | DNP ficha TerriData |
+| 47 | Tasa de mortalidad por desnutrición en menores de 5 años | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 48 | Tasa de mortalidad por tumores malignos en menores de 18 años | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 49 | Tasa de mortalidad por VIH/SIDA | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 50 | Tasa de mortalidad prematura de las enfermedades crónicas de las vías respiratorias inferiores | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 51 | Tasa de mortalidad prematura por cáncer de mama, cuello uterino, colon y recto, pulmón, próstata, estómago, linfoma no Hodgkin y Leucemia en adultos | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 52 | Tasa de mortalidad prematura por diabetes | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 53 | Tasa de mortalidad prematura por enfermedades no transmisibles en población entre 30 y hasta 70 años | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 54 | Tasa General de mortalidad por accidentes de tránsito terrestre | Valor publicado o calculado | OFI-FOR-ICET54-2023 | Medicina Legal |
+| 55 | Número de robos de vehículos motorizados | Valor publicado o calculado | DER-ICET-55-2023 | Cálculo reproducible |
+| 56 | Tasa de feminicidio (homicidios de mujeres asesinadas por razones de género, por cada 100.000 mujeres) | Estadística relacionada | FOR-MUJER-HOM-2023 | Fuente trazada por ID |
+| 57 | Tasa de homicidios | Valor publicado o calculado | DER-ICET-57-2025 | Cálculo reproducible |
+| 58 | Tasa de mortalidad por lesiones autoinfligidas intencionalmente | Valor publicado o calculado | OFI-FOR-ICET58-2023 | Medicina Legal |
+| 59 | Tasa de víctimas directas de homicidio y desaparición forzada registradas en RUV | Estadística relacionada | RUV-2025-HOMICIDIO-OCURRENCIA | RUV Datos Abiertos |
+| 60 | Tasa de victimización de hurto a personas | Estadística relacionada | EXT-POLICIA-HURTO-PERSONAS-2025 | Fuente trazada por ID |
+| 61 | Tasa de violencia interpersonal | Valor publicado o calculado | OFI-FOR-ICET61-2024 | Medicina Legal |
+| 62 | Víctimas con atención o acompañamiento psicosocial individual, familiar, comunitaria y/o grupal | Estadística relacionada | DOC-RUV-atencion | Documento municipal |
+| 63 | Víctimas que superaron la situación de vulnerabilidad (nueva medición) | Sin cifra compatible localizada | — | Búsqueda sectorial |
+| 64 | Acceso a agua potable adecuado | Estadística relacionada | TERRI-023 | DNP ficha TerriData |
+| 65 | Cobertura de energía eléctrica | Valor publicado o calculado | UPME-ICEE-TOTAL-2024 | UPME ICEE 2024 |
+| 66 | Porcentaje de la población con acceso a métodos de saneamiento adecuados | Estadística relacionada | TERRI-027 | DNP ficha TerriData |
 
-- Tasa general = suma de conteos compatibles / población de referencia × factor, sin mezclar distintos productores o métodos.
-- Tasas por subgrupo se combinan con promedio ponderado por denominadores correspondientes, no media simple salvo pesos iguales.
-- Cuota de energía o agua por viviendas: utilizar viviendas conectadas sobre total de viviendas, **NO** habitantes como denominador.
-- #55: sumatoria de hurto a automotores + hurto a motocicletas (Policía 2023) describe delitos reportados, **no** robos no denunciados ni tentativas.
-- #54: Forensis «eventos de transporte» puede ser más amplio que «tránsito terrestre», verificar alcance.
-- #57: mantener por separado series Forensis y Policía; el cálculo TerriData 2025 ponderado por sexo requiere contrastar el desglose poblacional con el Excel DANE original.
-- #38: cálculo marzo 2023 usa afiliados del PTS y población anual PPED DANE; registrar el desfase de cortes.
-- #61: usar las tasas oficiales Forensis de **violencia interpersonal exclusivamente**, no sumatoria de violencia familiar y de pareja, que son categorías diferentes.
-- Mantener observaciones relacionadas como contenido sectorial del dashboard sin falsear cumplimiento de la definición ICET.
+## Datos masivos integrados
 
-## Siguiente extracción prioritaria
+- `src/data/fuentesMasivas76670.json`: 232 observaciones verificadas de código territorial 76670, provenientes de UPME, Datos Abiertos / salud municipal, RUV y registros de prestadores SSPD.
+- `scripts/extraer_fuentes_76670.py`: consulta programable de UPME y RUV, extracción histórica salud 2005–2020, SSPD y metadatos INS/SISPRO.
+- `scripts/extraer_sspd_anexos_2024.py`: lee las bases nacionales de acueducto/alcantarillado/aseo, residuos aprovechados y disposición final 2024; se validaron seis filas de servicios para San Pedro, cuatro de materiales aprovechados y dos de disposición final por municipio atendido 76670.
+- `src/lib/indicadoresCalculados.ts`: fórmulas reproducibles; nunca usar población como denominador de tasas por vivienda.
+- `src/app/icet/ICETDashboard.tsx`: tarjetas reales, explorador, fichas de fuentes, filtro año/tema, catálogo completo. Las estadísticas relacionadas muestran su nombre real.
+- `/api/icet/documentados`: endpoint JSON, sin expedir microdatos personales.
 
-**#65:** Fuente UPME ArcGIS `https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/layers`. Capa 26: atributo `cod_mpio='76670'`; recuperar `iceetotal`, `vcstotal`, `vttotal` y `vigencia`. La respuesta API no pudo recuperarse en esta sesión, por lo que no hay cifra publicada para este indicador todavía. No usar datos nacionales o departamentales.
-**#20:** DANE CNPV censo 2018 de alfabetismo de personas 15+, diferente de privación por analfabetismo de hogares.
-**#64 y #66:** SSPD SUI/operadores y CNPV; diferenciar calidad de agua y tipo de saneamiento de simple cobertura de redes.
-**#27–53:** bases SISPRO/INS/RUAF desagregadas por código territorial, año, numerador/denominador; calcular tasas de enfermedades y mortalidad cuando haya compatibilidad.
-**#59, #62, #63:** obtener conjunto RUV de hechos directos, atención PAPSIVI y superación de vulnerabilidad; sus cifras acumuladas por ubicación/ocurrencia no sustituyen esas variables.
+## Priorización del trabajo restante
 
-**Publicación:** datos en rama PR #5, no en `main` ni publicados en Supabase/producción hasta merge e ingesta por Work. Los documentos públicos se enlazan desde `/documentos`, extractos agregados se versionan en GitHub. No generar más Excel de presentación.
+Investigar primero los 28 indicadores sin ningún valor vinculado en este archivo: fuentes SISPRO/INS/SIVIGILA para enfermedades, mortalidad y recursos de salud; UARIV/MinSalud para atención psicosocial y superación de vulnerabilidad; IGAC/ANT para catastro multipropósito y tierras; MEN/SIMAT para internet educativo y brecha urbano-rural; CVC/IDEAM/SSPD para ambientales; RUNT para parque matriculado.
+
+Los 14 relacionados pueden mejorarse hacia un valor que corresponda exactamente al indicador cuando se recuperen nuevos datos. **No eliminar su valor contextual actual ni convertirlo silenciosamente en equivalente.**
+
+**Estado de producción:** cambios en PR #5. No se ha comprobado despliegue de este PR en Vercel ni ingesta a Supabase.

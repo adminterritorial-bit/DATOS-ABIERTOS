@@ -4,6 +4,7 @@ import {observacionesDocumentales} from '@/lib/observacionesDocumentales2026';
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
 import {indicadoresCalculados} from '@/lib/indicadoresCalculados';
 import {observacionesINS} from '@/lib/observacionesINS';
+import {estimacionesMunicipales} from '@/lib/estimacionesMunicipales';
 import datosMasivos from '@/data/fuentesMasivas76670.json';
 import {observacionesTerriData} from '@/lib/terriDataExpanded';
 
@@ -15,10 +16,10 @@ export async function GET(){
   anio:x.anio,periodo:String(x.anio),fuente:x.fuente,pagina:x.pagina,
   icet:undefined,clase:'observacion',divipola:'76670'
  }));
- const anexos=[...observacionesDocumentales,...observacionesExternas,...indicadoresCalculados,...observacionesINS].map(x=>({
+ const anexos=[...observacionesDocumentales,...observacionesExternas,...indicadoresCalculados,...observacionesINS,...estimacionesMunicipales].map(x=>({
   id:x.id,nombre:x.nombre,tema:x.sector,valor:x.valor,unidad:x.unidad,
   anio:x.anio,periodo:x.periodo,fuente:x.fuente,pagina:x.pagina,
-  icet:x.codigoIcet,clase:x.vinculacion,metodo:x.id.startsWith('DER-')?'CALCULADO':'PUBLICADO',divipola:'76670',nota:x.nota??null
+  icet:x.codigoIcet,clase:x.vinculacion,metodo:x.id.startsWith('EST-')?'ESTIMACION_EXPLORATORIA':x.id.startsWith('DER-')?'CALCULADO':'PUBLICADO',divipola:'76670',nota:x.nota??null
  }));
  const masivos=datosMasivos.observaciones.filter(r=>r.divipola==='76670'&&Number.isFinite(r.valor)).map(r=>({
   id:r.id,nombre:r.nombre,tema:r.sector,valor:r.valor,unidad:r.unidad,

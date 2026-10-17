@@ -32,7 +32,8 @@ const DIRECTAS:Record<number,string>={
  46:'TERRI-016',
  54:'OFI-FOR-ICET54-2023',
  57:'DER-ICET-57-2025',
- 58:'OFI-FOR-ICET58-2023'
+ 58:'OFI-FOR-ICET58-2023',
+ 61:'OFI-FOR-ICET61-2024'
 };
 const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  id:r.id,titulo:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,

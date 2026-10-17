@@ -45,6 +45,12 @@ const furag:ValorDocumental[]=[
  periodo:String(anio),fuente:HIST,pagina:360,codigoIcet:'ICET-12',vinculacion:'directa' as const,
  nota:'Resultado municipal FURAG consignado en el informe de gestión. Las mediciones 2018–2021 tienen advertencias oficiales de comparabilidad con 2022 en adelante.'
 }));
+const pae:ValorDocumental[]=[
+ {id:'DOC-PAE-BENEFICIARIOS-2025',nombre:'Estudiantes beneficiados por el Programa de Alimentación Escolar',sector:'Educación',valor:2151,unidad:'estudiantes',anio:2025,periodo:'Ejecución 2025',fuente:'52005_informerendicioncuentassp.pdf',pagina:10,codigoIcet:'ICET-42',vinculacion:'relacionada',nota:'Informe de ejecución PDT 2025: 2.151 estudiantes beneficiados de una meta de 2.300. El indicador ICET 42 requiere cobertura PAE calculada sobre matrícula elegible, no sobre meta de producto.'},
+ {id:'DOC-PAE-META-2025',nombre:'Meta anual de estudiantes beneficiados por PAE',sector:'Educación',valor:2300,unidad:'estudiantes objetivo',anio:2025,periodo:'Meta 2025',fuente:'52005_informerendicioncuentassp.pdf',pagina:10,vinculacion:'adicional',nota:'Esta es una meta programada, no matrícula elegible total ni resultado de servicio.'},
+ {id:'DOC-PAE-AVANCE-META-2025',nombre:'Porcentaje de cumplimiento de la meta municipal PAE',sector:'Educación',valor:93.52,unidad:'%',anio:2025,periodo:'Ejecución 2025',fuente:'52005_informerendicioncuentassp.pdf',pagina:10,codigoIcet:'ICET-42',vinculacion:'relacionada',nota:'2.151/2.300×100 = 93,52% de cumplimiento de meta PAE. No equivale a cobertura de estudiantes matriculados de ICET 42.'}
+];
+
 const ruv:ValorDocumental[]=[
  ['ocurrencia','Víctimas por ocurrencia acumuladas',4866],
  ['declaracion','Víctimas por declaración acumuladas',5117],
@@ -68,5 +74,5 @@ const sisben:ValorDocumental[]=[
  ['secundaria','Matrícula secundaria sexto a noveno',914,'estudiantes'],
  ['media','Matrícula media décimo a undécimo',391,'estudiantes']
 ].map(([slug,nombre,valor,unidad])=>({id:'DOC-RSH-'+slug,nombre:String(nombre),valor:Number(valor),unidad:String(unidad),sector:['personas','hogares','viviendas','migrantes'].includes(String(slug))?'Demografía':['basica','secundaria','media'].includes(String(slug))?'Educación':String(slug).startsWith('salud')?'Salud':'Desarrollo social',anio:null,periodo:'El archivo suministrado no especifica fecha de corte',fuente:RSH,pagina:1,vinculacion:'adicional' as const,nota:'Registro Social de Hogares. Son universos distintos y no deben sumarse para construir una población municipal.'}));
-export const observacionesDocumentales=[...historicos,...valorAgregado,...viviendaCnpv,...furag,...ruv,...sisben];
+export const observacionesDocumentales=[...historicos,...valorAgregado,...viviendaCnpv,...furag,...pae,...ruv,...sisben];
 export const observacionesDocumentalesConAnio=observacionesDocumentales.filter((x):x is ValorDocumental & {anio:number}=>x.anio!==null);

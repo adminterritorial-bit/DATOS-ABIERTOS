@@ -1,6 +1,7 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
 import municipalGeo from '@/data/geografiaMunicipal76670.json';
+import centerCache from '@/data/centrosPoblados76670.json';
 
 export type GeoSelection={
  kind:'municipal'|'place';
@@ -60,7 +61,19 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
     if(destroyed){view.destroy();return}
     const home=()=>{const geographicBounds=polygon.extent;if(geographicBounds)void view.goTo(geographicBounds.expand(1.25),{duration:650}).catch(()=>{})};
     goHome.current=home;zoomRef.current=(step)=>{void view.goTo({zoom:Math.min(18,Math.max(9,view.zoom+step))},{duration:380}).catch(()=>{})};home();readyRef.current?.(true);
-    statusRef.current('Mapa real activo · límite DANE 2025 · 1 punto de consulta municipal');
+    const known=new Set<string>();
+    const locallySaved:{code:string;name:string}[]=[];
+    for(const p of centerCache.items as {code:string;name:string;longitude:number;latitude:number;area?:number|null;altitude?:number|null;year?:number}[]){
+      if(!p.code||!Number.isFinite(p.longitude)||!Number.isFinite(p.latitude)||known.has(p.code))continue;
+      known.add(p.code);
+      const point=new Point.default({longitude:p.longitude,latitude:p.latitude});
+      markerLayer.add(new Graphic.default({geometry:point,attributes:{kind:'place',name:p.name,code:p.code,area:p.area,altitude:p.altitude,year:p.year},symbol:flag('territory',57)}));
+      focusRef.current.set(p.code,()=>{void view.goTo({center:point,zoom:15},{duration:650}).catch(()=>{})});
+      locallySaved.push({code:p.code,name:p.name});
+    }
+    placesRef.current?.(locallySaved);
+    statusRef.current('Mapa real activo · '+locallySaved.length+' lugares DANE en respaldo · portal municipal');
+
     const click=view.on('click',async ev=>{
       const result=await view.hitTest(ev,{include:[markerLayer,consultLayer]}).catch(()=>null);
       if(!result||destroyed)return;
@@ -78,7 +91,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
      const query=remote.createQuery();query.where="MPIO_CDPMP = '76670'";query.outFields=['*'];query.returnGeometry=true;query.outSpatialReference={wkid:4326};
      const features=await remote.queryFeatures(query);
      if(destroyed)return;
-     let count=0;const seen=new Set<string>();const placeList:{code:string;name:string}[]=[];
+     let count=locallySaved.length;const seen=new Set<string>(known);const placeList:{code:string;name:string}[]=[...locallySaved];
      for(const f of features.features){
       const a=f.attributes;const code=String(a.ZU_CDIVI||'');
       if(!code||seen.has(code)||!f.geometry||f.geometry.type!=='polygon')continue;
@@ -93,7 +106,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
      statusRef.current(count?count+' lugares DANE con banderas georreferenciadas · 1 portal municipal':'Mapa real disponible · 1 portal municipal');
     }catch(error){
       // The municipal boundary is bundled from the same DANE MGN dataset, independently of this request.
-      statusRef.current('Mapa geográfico disponible · capa remota de centros poblados temporalmente inaccesible');
+      statusRef.current('Mapa geográfico disponible · '+locallySaved.length+' lugares DANE almacenados · servicio en vivo inaccesible');
     }
    }catch(e){if(destroyed)return;setFailure('No se pudo iniciar ArcGIS Maps SDK. Verifica los recursos cartográficos y vuelve a intentar.');statusRef.current(e instanceof Error?e.message:'Error del mapa');readyRef.current?.(false)}
   };

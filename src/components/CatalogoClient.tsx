@@ -1,11 +1,12 @@
 'use client';
-import {useMemo,useState} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
 import {ArrowLeft,ArrowDownToLine,BookOpen,ExternalLink,Search} from 'lucide-react';
 import {formatear} from '@/lib/publicFeed';
 import type {ObservacionPublica} from '@/lib/publicFeed';
 export default function CatalogoClient({rows}:{rows:ObservacionPublica[]}){
- const [texto,setTexto]=useState('');const [year,setYear]=useState('Todos');const [tema,setTema]=useState('Todos');
+ const [texto,setTexto]=useState('');
+ useEffect(()=>{const term=new URLSearchParams(location.search).get('buscar');if(term)setTexto(term.slice(0,120));},[]);const [year,setYear]=useState('Todos');const [tema,setTema]=useState('Todos');
  const years=['Todos',...new Set(rows.map(x=>String(x.anio)))].sort((a,b)=>a==='Todos'?-1:b==='Todos'?1:Number(b)-Number(a));
  const temas=['Todos',...new Set(rows.map(x=>x.tema))].sort();
  const data=useMemo(()=>rows.filter(r=>(year==='Todos'||String(r.anio)===year)&&(tema==='Todos'||r.tema===tema)&&r.nombre.toLocaleLowerCase('es').includes(texto.toLocaleLowerCase('es'))),[rows,year,tema,texto]);

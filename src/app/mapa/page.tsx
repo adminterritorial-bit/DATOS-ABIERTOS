@@ -11,6 +11,7 @@ import {observacionesDocumentalesConAnio} from '@/lib/observacionesDocumentales2
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
 import {indicadoresCalculados} from '@/lib/indicadoresCalculados';
 import {observacionesINS} from '@/lib/observacionesINS';
+import {observacionesDaneMortalidad} from '@/lib/observacionesDaneMortalidad';
 import {estimacionesMunicipales} from '@/lib/estimacionesMunicipales';
 import masivas from '@/data/fuentesMasivas76670.json';
 import geo from '@/data/geografiaMunicipal76670.json';
@@ -29,7 +30,7 @@ const fuenteCatalogo:DataItem[]=observacionesTerriData.filter(r=>r.divipola==='7
 const doc:DataItem[]=observacionesDocumentalesConAnio.map(r=>({
  id:r.id,nombre:r.nombre,valor:r.valor,unidad:r.unidad,anio:r.anio,sector:r.sector,fuente:r.fuente,nota:'Dato documentado en archivo municipal',icet:r.codigoIcet,tipo:'Publicado'
 }));
-const publicadas:DataItem[]=[...observacionesExternas,...indicadoresCalculados,...observacionesINS,...estimacionesMunicipales].map(r=>({
+const publicadas:DataItem[]=[...observacionesExternas,...indicadoresCalculados,...observacionesINS,...observacionesDaneMortalidad,...estimacionesMunicipales].map(r=>({
  id:r.id,nombre:r.nombre,valor:r.valor,unidad:r.unidad,anio:r.anio,sector:r.sector,fuente:r.fuente,nota:r.nota,
  icet:r.codigoIcet,tipo:r.id.startsWith('EST-')?'Estimación':r.id.startsWith('DER-')?'Calculado':r.vinculacion==='relacionada'?'Relacionado':'Publicado'
 }));

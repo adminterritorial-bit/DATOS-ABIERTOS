@@ -1,7 +1,7 @@
 name: Visual regression and responsive review
 on:
   push:
-    branches: ['feat/github-pages-deploy','feat/observatorio-qa-admin','feat/observatorio-navegacion']
+    branches: ['feat/github-pages-deploy','feat/observatorio-qa-admin','feat/observatorio-navegacion','feat/observatorio-nav-unificada']
   workflow_dispatch:
 permissions:
   contents: read

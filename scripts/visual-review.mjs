@@ -28,12 +28,13 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
 
   await page.locator('.g4-map-viewport').waitFor({timeout:45000});
   try{
-    await page.locator('.g4-map-viewport .esri-view').waitFor({state:'attached',timeout:35000});
+    await page.locator('.g4-map-viewport.esri-view, .g4-map-viewport .esri-view, .g4-map-viewport .esri-view-surface').first().waitFor({state:'attached',timeout:35000});
   }catch(mapError){
     await page.locator('.g4-map-scene').screenshot({path:'artifacts/visual/geo-diagnostic-'+viewport.name+'.png'}).catch(()=>{});
     const status=await page.locator('.g4-map-status').allTextContents();
     const errorText=await page.locator('.g4-map-error').allTextContents();
-    errors.push(viewport.name+': ArcGIS failed to mount: '+JSON.stringify({status,errorText}).slice(0,400));
+    const mapDOM=await page.locator('.g4-map-viewport').evaluate(el=>({cls:el.className,html:el.innerHTML.slice(0,280)})).catch(()=>null);
+    errors.push(viewport.name+': ArcGIS failed to mount: '+JSON.stringify({status,errorText,mapDOM}).slice(0,900));
     throw mapError;
   }
   await page.locator('.g4-map-toolbar button[aria-label="Acercar mapa"]').click();

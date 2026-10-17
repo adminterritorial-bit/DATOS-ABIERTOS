@@ -1,0 +1,31 @@
+name: Live Supabase feed smoke
+on:
+  push:
+    branches: ['feat/**', main]
+    paths:
+      - 'supabase/functions/observatorio-public-feed/**'
+      - 'src/lib/publicFeed.ts'
+      - '.github/workflows/live-feed-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-public-feed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify public endpoint, municipality and data count
+        run: |
+          python - <<'PY'
+          import json, urllib.request, sys
+          url='https://dvdpgllezrmttrknbcjq.supabase.co/functions/v1/observatorio-public-feed'
+          with urllib.request.urlopen(url, timeout=28) as f:
+            assert f.status == 200, f.status
+            data=json.loads(f.read())
+          assert data.get('divipola') == '76670', data.get('divipola')
+          records=data.get('registros')
+          assert isinstance(records,list) and len(records) >= 75, len(records or [])
+          assert all(x.get('fuente') and isinstance(x.get('valor'),(float,int)) for x in records)
+          assert not any(x.get('grupo') in ('POLICIA','ICET') for x in records)
+          print(f"PASS: {len(records)} observaciones reales publicas, municipio {data['divipola']}")
+          PY

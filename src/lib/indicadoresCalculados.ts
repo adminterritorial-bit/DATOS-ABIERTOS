@@ -52,6 +52,7 @@ const tasaHomicidios2025=(tasaH.valor*ph2025+tasaM.valor*pm2025)/p2025.total;
  * Es una medida calculada, no la cobertura certificada por el Ministerio para el día de corte.
  */
 export const indicadoresCalculados:ValorDocumental[]=[
+ {id:'DER-CAT-PREDIOS-2024',nombre:'Total de predios registrados (urbanos y rurales)',sector:'Catastro',valor:4498+2903,unidad:'predios',anio:2024,periodo:'2024',fuente:'FICHA  TERRIDATA SAN PEDRO.pdf',pagina:14,codigoIcet:'ICET-14',vinculacion:'relacionada',nota:'DERIVADO: 4.498 predios urbanos + 2.903 rurales = 7.401 predios catastrales registrados en 2024. El total existente no equivale al número de predios actualizados mediante catastro multipropósito (ICET 14).'},
  {
  id:'DER-ICET-61-2024',nombre:'Tasa reconstruida de casos médico-legales por violencia interpersonal e intrafamiliar',sector:'Seguridad',
  valor:Math.round(porCienMil(inter2024.valor+intra2024.valor+pareja2024.valor,p2024.total)*100)/100,

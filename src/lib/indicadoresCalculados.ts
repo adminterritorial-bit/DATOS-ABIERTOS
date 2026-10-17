@@ -41,7 +41,7 @@ export const indicadoresCalculados:ValorDocumental[]=[
   id:'DER-ICET-38-2023',nombre:'Población afiliada al sistema de salud, calculada con registros públicos',
   sector:'Salud',valor:Math.round(pct(afiliados.valor,p2023.total)*100)/100,unidad:'%',
   anio:2023,periodo:'Numerador: marzo 2023; denominador: proyección anual 2023',
-  fuente:afiliados.fuente+' | '+DANE,pagina:60,codigoIcet:'ICET-38',vinculacion:'directa',
+  fuente:afiliados.fuente,pagina:60,codigoIcet:'ICET-38',vinculacion:'directa',
   nota:'DERIVADO: 11.211 afiliados (MSPS/PTS Tabla 25; 7.293 subsidiados + 3.830 contributivos + 59 excepción + 29 INPEC) / 17.280 habitantes (DANE PPED, versión 08/08/2025) × 100. No se presenta como tasa oficial certificada del MSPS ni como dato 2025.'
  },
  {
@@ -60,7 +60,7 @@ export const indicadoresCalculados:ValorDocumental[]=[
   id:'DER-ICET-61-2023',nombre:'Tasa calculada de casos médico-legales por violencia interpersonal e intrafamiliar',
   sector:'Seguridad',valor:Math.round(porCienMil(inter.valor+intra.valor+pareja.valor,p2023.total)*100)/100,
   unidad:'casos examinados por 100.000 habitantes',anio:2023,periodo:'2023',
-  fuente:inter.fuente+' | '+DANE,pagina:90,codigoIcet:'ICET-61',vinculacion:'relacionada',
+  fuente:inter.fuente,pagina:90,codigoIcet:'ICET-61',vinculacion:'relacionada',
   nota:'DERIVADO: (18 violencia interpersonal + 5 intrafamiliar + 7 de pareja = 30 casos en columnas separadas de Forensis Tabla 8) / 17.280 habitantes DANE PPED 2023 × 100.000. Corresponde a casos médico-legales examinados, no garantiza personas únicas lesionadas; tasa distinta a la tasa oficial Forensis por usar otra versión de proyecciones.'
  },
  ...poblacionDane.filter(p=>p.divipola==='76670'&&p.anio>=2018&&p.anio<=2026).flatMap(p=>[

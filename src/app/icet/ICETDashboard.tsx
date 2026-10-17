@@ -12,6 +12,7 @@ import './icet-dashboard.css';
 
 /** Correspondencias directas por definición y unidad, nunca por semejanza del nombre. */
 const DIRECTAS:Record<number,string>={
+ 9:'DOC-ICET-09-2023',
  12:'DOC-FURAG-12-2021',
  16:'TERRI-001',
  18:'DOC-EDU-18-2023',

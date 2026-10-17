@@ -1,0 +1,42 @@
+name: Modelos regionales de áreas pequeñas
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/icet-recuperacion-documental']
+    paths:
+      - scripts/modelar_comparables.py
+      - .github/workflows/modelos-comparables.yml
+permissions:
+  contents: write
+concurrency:
+  group: modelos-comparables-76670
+  cancel-in-progress: false
+jobs:
+  modelo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/icet-recuperacion-documental
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install python-calamine==0.6.1
+      - name: Estimar tasas municipales a partir de observaciones de municipios comparables
+        run: python scripts/modelar_comparables.py
+      - name: Versionar resultados trazables y errores de validación
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/data/escenariosComparables76670.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'data(model): escenarios de vecinos con población DANE y validación LOO'
+          git pull --rebase origin feat/icet-recuperacion-documental
+          git push origin HEAD:feat/icet-recuperacion-documental
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: escenarios-estimados-76670
+          path: src/data/escenariosComparables76670.json
+          retention-days: 30

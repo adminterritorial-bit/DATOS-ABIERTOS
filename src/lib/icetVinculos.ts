@@ -1,5 +1,7 @@
 /** Shared ICET catalog to evidence mapping. Contextual data do not prove full indicator. */
 export const ICET_DIRECTAS:Record<number,string>={
+ 47:'DANE-ICET47-2024',
+ 49:'DANE-ICET49-2024',
  9:'DOC-ICET-09-2023',
  12:'DOC-FURAG-12-2021',
  16:'TERRI-001',
@@ -27,6 +29,11 @@ export const ICET_DIRECTAS:Record<number,string>={
 };
 
 export const ICET_RELACIONADAS:Record<number,string>={
+ 48:'DANE-ICET48-2024',
+ 50:'DANE-ICET50-2024',
+ 51:'DANE-ICET51-2024',
+ 52:'DANE-ICET52-2024',
+ 53:'DANE-ICET53-2024',
  29:'INS-TB-ICET29-2018',
  7:'TERRI-055',
  8:'GOB-AGRO-SIEMBRA-2023',

@@ -12,6 +12,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
   await page.locator('.n5-navigation').waitFor();
   await page.locator('.n5-banner-frame').waitFor();
+  if(viewport.width>900&&await page.evaluate(()=>document.querySelector('.xp-main').getBoundingClientRect().left<document.querySelector('.xp-side').getBoundingClientRect().right-1))errors.push(viewport.name+': main content overlaps institutional sidebar');
   await page.waitForFunction(()=>{
     const image=document.querySelector('.n5-banner-slide img');
     return !!image && image.complete && image.naturalWidth>=2000;

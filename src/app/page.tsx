@@ -1,7 +1,7 @@
+'use client';
 import TerritorialDashboard from '@/components/TerritorialDashboard';
-import {obtenerFeed} from '@/lib/publicFeed';
-export const dynamic='force-dynamic';
-export default async function Page(){
- try{const feed=await obtenerFeed();return <TerritorialDashboard feed={feed}/>;}
- catch(err){return <TerritorialDashboard feed={null} error={err instanceof Error?err.message:'No se pudo consultar la fuente'}/>;}
+import {usePublicFeed} from '@/lib/usePublicFeed';
+export default function Page(){
+ const {feed,error,loading}=usePublicFeed();
+ return <TerritorialDashboard feed={feed} error={loading?undefined:error}/>;
 }

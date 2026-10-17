@@ -3,7 +3,7 @@ import {chromium} from 'playwright';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 fs.mkdirSync('artifacts/visual',{recursive:true});
 const errors=[];
-for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',width:1024,height:768},{name:'mobile',width:390,height:844}]){
+for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2560,height:1440},{name:'4k',width:3840,height:2160},{name:'desktop',width:1440,height:900},{name:'tablet',width:1024,height:768},{name:'mobile',width:390,height:844}]){
  const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height},deviceScaleFactor:1});
  page.on('pageerror',e=>errors.push(viewport.name+': '+e.message.slice(0,250)));
  try{
@@ -14,12 +14,12 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   await page.locator('.n5-banner-frame').waitFor();
   await page.waitForFunction(()=>{
     const image=document.querySelector('.n5-banner-slide img');
-    return !!image && image.complete && image.naturalWidth===1200 && image.naturalHeight===300;
-  },{timeout:22000}).catch(()=>errors.push(viewport.name+': first supplied banner is missing or not 1200x300'));
+    return !!image && image.complete && image.naturalWidth>=2000;
+  },{timeout:22000}).catch(()=>errors.push(viewport.name+': first supplied banner is missing or not high resolution'));
   if(viewport.name==='desktop'){
     for(let slide=1;slide<4;slide++){
       await page.getByRole('button',{name:'Banner siguiente'}).click();
-      await page.waitForFunction(()=>{const img=document.querySelector('.n5-banner-slide img');return !!img&&img.complete&&img.naturalWidth===1200&&img.naturalHeight===300},null,{timeout:10000}).catch(()=>errors.push('banner '+slide+': missing original image'));
+      await page.waitForFunction(()=>{const img=document.querySelector('.n5-banner-slide img');return !!img&&img.complete&&img.naturalWidth>=2000},null,{timeout:10000}).catch(()=>errors.push('banner '+slide+': missing original image'));
     }
     await page.getByRole('button',{name:'Mostrar: Observatorio de Datos'}).click();
   }
@@ -60,7 +60,7 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   await page.getByRole('button',{name:'Cerrar ventana'}).click();
   await page.locator('.n5-place-list').waitFor({timeout:17000});
   const firstPlace=page.locator('.n5-place-list button').first();
-  if(await firstPlace.count()){await firstPlace.click();await page.getByRole('dialog',{name:/Información del lugar/}).waitFor({timeout:10000});await page.getByRole('button',{name:'Cerrar información del lugar'}).click()}
+  if(await firstPlace.count()){await firstPlace.click();await page.getByRole('dialog',{name:/Información del lugar/}).waitFor({timeout:10000});await page.locator('.n5-place-popup').screenshot({path:'artifacts/visual/popup-'+viewport.name+'.png'});await page.getByRole('button',{name:'Cerrar información del lugar'}).click()}
   await page.locator('.g4-map-viewport').screenshot({path:'artifacts/visual/geo-'+viewport.name+'.png'});
 
 

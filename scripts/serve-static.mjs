@@ -4,7 +4,7 @@ import {resolve,sep} from 'node:path';
 const port=Number(process.env.PORT||3000);
 const root=resolve('out');
 const prefix='/DATOS-ABIERTOS';
-const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.ico':'image/x-icon','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8'};
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.svg':'image/svg+xml','.avif':'image/avif','.webp':'image/webp','.pdf':'application/pdf','.png':'image/png','.jpg':'image/jpeg','.ico':'image/x-icon','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8'};
 createServer(async(req,res)=>{
  const url=new URL(req.url||'/', 'http://localhost');
  if(!url.pathname.startsWith(prefix)){res.writeHead(302,{Location:prefix+'/'});res.end();return;}

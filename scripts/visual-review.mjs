@@ -27,7 +27,15 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   await page.getByRole('button',{name:'Geografía',exact:true}).click();
 
   await page.locator('.g4-map-viewport').waitFor({timeout:45000});
-  await page.locator('.g4-map-viewport .esri-view').waitFor({timeout:60000});
+  try{
+    await page.locator('.g4-map-viewport .esri-view').waitFor({state:'attached',timeout:35000});
+  }catch(mapError){
+    await page.locator('.g4-map-scene').screenshot({path:'artifacts/visual/geo-diagnostic-'+viewport.name+'.png'}).catch(()=>{});
+    const status=await page.locator('.g4-map-status').allTextContents();
+    const errorText=await page.locator('.g4-map-error').allTextContents();
+    errors.push(viewport.name+': ArcGIS failed to mount: '+JSON.stringify({status,errorText}).slice(0,400));
+    throw mapError;
+  }
   await page.locator('.g4-map-toolbar button[aria-label="Acercar mapa"]').click();
   await page.locator('.g4-map-toolbar button[aria-label="Centrar en San Pedro"]').click();
   await page.locator('.g4-map-toolbar button').filter({hasText:'Indicadores'}).click();

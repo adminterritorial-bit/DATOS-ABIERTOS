@@ -1,32 +1,36 @@
 import fs from 'node:fs';
-import { chromium } from 'playwright';
+import {chromium} from 'playwright';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 fs.mkdirSync('artifacts/visual',{recursive:true});
-let failures=[];
-for(const config of [{name:'desktop',width:1440,height:900},{name:'tablet',width:1024,height:768},{name:'mobile',width:390,height:844}]){
- const page=await browser.newPage({viewport:{width:config.width,height:config.height},deviceScaleFactor:1});
- page.on('pageerror',e=>failures.push(config.name+': '+String(e).slice(0,200)));
- await page.goto('http://127.0.0.1:3000/',{waitUntil:'networkidle',timeout:60000});
- await page.screenshot({path:'artifacts/visual/'+config.name+'.png',fullPage:true});
- const h=await page.locator('h1').first().innerText();
- if(!h.includes('territorio'))failures.push(config.name+': heading missing');
- const text=await page.locator('body').innerText();
- if(!text.includes('17.275'))failures.push(config.name+': DANE 2025 value missing');
- const metrics=await page.locator('.ot-data-card').count();
- if(metrics<6)failures.push(config.name+': too few data cards ('+metrics+')');
- const horizontal=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+3);
- if(horizontal)failures.push(config.name+': horizontal page overflow');
- if(config.name==='mobile'){
-  await page.getByRole('button',{name:'Abrir menú'}).click();
-  if(!await page.getByRole('button',{name:'Seguridad',exact:true}).isVisible())failures.push('mobile menu is not visible');
-  await page.getByRole('button',{name:'Cerrar navegación'}).click();
- }
- if(config.name==='desktop'){
-  await page.getByRole('button',{name:'2025'}).count(); // no-op if select displayed
-  await page.getByRole('button',{name:'CSV',exact:true}).click();
- }
+const errors=[];
+for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',width:1024,height:768},{name:'mobile',width:390,height:844}]){
+ const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height},deviceScaleFactor:1});
+ page.on('pageerror',e=>errors.push(viewport.name+': '+e.message.slice(0,250)));
+ try{
+  const r=await page.goto('http://localhost:3000/DATOS-ABIERTOS/',{waitUntil:'networkidle',timeout:70000});
+  if(r?.status()!==200)errors.push(viewport.name+': HTTP '+r?.status());
+  await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
+  await page.locator('.xp-theme').first().waitFor();
+  if(await page.locator('.xp-theme').count()!==14)errors.push(viewport.name+': taxonomy tiles !=14');
+  if(await page.locator('.xp-theme[aria-pressed="true"]').count()>1)errors.push(viewport.name+': multiple topic selected');
+  const over=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3);
+  if(over)errors.push(viewport.name+': horizontal overflow');
+  await page.screenshot({path:'artifacts/visual/'+viewport.name+'.png',fullPage:true});
+  await page.getByRole('button',{name:/Educación y aprendizaje/}).last().click();
+  if(!(await page.locator('.xp-theme.chosen').count()))errors.push(viewport.name+': topic filter did not apply');
+  await page.getByRole('button',{name:'Indicadores',exact:true}).click();
+  if(!await page.locator('.xp-indicator-row').count())errors.push(viewport.name+': no indicator catalog');
+  await page.getByRole('button',{name:'Geografía',exact:true}).click();
+  await page.locator('.xp-geo-svg').waitFor({timeout:30000});
+  if(!(await page.getByText('DANE · DIVIPOLA 76670 · MGN 2025').count()))errors.push(viewport.name+': municipal boundary not rendered');
+  if(viewport.name==='mobile'){
+   await page.getByRole('button',{name:'Abrir navegación'}).click();
+   if(!await page.locator('.xp-side.is-open').count())errors.push('mobile sidebar cannot open');
+   await page.getByRole('button',{name:/Panorama general/}).click();
+  }
+ }catch(e){errors.push(viewport.name+': '+String(e).slice(0,300))}
  await page.close();
 }
 await browser.close();
-if(failures.length){console.error(failures.join('\n'));process.exit(1)}
-console.log('All screenshots and interaction checks passed');
+if(errors.length){console.error(errors.join('\n'));process.exit(1)}
+console.log('PASS: redesigned observatory, 14 category tiles, chart/cat/map tabs, mobile navigation and no overflow');

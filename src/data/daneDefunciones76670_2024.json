@@ -1,0 +1,658 @@
+{
+  "municipio": "San Pedro",
+  "divipola": "76670",
+  "anio": 2024,
+  "territorio": "municipio de residencia habitual del fallecido",
+  "fuente": "https://www.dane.gov.co/files/operaciones/EEVV/2026/6-feb-2026/anex-EEVV-DefuncionesNoFetalesCuadroUnificado-2024.xlsx",
+  "tabla": "Cuadro5 (causa 6/67 OPS) y Cuadro4 (residencia)",
+  "total_defunciones": 130,
+  "total_hombres": 71,
+  "total_mujeres": 59,
+  "registros_causa": [
+    {
+      "grupo": "101",
+      "nombre": "Enfermedades infecciosas intestinales",
+      "fila_original": 31697,
+      "total": 1,
+      "hombres": 0,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "106",
+      "nombre": "Septicemia, excepto neonatal",
+      "fila_original": 31698,
+      "total": 2,
+      "hombres": 0,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 1,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "108",
+      "nombre": "Infecciones respiratorias agudas",
+      "fila_original": 31699,
+      "total": 2,
+      "hombres": 2,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "109",
+      "nombre": "Resto de ciertas enfermedades infecciosas y parasitarias",
+      "fila_original": 31700,
+      "total": 3,
+      "hombres": 1,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 2,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "201",
+      "nombre": "Tumor maligno del estómago",
+      "fila_original": 31701,
+      "total": 3,
+      "hombres": 1,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 2,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "202",
+      "nombre": "Tumor maligno del colon y de la unión rectosigmoidea",
+      "fila_original": 31702,
+      "total": 2,
+      "hombres": 1,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "203",
+      "nombre": "Tumor maligno de los órganos digestivos y del peritoneo excepto estómago y colon",
+      "fila_original": 31703,
+      "total": 2,
+      "hombres": 2,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "204",
+      "nombre": "Tumor maligno de la tráquea, los bronquios y el pulmón",
+      "fila_original": 31704,
+      "total": 1,
+      "hombres": 1,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "206",
+      "nombre": "Tumor maligno de la mama de la mujer",
+      "fila_original": 31705,
+      "total": 1,
+      "hombres": 0,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "207",
+      "nombre": "Tumor maligno del cuello del útero",
+      "fila_original": 31706,
+      "total": 1,
+      "hombres": 0,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "210",
+      "nombre": "Tumor maligno de la próstata",
+      "fila_original": 31707,
+      "total": 3,
+      "hombres": 3,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 3,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "211",
+      "nombre": "Tumor maligno de otros órganos genitourinarios",
+      "fila_original": 31708,
+      "total": 3,
+      "hombres": 1,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 2,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "212",
+      "nombre": "Leucemia",
+      "fila_original": 31709,
+      "total": 1,
+      "hombres": 0,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 1,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "213",
+      "nombre": "Tumor maligno del tejido linfático, de otros órganos hematopoyéticos y de tejidos afines",
+      "fila_original": 31710,
+      "total": 1,
+      "hombres": 0,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "214",
+      "nombre": "Tumores malignos de otras localizaciones y de las no especificadas",
+      "fila_original": 31711,
+      "total": 4,
+      "hombres": 2,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 3,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "215",
+      "nombre": "Tumores in situ, benignos y los de comportamiento incierto o desconocido",
+      "fila_original": 31712,
+      "total": 1,
+      "hombres": 0,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 1,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "302",
+      "nombre": "Enfermedades hipertensivas",
+      "fila_original": 31713,
+      "total": 2,
+      "hombres": 2,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 1,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "303",
+      "nombre": "Enfermedades isquémicas del corazón",
+      "fila_original": 31714,
+      "total": 46,
+      "hombres": 20,
+      "mujeres": 26,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 7,
+        "edad_65_84": 22,
+        "edad_85_99": 16,
+        "edad_100_mas": 1,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "304",
+      "nombre": "Enfermedad cardiopulmonar, enfermedades de la circulación pulmonar y otras formas de enfermedad del corazón",
+      "fila_original": 31715,
+      "total": 3,
+      "hombres": 1,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 1,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 0,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "307",
+      "nombre": "Enfermedades cerebrovasculares",
+      "fila_original": 31716,
+      "total": 7,
+      "hombres": 3,
+      "mujeres": 4,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 3,
+        "edad_85_99": 3,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "309",
+      "nombre": "Las demás enfermedades del sistema circulatorio",
+      "fila_original": 31717,
+      "total": 1,
+      "hombres": 0,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "501",
+      "nombre": "Accidentes de transporte terrestre",
+      "fila_original": 31718,
+      "total": 3,
+      "hombres": 3,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 1,
+        "edad_45_64": 2,
+        "edad_65_84": 0,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "511",
+      "nombre": "Lesiones autoinfligidas intencionalmente (suicidios)",
+      "fila_original": 31719,
+      "total": 1,
+      "hombres": 1,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 1,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "512",
+      "nombre": "Agresiones (homicidios)",
+      "fila_original": 31720,
+      "total": 10,
+      "hombres": 9,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 9,
+        "edad_45_64": 1,
+        "edad_65_84": 0,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "601",
+      "nombre": "Diabetes mellitus",
+      "fila_original": 31721,
+      "total": 5,
+      "hombres": 4,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 2,
+        "edad_65_84": 3,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "602",
+      "nombre": "Deficiencias nutricionales y anemias nutricionales",
+      "fila_original": 31722,
+      "total": 1,
+      "hombres": 1,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 0,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "604",
+      "nombre": "Enfermedades del sistema nervioso, excepto meningitis",
+      "fila_original": 31723,
+      "total": 2,
+      "hombres": 1,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 2,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "605",
+      "nombre": "Enfermedades crónicas de las vías respiratorias inferiores",
+      "fila_original": 31724,
+      "total": 8,
+      "hombres": 6,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 4,
+        "edad_85_99": 2,
+        "edad_100_mas": 1,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "606",
+      "nombre": "Resto de enfermedades del sistema respiratorio",
+      "fila_original": 31725,
+      "total": 3,
+      "hombres": 2,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 1,
+        "edad_45_64": 1,
+        "edad_65_84": 1,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "609",
+      "nombre": "Resto de enfermedades del sistema digestivo",
+      "fila_original": 31726,
+      "total": 3,
+      "hombres": 3,
+      "mujeres": 0,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 2,
+        "edad_85_99": 0,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "610",
+      "nombre": "Enfermedades del sistema urinario",
+      "fila_original": 31727,
+      "total": 2,
+      "hombres": 1,
+      "mujeres": 1,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 0,
+        "edad_65_84": 0,
+        "edad_85_99": 2,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    },
+    {
+      "grupo": "614",
+      "nombre": "Resto de las enfermedades",
+      "fila_original": 31728,
+      "total": 2,
+      "hombres": 0,
+      "mujeres": 2,
+      "indeterminado": 0,
+      "edades": {
+        "menor_1": 0,
+        "edad_1_4": 0,
+        "edad_5_14": 0,
+        "edad_15_44": 0,
+        "edad_45_64": 1,
+        "edad_65_84": 0,
+        "edad_85_99": 1,
+        "edad_100_mas": 0,
+        "desconocida": 0
+      }
+    }
+  ],
+  "verificaciones": [
+    "suma causas=defunciones residentes",
+    "grupo de edades suma total de cada causa",
+    "municipio de residencia, no ocurrencia"
+  ]
+}

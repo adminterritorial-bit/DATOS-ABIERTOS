@@ -1,0 +1,29 @@
+name: Extracción municipal 76670 · UPME y RUV
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/icet-recuperacion-documental
+    paths:
+      - 'scripts/extraer_fuentes_76670.py'
+      - '.github/workflows/extraer-fuentes-76670.yml'
+permissions:
+  contents: read
+jobs:
+  extraer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Descargar respuestas de UPME y UARIV y buscar fuentes INS/SISPRO/SSPD
+        run: python scripts/extraer_fuentes_76670.py
+      - name: Conservar salida municipal estructurada para ingesta posterior
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fuentes-gubernamentales-76670
+          path: out/masivo_76670/respuesta_gubernamental_76670.json
+          retention-days: 30

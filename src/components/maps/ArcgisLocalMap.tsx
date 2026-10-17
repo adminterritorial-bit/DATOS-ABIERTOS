@@ -66,7 +66,7 @@ export default function ArcgisLocalMap({datos}:{datos:DatoExplorador[]}){
  <svg viewBox={'0 0 '+w+' '+h} className="xp-geo-svg" role="img" aria-label="Contorno cartográfico DANE de San Pedro y marcadores de los centros poblados obtenidos en ArcGIS">
   <defs><linearGradient id="xp-land" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#bceaf2"/><stop offset="1" stopColor="#c9d8ff"/></linearGradient><pattern id="xp-grid" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M 44 0 L 0 0 0 44" fill="none" stroke="#e6eff7" strokeWidth="1"/></pattern><filter id="xp-land-shadow"><feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#3c79b6" floodOpacity=".2"/></filter></defs>
   <rect width={w} height={h} fill="#f5f9ff"/><rect width={w} height={h} fill="url(#xp-grid)"/>
-  <g transform={'translate('+w/2+' '+h/2+') scale('+zoom+') translate('+-w/2+' '+-h/2+')'}>
+  <g transform={`translate(${w/2} ${h/2}) scale(${zoom}) translate(${-w/2} ${-h/2})`}>
    <path d={boundary} fill="url(#xp-land)" stroke="#3888b6" strokeWidth={2/zoom} filter="url(#xp-land-shadow)" strokeLinejoin="round" fillRule="evenodd"/>
    {showZones&&layers.map((p,i)=><g key={p.code+'-'+i} className="xp-zone-pin" tabIndex={0} role="button" aria-label={'Consultar '+p.name} onClick={()=>setZone(p.zone)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setZone(p.zone)}}}>
     <circle cx={p.pt[0]} cy={p.pt[1]} r={19/zoom} fill="#fff" opacity=".84"/>

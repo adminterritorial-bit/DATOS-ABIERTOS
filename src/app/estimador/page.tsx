@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
-import {ArrowLeft,ArrowRight,BookOpen,Calculator,Check,ClipboardCopy,Database,Info,MapPinned,RotateCcw,ShieldAlert,TrendingUp} from 'lucide-react';
+import {ArrowLeft,ArrowRight,BookOpen,Calculator,Database,Info,MapPinned,RotateCcw,ShieldAlert,TrendingUp} from 'lucide-react';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import {recetasEstimacion,escenarioEstimacion,type Receta} from '@/lib/recetasEstimacion';
 import {poblacionDane} from '@/lib/danePopulation';
@@ -29,9 +29,7 @@ export default function Estimador(){
  const [anio,setAnio]=useState('2024');
  const [observaciones,setObservaciones]=useState('');
  const [comparables,setComparables]=useState('');
- const [copiado,setCopiado]=useState(false);
  const [buscar,setBuscar]=useState('');
- const [mostrarTodos,setMostrarTodos]=useState(false);
  useEffect(()=>{
   const params=new URLSearchParams(window.location.search);
   const codigo=Number(params.get('icet'));
@@ -43,7 +41,6 @@ export default function Estimador(){
  const n2=denominador.trim()===''?NaN:Number(denominador);
  const n3=universo.trim()===''?NaN:Number(universo);
  const result=escenarioEstimacion(receta,n1,n2,n3);
- const ratio=Number.isFinite(n1)&&Number.isFinite(n2)&&n2>0?n1/n2:null;
  const valid=(result!==null&&Number.isFinite(result))&&
   (receta.modelo!=='proporcion'||result<=100)&&
   (receta.modelo!=='brecha'||(n1<=100&&n2<=100))&&
@@ -55,7 +52,7 @@ export default function Estimador(){
  const resetInputs=()=>{setNumerador('');setDenominador('');setUniverso(String(poblacion));setFuente('');setObservaciones('');setComparables('');};
  const cambiar=(value:number)=>{setSelected(value);resetInputs();};
  const exportar=()=>{
-  if(!valid||!result)return;
+  if(!valid||result===null)return;
   const datos={municipio:'San Pedro, Valle del Cauca',divipola:'76670',
    icet:'ICET-'+String(receta.numero).padStart(2,'0'),definicion:indicador.nombre,
    resultado:Number(result.toFixed(4)),unidad:outputUnit(receta),vigencia:Number(anio),

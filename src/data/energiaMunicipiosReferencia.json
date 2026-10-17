@@ -1,0 +1,85 @@
+{
+  "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+  "registros": [
+    {
+      "divipola": "76036",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 80.51692038,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 7352,
+      "viviendas_total": 9131
+    },
+    {
+      "divipola": "76111",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 100.0,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 45797,
+      "viviendas_total": 45797
+    },
+    {
+      "divipola": "76113",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 91.11947736,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 8229,
+      "viviendas_total": 9031
+    },
+    {
+      "divipola": "76318",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 100.0,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 11839,
+      "viviendas_total": 11839
+    },
+    {
+      "divipola": "76616",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 94.38853309,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 6190,
+      "viviendas_total": 6558
+    },
+    {
+      "divipola": "76670",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 94.28942245,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 5812,
+      "viviendas_total": 6164
+    },
+    {
+      "divipola": "76834",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 85.46569994,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 68958,
+      "viviendas_total": 80685
+    },
+    {
+      "divipola": "76890",
+      "anio": 2024,
+      "indicador": "ICET-65",
+      "valor": 100.0,
+      "unidad": "%",
+      "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+      "viviendas_conectadas": 6389,
+      "viviendas_total": 6389
+    }
+  ]
+}

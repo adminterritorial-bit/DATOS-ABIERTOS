@@ -1,32 +1,44 @@
 import Link from 'next/link';
 import {obtenerFeed,formatear} from '@/lib/publicFeed';
-import type {ObservacionPublica} from '@/lib/publicFeed';
+import type {FeedPublico} from '@/lib/publicFeed';
 import {indicadoresICET} from '@/lib/icetCatalog';
-import {ArrowLeft,BookOpen,ExternalLink} from 'lucide-react';
+import {ICET_TOTAL,icetVigenciaActual,vincularICET} from '@/lib/icetMapping';
+import {ArrowLeft,ExternalLink,Database,TrendingUp} from 'lucide-react';
 export const dynamic='force-dynamic';
-const relaciones=[
- {icet:'ICET-16',source:'DANE-POB-TOTAL',year:2025,explica:'Proyección municipal DANE para la vigencia 2025.'},
- {icet:'ICET-23',source:'TERRI-021',year:2024,explica:'Tasa de deserción intra-anual según ficha TerriData de 2024.'},
- {icet:'ICET-36',source:'TERRI-014',year:2024,explica:'Atención del parto por personal calificado, dato de la ficha TerriData 2024.'}
-];
 export default async function ICET(){
- let registros:ObservacionPublica[]=[];try{registros=(await obtenerFeed()).registros}catch{registros=[]}
- const available=relaciones.flatMap(p=>{const registro=registros.find(x=>x.codigo===p.source&&x.anio===p.year);
-  const meta=indicadoresICET.find(x=>x.codigo===p.icet);return registro&&meta?[{...p,registro,meta}]:[]});
+ let feed:FeedPublico|null=null;
+ try{feed=await obtenerFeed()}catch{}
+ const linked=feed?vincularICET(feed):[];
+ const latest=icetVigenciaActual(linked);
+ const map=new Map(latest.map(x=>[x.codigo,x]));
  const areas=[...new Set(indicadoresICET.map(i=>i.area))];
- return <main className="ot-app" style={{display:'block',minHeight:'100vh'}}><div className="ot-main" style={{maxWidth:1180}}>
-  <Link href="/" style={{color:'#106ed4',display:'inline-flex',gap:8,alignItems:'center',fontWeight:800,fontSize:12}}><ArrowLeft size={16}/> Volver al Observatorio</Link>
-  <div className="ot-heading-strip"><div><span className="ot-small-heading">ESTADÍSTICA MUNICIPAL · DANE</span><h1 style={{font:'800 34px Manrope,Arial',margin:'10px 0'}}>Indicadores de la batería ICET</h1><p>Indicadores con cifras disponibles en las fuentes nacionales recopiladas, conservando la vigencia de cada dato.</p></div><BookOpen size={27} color="#0f78e0"/></div>
-  <div className="ot-data-grid">{available.map(({icet,registro,meta,explica})=><article className="ot-data-card" key={icet} style={{minHeight:200}}>
-    <span className="ot-small-heading">{icet} · {meta.area}</span><h3 style={{fontSize:13,margin:'14px 0'}}>{meta.nombre}</h3>
-    <strong style={{font:'800 27px Manrope,Arial',color:'#176bdd'}}>{formatear(Number(registro.valor),2)} <small style={{fontSize:11}}>{registro.unidad}</small></strong>
-    <p style={{fontSize:11,color:'#758aa4',lineHeight:1.7}}>{explica}</p>
-    <a href={registro.fuente_url} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:11,fontWeight:800,color:'#0e69ce',marginTop:'auto'}}>Consultar fuente <ExternalLink size={13}/></a>
-   </article>)}</div>
-  <section className="ot-panel" style={{marginTop:25}}><span className="ot-small-heading">DICCIONARIO METODOLÓGICO</span><h2 style={{font:'800 21px Manrope',margin:'10px 0'}}>Estructura completa del instrumento</h2><p style={{fontSize:11,color:'#8396ab',lineHeight:1.7}}>Se identificaron 66 indicadores. El diccionario conserva su numeración y responsables propuestos. Una ficha numérica se presenta únicamente cuando existe un valor con período y fuente distinguibles.</p>
-   {areas.map(area=><details key={area} style={{borderTop:'1px solid #eaf0f6',padding:'13px 0'}}><summary style={{cursor:'pointer',fontWeight:800,color:'#44617c',fontSize:12}}>{area} · {indicadoresICET.filter(x=>x.area===area).length} indicadores</summary>
-    <div style={{padding:'14px 8px',display:'grid',gap:12}}>{indicadoresICET.filter(x=>x.area===area).map(x=><div key={x.codigo} style={{display:'flex',gap:10,fontSize:11,color:'#5d7790',lineHeight:1.6}}><b style={{color:'#0e6bce',minWidth:57}}>{x.codigo}</b><span>{x.nombre}</span></div>)}</div></details>)}
-   <p className="ot-fineprint">Este catálogo no responde automáticamente las preguntas de disponibilidad web del DANE. Ese cuestionario debe conservar sus propias evidencias de publicación municipal.</p>
-  </section>
+ return <main className="ot-app" style={{display:'block',minHeight:'100vh'}}><div className="ot-main" style={{maxWidth:1240}}>
+ <Link href="/" style={{display:'inline-flex',alignItems:'center',gap:8,fontSize:12,fontWeight:800,color:'#126dd8'}}><ArrowLeft size={17}/> Inicio del Observatorio</Link>
+ <div className="ot-hero" style={{marginTop:24,minHeight:230}}><div className="ot-hero-info"><div className="ot-overline"><span/> INTELIGENCIA TERRITORIAL · DANE</div><h1>Indicadores <em>ICET</em></h1><p>66 variables del instrumento, relacionadas con las cifras municipales recuperadas. Cada valor conserva su fuente, unidad y vigencia.</p></div><div className="ot-hero-graphic"><div className="ot-floating-box"><small>INDICADORES CON CIFRA</small><strong>{latest.length}/{ICET_TOTAL}</strong><small>Fuentes oficiales municipales</small></div></div></div>
+ <div className="ot-kpis" style={{gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',marginTop:20}}>
+ <article className="ot-kpi"><div className="ot-kpi-top">Batería de referencia <Database size={17}/></div><strong>{ICET_TOTAL}</strong><small>Indicadores catalogados</small></article>
+ <article className="ot-kpi"><div className="ot-kpi-top">Con valores recuperados <TrendingUp size={17}/></div><strong>{latest.length}</strong><small>Relaciones explícitas y vigencia</small></article>
+ <article className="ot-kpi"><div className="ot-kpi-top">Registros históricos</div><strong>{linked.length}</strong><small>Serie demográfica incluida</small></article>
+ </div>
+ {feed?<section className="ot-panel"><div className="ot-panel-head"><div><span className="ot-small-heading">CIFRAS DOCUMENTADAS</span><h2 style={{font:'800 20px Manrope',margin:'10px 0'}}>Resultados municipales recuperados</h2><p>No se sustituyen años históricos por 2025 ni tasas por conteos.</p></div></div>
+ <div className="ot-data-grid">{latest.map(({codigo,registro,relacion})=>{
+ const ind=indicadoresICET.find(x=>x.codigo===codigo);
+ const historico=linked.filter(x=>x.codigo===codigo);
+ return <article key={codigo} className="ot-data-card" style={{minHeight:215}}>
+ <span className="ot-small-heading">{codigo} · {ind?.area||registro.tema}</span>
+ <h3 style={{fontSize:12,lineHeight:1.65,color:'#536f8c',margin:'14px 0'}}>{ind?.nombre||registro.nombre}</h3>
+ <strong style={{font:'800 26px Manrope,Arial',color:'#126fda',margin:'auto 0 4px'}}>{formatear(Number(registro.valor),2)} <small style={{fontWeight:600,fontSize:10,color:'#8ca3b6'}}>{registro.unidad}</small></strong>
+ <div style={{fontSize:11,color:'#617e98',fontWeight:700}}>{registro.anio} · {relacion.equivalencia==='derivada'?'Suma de sectores':'Dato de la fuente'}</div>
+ {historico.length>1&&<details style={{fontSize:10,color:'#6b839e',marginTop:9}}><summary style={{cursor:'pointer'}}>Consultar serie {historico.length} años</summary><div style={{display:'flex',flexWrap:'wrap',gap:9,padding:'9px 0'}}>{historico.slice(0,30).map(x=><span key={x.registro.id+'-'+x.registro.anio}>{x.registro.anio}: {formatear(Number(x.registro.valor),2)}</span>)}</div></details>}
+ <div className="ot-data-foot"><span>Vigencia: {registro.anio}</span><a href={registro.fuente_url} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:5,color:'#126fda'}}>Fuente <ExternalLink size={14}/></a></div></article>})}</div>
+ </section>:<p className="ot-error">No está disponible la conexión estadística en este momento; no se mostrarán valores simulados.</p>}
+ <section className="ot-panel" style={{marginTop:20}}><div className="ot-panel-head"><div><span className="ot-small-heading">CONSULTA DE LA BATERÍA COMPLETA</span><h2 style={{font:'800 21px Manrope',margin:'8px 0'}}>Diccionario de 66 indicadores</h2><p>La ausencia de una cifra no significa cero ni falta de gestión del municipio.</p></div></div>
+ {areas.map(area=><details key={area} open={area==='Económico'||area==='Sociodemográfico'} style={{borderTop:'1px solid #e8eef6',padding:'15px 0'}}><summary style={{cursor:'pointer',fontSize:12,fontWeight:800,color:'#335878'}}>{area} · {indicadoresICET.filter(x=>x.area===area).length}</summary>
+ <div style={{display:'grid',gap:0,marginTop:11}}>{indicadoresICET.filter(x=>x.area===area).map(ind=>{
+  const row=map.get(ind.codigo);
+  return <div key={ind.codigo} style={{display:'grid',gridTemplateColumns:'60px minmax(0,1fr) minmax(130px,200px)',gap:12,padding:'11px 7px',alignItems:'center',borderBottom:'1px solid #eff3f8',fontSize:11}}>
+   <strong style={{color:'#176bca'}}>{ind.codigo}</strong><span style={{color:'#5b7086',lineHeight:1.6}}>{ind.nombre}</span>
+   <span style={{textAlign:'right',color:row?'#0f6dd2':'#a1afbd',fontWeight:row?800:500}}>{row?formatear(Number(row.registro.valor),2)+' '+row.registro.unidad+' · '+row.registro.anio:'—'}</span></div>})}</div></details>)}
+ <p className="ot-fineprint">La presencia de una estadística pública no acredita por sí misma la disponibilidad histórica que evalúa el cuestionario ICET del DANE.</p></section>
  </div></main>
 }

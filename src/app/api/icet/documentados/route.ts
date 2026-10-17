@@ -4,7 +4,7 @@ import {observacionesDocumentales} from '@/lib/observacionesDocumentales2026';
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
 import {observacionesTerriData} from '@/lib/terriDataExpanded';
 
-export const dynamic='force-dynamic';
+export const dynamic='force-static';
 
 export async function GET(){
  const territorial=observacionesTerriData.filter(x=>x.divipola==='76670').map(x=>({

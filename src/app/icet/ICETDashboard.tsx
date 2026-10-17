@@ -34,7 +34,8 @@ const DIRECTAS:Record<number,string>={
  55:'DER-ICET-55-2023',
  57:'DER-ICET-57-2025',
  58:'OFI-FOR-ICET58-2023',
- 61:'OFI-FOR-ICET61-2024'
+ 61:'OFI-FOR-ICET61-2024',
+ 65:'UPME-ICEE-TOTAL-2024'
 };
 const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  id:r.id,titulo:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,

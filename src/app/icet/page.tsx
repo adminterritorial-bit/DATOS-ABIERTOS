@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {useEffect} from 'react';
 import {formatear} from '@/lib/publicFeed';
 import {usePublicFeed} from '@/lib/usePublicFeed';
 import type {FeedPublico} from '@/lib/publicFeed';
@@ -8,6 +9,7 @@ import {ICET_TOTAL,icetVigenciaActual,vincularICET} from '@/lib/icetMapping';
 import {ArrowLeft,ExternalLink,Database,TrendingUp} from 'lucide-react';
 export default function ICET(){
  const {feed}=usePublicFeed();
+ useEffect(()=>{const codigo=new URLSearchParams(location.search).get('q');if(codigo&&/^ICET-\\d{2}$/.test(codigo)){document.getElementById(codigo)?.scrollIntoView({behavior:'smooth',block:'center'});}},[]);
  const linked=feed?vincularICET(feed):[];
  const latest=icetVigenciaActual(linked);
  const map=new Map(latest.map(x=>[x.codigo,x]));

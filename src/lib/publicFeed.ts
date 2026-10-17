@@ -10,8 +10,8 @@ export interface FeedPublico {
  municipio: string; departamento: string; divipola: string; aviso: string;
  actualizado_consulta: string; registros: ObservacionPublica[]; vinculos_icet?: VinculoICET[];
 }
-export async function obtenerFeed(): Promise<FeedPublico> {
- const response = await fetch(PUBLIC_FEED_URL, {next: { revalidate: 300 }, headers: { accept: 'application/json' }});
+export async function obtenerFeed(options?:{signal?:AbortSignal}): Promise<FeedPublico> {
+ const response = await fetch(PUBLIC_FEED_URL, {signal:options?.signal,cache:'no-store', headers: { accept: 'application/json' }});
  if (!response.ok) throw new Error('Fuente estadística temporalmente no disponible');
  const data: unknown = await response.json();
  if (typeof data !== 'object' || data === null || !('registros' in data) || !Array.isArray(data.registros)) {

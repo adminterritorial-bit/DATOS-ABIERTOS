@@ -9,6 +9,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 14
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,28 +23,35 @@ jobs:
         run: python3 scripts/check_statistical_integrity.py
       - name: Type checks
         run: npm run lint
-      - name: Build
+      - name: Build static GitHub Pages application
+        env:
+          GITHUB_PAGES: 'true'
         run: npm run build
-      - name: HTTP smoke for dashboard, data API and PDF
+      - name: Verify exported HTML routes and assets
         run: |
           set -euo pipefail
-          npm run start -- --port 3000 > /tmp/observatorio-server.log 2>&1 &
+          test -f out/index.html
+          test -f out/icet/index.html
+          test -f out/catalogo/index.html
+          test -f out/poblacion/index.html
+          test -f out/seguridad/index.html
+          test -f out/pdt/index.html
+          test -f out/admin/index.html
+          test -f out/escudo-san-pedro.png
+          npm run start > /tmp/observatorio-pages.log 2>&1 &
           server_pid=$!
           trap 'kill $server_pid 2>/dev/null || true' EXIT
           for i in $(seq 1 35); do
-            if curl -fsS http://127.0.0.1:3000/ -o /tmp/observatorio.html; then break; fi
+            if curl -fsS http://localhost:3000/DATOS-ABIERTOS/ -o /tmp/index.html; then break; fi
             sleep 2
           done
-          grep -q 'Observatorio' /tmp/observatorio.html
-          curl -fsS http://127.0.0.1:3000/api/indicadores -o /tmp/indicadores.json
-          python3 - <<'PY'
-          import json
-          d=json.load(open('/tmp/indicadores.json'))
-          assert d['divipola']=='76670'
-          assert d['total']>=75,d['total']
-          assert any(x.get('anio')==2025 and x.get('codigo')=='DANE-POB-TOTAL' and int(x['valor'])==17275 for x in d['observaciones'])
-          print('Live Next SSR + API: success',d['total'])
-          PY
-          curl -fsS 'http://127.0.0.1:3000/api/reporte?anio=2025&sector=Panorama' -o /tmp/reporte.pdf
-          head -c 4 /tmp/reporte.pdf | grep -q '%PDF'
-          test $(wc -c </tmp/reporte.pdf) -gt 1600
+          grep -q 'Observatorio' /tmp/index.html
+          curl -fsS http://localhost:3000/DATOS-ABIERTOS/icet/ -o /tmp/icet.html
+          curl -fsS http://localhost:3000/DATOS-ABIERTOS/catalogo/ -o /tmp/catalogo.html
+          curl -fsS http://localhost:3000/DATOS-ABIERTOS/escudo-san-pedro.png -o /tmp/escudo.png
+          test "$(wc -c </tmp/escudo.png)" -gt 1000
+          if grep -R '/api/reporte\|/api/indicadores' src/components/TerritorialDashboard.tsx; then
+            echo "::error::Server-only API references remain"
+            exit 1
+          fi
+          echo "PASS: GitHub Pages pages, asset paths and no server APIs"

@@ -1,13 +1,13 @@
+'use client';
 import Link from 'next/link';
-import {obtenerFeed,formatear} from '@/lib/publicFeed';
+import {formatear} from '@/lib/publicFeed';
+import {usePublicFeed} from '@/lib/usePublicFeed';
 import type {FeedPublico} from '@/lib/publicFeed';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import {ICET_TOTAL,icetVigenciaActual,vincularICET} from '@/lib/icetMapping';
 import {ArrowLeft,ExternalLink,Database,TrendingUp} from 'lucide-react';
-export const dynamic='force-dynamic';
-export default async function ICET(){
- let feed:FeedPublico|null=null;
- try{feed=await obtenerFeed()}catch{}
+export default function ICET(){
+ const {feed}=usePublicFeed();
  const linked=feed?vincularICET(feed):[];
  const latest=icetVigenciaActual(linked);
  const map=new Map(latest.map(x=>[x.codigo,x]));

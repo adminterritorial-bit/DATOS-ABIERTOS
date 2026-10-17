@@ -6,24 +6,27 @@ export type GeoSelection={
  kind:'municipal'|'place';
  name:string;code:string;area?:number;altitude?:number;year?:number;
 };
-type Props={visible:boolean;onSelect:(selection:GeoSelection)=>void;onStatus:(message:string)=>void;onReady?:(ready:boolean)=>void;focusKey?:string};
+type Props={visible:boolean;onSelect:(selection:GeoSelection)=>void;onStatus:(message:string)=>void;onReady?:(ready:boolean)=>void;cameraCommand?:{type:'home'|'in'|'out';nonce:number};focusKey?:string};
 const DANE='https://geoportal.dane.gov.co/mparcgis/rest/services/Divipola/Serv_DIVIPOLA_MGN_2025/FeatureServer/305';
 const feature=(municipalGeo as unknown as {features:{properties:{codigo:string};geometry:{type:string;coordinates:number[][][]|number[][][][]}}[]}).features.find(f=>f.properties.codigo==='76670');
 function polygons(){if(!feature)return[];return feature.geometry.type==='Polygon'?[feature.geometry.coordinates as number[][][]]:(feature.geometry.coordinates as number[][][][])}
 const shapes=polygons().flat();
 const extent=shapes.flat().reduce((e,p)=>[Math.min(e[0],p[0]),Math.min(e[1],p[1]),Math.max(e[2],p[0]),Math.max(e[3],p[1])],[180,90,-180,-90]);
 const center:[number,number]=[(extent[0]+extent[2])/2,(extent[1]+extent[3])/2];
-export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focusKey}:Props){
+export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focusKey,cameraCommand}:Props){
  const mount=useRef<HTMLDivElement>(null);
  const viewRef=useRef<{destroy:()=>void;goTo:(target:unknown,options?:unknown)=>Promise<unknown>;hitTest:(event:unknown)=>Promise<{results:{graphic?:{attributes?:Record<string,unknown>}}[]}>;on:(event:string,handler:(event:unknown)=>void)=>{remove:()=>void}}|null>(null);
  const graphicsRef=useRef<{visible:boolean}|null>(null);
  const goHome=useRef<(()=>void)|null>(null);
+ const zoomRef=useRef<((step:number)=>void)|null>(null);
+ const focusRef=useRef<Map<string,()=>void>>(new Map());
  const selectRef=useRef(onSelect),statusRef=useRef(onStatus),readyRef=useRef(onReady);
  const [failure,setFailure]=useState('');
  const [retry,setRetry]=useState(0);
  useEffect(()=>{selectRef.current=onSelect;statusRef.current=onStatus;readyRef.current=onReady},[onSelect,onStatus,onReady]);
  useEffect(()=>{if(graphicsRef.current)graphicsRef.current.visible=visible},[visible]);
- useEffect(()=>{if(focusKey==='home')goHome.current?.()},[focusKey]);
+ useEffect(()=>{if(focusKey==='home')goHome.current?.();else if(focusKey)focusRef.current.get(focusKey)?.()},[focusKey]);
+ useEffect(()=>{if(!cameraCommand)return;if(cameraCommand.type==='home')goHome.current?.();if(cameraCommand.type==='in')zoomRef.current?.(1);if(cameraCommand.type==='out')zoomRef.current?.(-1)},[cameraCommand]);
  useEffect(()=>{
   let destroyed=false;let cleanup=()=>{};
   const load=async()=>{
@@ -56,7 +59,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focus
     await view.when();
     if(destroyed){view.destroy();return}
     const home=()=>{void view.goTo(polygon.extent.expand(1.25),{duration:650}).catch(()=>{})};
-    goHome.current=home;home();readyRef.current?.(true);
+    goHome.current=home;zoomRef.current=(step)=>{void view.goTo({zoom:Math.min(18,Math.max(9,view.zoom+step))},{duration:380}).catch(()=>{})};home();readyRef.current?.(true);
     statusRef.current('Mapa real activo · límite DANE 2025 · 1 punto de consulta municipal');
     const click=view.on('click',async ev=>{
       const result=await view.hitTest(ev,{include:[markerLayer,consultLayer]}).catch(()=>null);
@@ -67,7 +70,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focus
       if(a.kind==='municipal')selectRef.current({kind:'municipal',name:'San Pedro · indicadores municipales',code:'76670'});
       else if(a.kind==='place')selectRef.current({kind:'place',name:String(a.name||'Centro poblado'),code:String(a.code||''),area:Number(a.area)||undefined,altitude:Number(a.altitude)||undefined,year:Number(a.year)||2025});
     });
-    cleanup=()=>{click.remove();view.destroy();viewRef.current=null;graphicsRef.current=null;goHome.current=null;readyRef.current?.(false)};
+    cleanup=()=>{click.remove();view.destroy();viewRef.current=null;graphicsRef.current=null;goHome.current=null;zoomRef.current=null;focusRef.current.clear();readyRef.current?.(false)};
     graphicsRef.current=markerLayer as unknown as {visible:boolean};markerLayer.visible=visible;
     // A remote source can be blocked by CORS. This cannot remove the OSM basemap or municipal access.
     try{
@@ -82,6 +85,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focus
       seen.add(code);
       const centroid=(f.geometry as InstanceType<typeof Polygon.default>).centroid;
       if(!centroid||!Number.isFinite(centroid.longitude))continue;
+      focusRef.current.set(code,()=>{void view.goTo({center:centroid,zoom:15},{duration:650}).catch(()=>{})});
       markerLayer.add(new Graphic.default({geometry:centroid,attributes:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:a.ZU_NAREA,altitude:a.ZU_NALTD,year:a.ZU_NANO},symbol:flag('territory',57)}));
       count++;
      }

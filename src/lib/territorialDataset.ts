@@ -1,3 +1,5 @@
+import {observacionesRendicion} from './rendicion2025';
+import {observacionesConectividad} from './conectividadV6';
 import type {FeedPublico} from './publicFeed';
 import {observacionesTerriData} from './terriDataExpanded';
 import {observacionesDocumentalesConAnio} from './observacionesDocumentales2026';
@@ -11,7 +13,7 @@ export type ClaseDato='Publicado'|'Calculado'|'Relacionado'|'Estimación';
 export interface DatoExplorador {
  id:string;nombre:string;sector:string;valor:number;unidad:string;
  anio:number;fuente:string;fuenteUrl?:string;codigoICET?:string;
- clase:ClaseDato;nota?:string;
+ clase:ClaseDato;nota?:string;pagina?:number;tipoFuente?:string;codigoSerie?:string;precision?:string;origen?:'Gestión municipal'|'Estadística oficial'|'Contexto';
 }
 type Entrada={id:string;nombre:string;sector:string;valor:number;unidad:string;anio:number|null;fuente:string;nota?:string;codigoIcet?:string|null;vinculacion?:string};
 const publicados:Entrada[]=[
@@ -37,13 +39,14 @@ export function reunirEstadisticas(feed:FeedPublico|null):DatoExplorador[]{
  const map=new Map<string,DatoExplorador>();
  for(const r of [...publicados,...adicionales]){
   if(typeof r.anio!=='number'||r.anio<1900||r.anio>2100||!Number.isFinite(r.valor))continue;
-  map.set(r.id,{id:r.id,nombre:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,anio:r.anio,fuente:r.fuente,nota:r.nota,codigoICET:r.codigoIcet||undefined,clase:clase(r)});
+  map.set(r.id,{id:r.id,nombre:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,anio:r.anio,fuente:r.fuente,fuenteUrl:r.fuente.startsWith('https://')?r.fuente:undefined,origen:'Estadística oficial',nota:r.nota,codigoICET:r.codigoIcet||undefined,clase:clase(r)});
  }
  for(const r of feed?.registros||[]){
   // Preserve source record IDs and avoid translating different units to a common measure.
   const id='db-'+r.codigo+'-'+r.anio+'-'+r.id;
-  map.set(id,{id,nombre:r.nombre,sector:r.tema,valor:Number(r.valor),unidad:r.unidad,anio:r.anio,fuente:r.fuente,fuenteUrl:r.fuente_url,nota:r.nota,clase:r.tipo==='derivado'?'Calculado':'Publicado'});
+  map.set(id,{id,tipoFuente:r.tipo,codigoSerie:r.codigo,nombre:r.nombre,sector:r.tema,valor:Number(r.valor),unidad:r.unidad,anio:r.anio,fuente:r.fuente,fuenteUrl:r.fuente_url,nota:r.nota,clase:r.tipo==='derivado'?'Calculado':'Publicado'});
  }
+ for(const r of [...observacionesRendicion,...observacionesConectividad])map.set(r.id,r);
  return [...map.values()].sort((a,b)=>b.anio-a.anio||a.nombre.localeCompare(b.nombre,'es'));
 }
 /** Only match explicit indicator-source IDs. Never infer a numerator from name similarity. */

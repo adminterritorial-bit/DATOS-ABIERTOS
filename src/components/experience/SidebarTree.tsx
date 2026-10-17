@@ -27,6 +27,8 @@ export default function SidebarTree({active,onTopic,onMap,onExplore,onHome}:Prop
    <button aria-current={active==='Todos'?'page':undefined} onClick={onHome}><LayoutDashboard size={20}/><span>Inicio · Mi Observatorio</span></button>
    <button onClick={onExplore}><BookOpen size={20}/><span>Explorar los 14 temas</span></button>
    <button onClick={onMap}><MapPinned size={20}/><span>Mapa de San Pedro</span></button>
+   <Link href="/rendicion/"><LayoutDashboard size={20}/><span>Gestión municipal 2025</span></Link>
+   <Link href="/territorios/"><MapPinned size={20}/><span>Comparar territorios</span></Link>
    <Link href="/icet/recuperados/"><Compass size={20}/><span>Indicadores DANE</span></Link>
   </nav>
   <div className="n5-navigation-heading"><span>MIS TEMAS FAVORITOS</span><Heart size={15}/></div>

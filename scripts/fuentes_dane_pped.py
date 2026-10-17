@@ -28,7 +28,7 @@ for name,label in sources:
    matches=[]
    for ix,row in enumerate(rows):
     cols=[str(v or "").strip() for v in row]
-    if any(x in ("76670","76670.0") or re.fullmatch(r"SAN\s*PEDRO",x,re.IGNORECASE) for x in cols):
+    if any(x in ("76670","76670.0") for x in cols):
      # keep near heading and municipality rows (no personal records in municipal PPED)
      nearby=[{"nro":j+1,"columnas":[{"col":k+1,"v":str(v)[:150]} for k,v in enumerate(rows[j]) if v is not None]} for j in sorted(set([max(0,ix-2),max(0,ix-1),ix]))]
      matches.append({"fila":ix+1,"filas_contexto":nearby,"columnas_no_vacias":[{"col":k+1,"valor":str(v)[:150]} for k,v in enumerate(row) if v is not None]})

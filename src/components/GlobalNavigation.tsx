@@ -16,6 +16,6 @@ function Utilities(){
 export default function GlobalNavigation(){
  const path=usePathname();
  // The rebuilt homepage has its own integrated header search and navigation.
- if(path==='/'||path==='/DATOS-ABIERTOS'||path==='/DATOS-ABIERTOS/')return null;
+ if(path==='/'||path==='/DATOS-ABIERTOS'||path==='/DATOS-ABIERTOS/'||path==='/temas'||path==='/temas/'||path==='/DATOS-ABIERTOS/temas'||path==='/DATOS-ABIERTOS/temas/')return null;
  return <Utilities/>;
 }

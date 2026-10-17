@@ -4,6 +4,7 @@ import {useMemo,useState} from 'react';
 import Link from 'next/link';
 import {Calculator,ArrowLeft,ArrowUpRight,Database,Layers,MapPin,Search,SlidersHorizontal,Activity,ExternalLink} from 'lucide-react';
 import {indicadoresICET} from '@/lib/icetCatalog';
+import {fuentesPublicas} from '@/lib/fuentesPublicas';
 import {ICET_DIRECTAS,ICET_VINCULOS} from '@/lib/icetVinculos';
 import {observacionesTerriData} from '@/lib/terriDataExpanded';
 import {observacionesDocumentalesConAnio} from '@/lib/observacionesDocumentales2026';
@@ -82,6 +83,7 @@ export default function MapaEstadistico(){
  const [clase,setClase]=useState('Todos');
  const [query,setQuery]=useState('');
  const [detalle,setDetalle]=useState<DataItem|null>(null);
+ const [filtroFuente,setFiltroFuente]=useState('Todas');
  const active=paths.find(x=>x.id===municipio);
  const filaEnergia=energiaMunicipal.find(x=>x.divipola===municipio);
  const esSanPedro=municipio==='76670';
@@ -98,6 +100,7 @@ export default function MapaEstadistico(){
    &&(clase==='Todos'||d.tipo===clase)&&(!query||[d.nombre,d.icet||'',d.sector].join(' ').toLowerCase().includes(query.toLowerCase())))
    .sort((a,b)=>(b.anio??0)-(a.anio??0));
  },[esSanPedro,municipio,tema,anio,clase,query]);
+ const serviciosDisponibles=fuentesPublicas.filter(f=>filtroFuente==='Todas'||(filtroFuente==='Integradas'&&f.estado==='integrada')||(filtroFuente==='Por integrar'&&f.estado!=='integrada'));
  const byIndicator=new Map(indicadoresICET.map(i=>[i.codigo,i]));
  const serieDetalle=detalle&&esSanPedro?DATOS.filter(d=>d.nombre===detalle.nombre&&d.anio!==null).sort((a,b)=>(a.anio??0)-(b.anio??0)):[];
  const puntosSerie=serieDetalle.slice(-30);
@@ -165,6 +168,13 @@ export default function MapaEstadistico(){
    </button>)}</div>
    {dataFiltrada.length>80&&<p className="gm-overflow">Se presentan las primeras 80 observaciones filtradas; acota por tema, año o búsqueda para localizar otras.</p>}
    {dataFiltrada.length===0&&<div className="gm-empty"><Activity size={32}/><b>No hay datos compatibles para esta selección.</b><p>Prueba otro año o municipio. No sustituimos las ausencias con ceros.</p></div>}
+  </section>
+  <section className="gm-sources gm-data-section"><div className="gm-data-head"><div><span className="gm-eyebrow">CATÁLOGO DE CONECTORES PÚBLICOS</span><h2>Fuentes estadísticas y georreferenciadas</h2><p>{fuentesPublicas.filter(x=>x.estado==='integrada').length} fuentes con extracción integrada de {fuentesPublicas.length} documentadas · otras requieren acceso, configuración o componentes</p></div>
+   <div className="gm-switch"><button type="button" className={filtroFuente==='Todas'?'active':''} onClick={()=>setFiltroFuente('Todas')}>Todas</button><button type="button" className={filtroFuente==='Integradas'?'active':''} onClick={()=>setFiltroFuente('Integradas')}>Integradas</button><button type="button" className={filtroFuente==='Por integrar'?'active':''} onClick={()=>setFiltroFuente('Por integrar')}>Por integrar</button></div></div>
+   <div className="gm-source-grid">{serviciosDisponibles.map(f=><a className="gm-source-tile" key={f.id} href={f.url} target="_blank" rel="noopener noreferrer">
+    <span className="gm-source-tile-top"><span>{f.tema} · {f.formato}</span><ExternalLink size={13}/></span>
+    <h3>{f.nombre}</h3><p>{f.detalle}</p><div><small>{f.periodicidad}</small><span className={f.estado==='integrada'?'is-integrated':f.estado==='sin_dato_local'?'is-unavailable':'is-external'}>{f.estado==='integrada'?'Extracción integrada':f.estado==='sin_dato_local'?'Sin registro municipal':'Referencia por integrar'}</span></div>
+   </a>)}</div>
   </section>
   <footer className="gm-footer"><span>Geoportal DANE MGN 2025 · ICEE UPME 2024 · Observatorio de San Pedro</span><span>Los datos de municipios vecinos no se atribuyen a San Pedro.</span></footer>
   {detalle&&<div className="gm-modal-bg" role="presentation" onClick={()=>setDetalle(null)}><div className="gm-modal" role="dialog" aria-modal="true" aria-label="Ficha de trazabilidad" onClick={e=>e.stopPropagation()}>

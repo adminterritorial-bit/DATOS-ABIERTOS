@@ -1,0 +1,37 @@
+name: Verify Published GitHub Pages
+on:
+  workflow_run:
+    workflows: ["Publish Observatorio to GitHub Pages"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-url:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Confirm production pages are reachable over HTTPS
+        run: |
+          set -euo pipefail
+          root='https://adminterritorial-bit.github.io/DATOS-ABIERTOS'
+          for route in / /mapa/ /estimador/ /icet/recuperados/ /documentos/ /comparar/ /catalogo/; do
+            echo "Checking ${root}${route}"
+            success=0
+            for attempt in $(seq 1 24); do
+              if curl -LfsS --max-time 25 --retry 1 "${root}${route}" -o /tmp/site-page.html; then
+                if grep -qi 'observatorio' /tmp/site-page.html; then success=1; break; fi
+              fi
+              sleep 10
+            done
+            if [ "$success" != 1 ]; then
+              echo "::error::Production URL not available: ${root}${route}"
+              exit 1
+            fi
+            echo "PASS ${root}${route}"
+          done
+          curl -LfsS --max-time 30 "${root}/escudo-san-pedro.png" -o /tmp/logo.png
+          test $(wc -c </tmp/logo.png) -gt 1000
+          echo "PASS: public HTTPS pages, geographic, estimation, ICET, library, comparators and logo"

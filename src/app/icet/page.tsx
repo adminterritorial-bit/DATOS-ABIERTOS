@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {useEffect} from 'react';
 import {formatear} from '@/lib/publicFeed';
 import {usePublicFeed} from '@/lib/usePublicFeed';
 import type {FeedPublico} from '@/lib/publicFeed';
@@ -8,6 +9,7 @@ import {ICET_TOTAL,icetVigenciaActual,vincularICET} from '@/lib/icetMapping';
 import {ArrowLeft,ExternalLink,Database,TrendingUp} from 'lucide-react';
 export default function ICET(){
  const {feed}=usePublicFeed();
+ useEffect(()=>{const codigo=new URLSearchParams(location.search).get('q');if(codigo&&/^ICET-\d{2}$/.test(codigo)){document.getElementById(codigo)?.scrollIntoView({behavior:'smooth',block:'center'});}},[]);
  const linked=feed?vincularICET(feed):[];
  const latest=icetVigenciaActual(linked);
  const map=new Map(latest.map(x=>[x.codigo,x]));
@@ -36,7 +38,7 @@ export default function ICET(){
  {areas.map(area=><details key={area} open={area==='Económico'||area==='Sociodemográfico'} style={{borderTop:'1px solid #e8eef6',padding:'15px 0'}}><summary style={{cursor:'pointer',fontSize:12,fontWeight:800,color:'#335878'}}>{area} · {indicadoresICET.filter(x=>x.area===area).length}</summary>
  <div style={{display:'grid',gap:0,marginTop:11}}>{indicadoresICET.filter(x=>x.area===area).map(ind=>{
   const row=map.get(ind.codigo);
-  return <div key={ind.codigo} style={{display:'grid',gridTemplateColumns:'60px minmax(0,1fr) minmax(130px,200px)',gap:12,padding:'11px 7px',alignItems:'center',borderBottom:'1px solid #eff3f8',fontSize:11}}>
+  return <div key={ind.codigo} id={ind.codigo} style={{scrollMarginTop:25,display:'grid',gridTemplateColumns:'60px minmax(0,1fr) minmax(130px,200px)',gap:12,padding:'11px 7px',alignItems:'center',borderBottom:'1px solid #eff3f8',fontSize:11}}>
    <strong style={{color:'#176bca'}}>{ind.codigo}</strong><span style={{color:'#5b7086',lineHeight:1.6}}>{ind.nombre}</span>
    <span style={{textAlign:'right',color:row?'#0f6dd2':'#a1afbd',fontWeight:row?800:500}}>{row?formatear(Number(row.registro.valor),2)+' '+row.registro.unidad+' · '+row.registro.anio:'—'}</span></div>})}</div></details>)}
  <p className="ot-fineprint">La presencia de una estadística pública no acredita por sí misma la disponibilidad histórica que evalúa el cuestionario ICET del DANE.</p></section>

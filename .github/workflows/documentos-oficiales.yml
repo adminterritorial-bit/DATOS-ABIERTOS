@@ -1,0 +1,28 @@
+name: Documentos oficiales · Concejo de San Pedro
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/**']
+    paths:
+      - 'scripts/fuentes_concejo.py'
+      - '.github/workflows/documentos-oficiales.yml'
+permissions:
+  contents: read
+jobs:
+  descargar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download public municipality documents
+        run: python scripts/fuentes_concejo.py
+      - name: Preserve provenance and downloaded documents
+        uses: actions/upload-artifact@v4
+        with:
+          name: san-pedro-pdt-pts-public-docs
+          path: documentos_oficiales/
+          if-no-files-found: error
+          retention-days: 14

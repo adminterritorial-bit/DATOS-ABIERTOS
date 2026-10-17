@@ -99,7 +99,7 @@ export default function ObservatoryExperience(){
  return <div className="xp-app">
   <a className="xp-skip" href="#xp-main">Ir al contenido estadístico</a>
   <aside className={'xp-side '+(menu?'is-open':'')} aria-label="Navegación temática del Observatorio">
-   <div className="xp-logo"><span className="xp-logo-mark g4-logo"><img src="/DATOS-ABIERTOS/escudo-san-pedro.png" alt="Escudo de la Alcaldía de San Pedro, Valle del Cauca" width="55" height="55"/></span><div><strong>SAN PEDRO</strong><small>Observatorio de datos abiertos</small></div></div>
+   <div className="xp-logo n5-official-logo"><div className="g4-logo n5-crest-wrapper"><img src="/DATOS-ABIERTOS/escudo-san-pedro.png" alt="Alcaldía de San Pedro, Valle del Cauca: escudo y denominación oficial" width="234" height="95"/></div><small>OBSERVATORIO DE DATOS ABIERTOS</small></div>
    <SidebarTree active={tema} onTopic={id=>{seleccionarTema(id);document.getElementById('n5-charts')?.scrollIntoView({behavior:'smooth'})}} onMap={()=>{setVista('territorio');setMenu(false);document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}} onExplore={()=>{window.location.assign('/DATOS-ABIERTOS/temas/')}} onHome={()=>{reset();setVista('historias');setMenu(false);window.scrollTo({top:0,behavior:'smooth'})}}/>
    <div className="xp-sidebar-bottom"><small>Alcaldía de San Pedro · Valle del Cauca</small><Link href="/documentos/">Biblioteca documental <ExternalLink size={13}/></Link></div>
   </aside>

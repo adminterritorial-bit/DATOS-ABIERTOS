@@ -2,10 +2,10 @@
 import {useMemo,useState} from 'react';
 import {AreaChart,Area,BarChart,Bar,CartesianGrid,XAxis,YAxis,Tooltip,Legend,ResponsiveContainer,PieChart,Pie,Cell,ReferenceLine} from 'recharts';
 import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
-import {AreaChart as AreaIcon,BarChart3,ChartPie,Info,ZoomIn} from 'lucide-react';
+import {AreaChart as AreaIcon,BarChart3,ChartPie,Grid3x3,Gauge,Info,ZoomIn} from 'lucide-react';
 import type {DatoExplorador} from '@/lib/territorialDataset';
 const format=(x:number,digits=1)=>new Intl.NumberFormat('es-CO',{maximumFractionDigits:digits}).format(x);
-type ChartMode='tendencia'|'ranking'|'participacion';
+type ChartMode='tendencia'|'ranking'|'participacion'|'matriz'|'medidores';
 const PALETTE=['#287bf1','#24b7ab','#956de7','#e4a258','#f0727b','#67a7ce'];
 const barUnitExcluded=(s:string)=>/COP|\$|habitantes|hectáreas|tonelada|productores|personas|casos|UPA|matriculad/i.test(s);
 function cleanUnit(d:DatoExplorador){return d.unidad.trim().toLocaleLowerCase('es-CO');}
@@ -52,8 +52,13 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
  const comparables=base.filter(x=>x.anio===latest);
  const ranking=Array.from(new Map(comparables.map(x=>[x.nombre,x])).values()).sort((a,b)=>b.valor-a.valor).slice(0,9).map((x,i)=>({...x,name:x.nombre.length>28?x.nombre.slice(0,26)+'…':x.nombre,indice:i}));
  const areParts=ranking.length>=2&&ranking.length<=6&&!barUnitExcluded(unidad)&&ranking.every(r=>r.valor>=0)&&Math.abs(ranking.reduce((n,r)=>n+r.valor,0)-100)<1.5&&ranking.every(r=>r.nombre.toLowerCase().split(' ').slice(0,2).join(' ')===ranking[0].nombre.toLowerCase().split(' ').slice(0,2).join(' '));
- const disponible:ChartMode[]=areParts?['ranking','tendencia','participacion']:['ranking','tendencia'];
- const chosen=tipo==='participacion'&&!areParts?'ranking':tipo;
+
+ const repetidos=byName.filter(a=>new Set(a.map(x=>x.anio)).size>=2).slice(0,5);
+ const matriz=repetidos.length>=2;
+ const matrixYears=[...new Set(repetidos.flatMap(g=>g.map(r=>r.anio)))].sort((a,b)=>a-b).slice(-11);
+ const medidores=/(^%$|por ciento|porcentaje)/.test(unidad)&&ranking.filter(x=>x.valor>=0&&x.valor<=100).length>=2;
+ const disponible:ChartMode[]=['ranking',...(temporal?['tendencia' as const]:[]),...(matriz?['matriz' as const]:[]),...(medidores?['medidores' as const]:[]),...(areParts?['participacion' as const]:[])];
+ const chosen=disponible.includes(tipo)?tipo:(temporal?'tendencia':'ranking');
  const active=chosen==='tendencia'&&!temporal?'ranking':chosen;
  const empty=!ranking.length;
  return <section className="xp-chart-panel">
@@ -61,7 +66,7 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
    <label className="xp-unit-selector">Unidad comparable<select value={unidad} onChange={e=>{setSeleccion(e.target.value);setTipo('ranking')}} aria-label="Unidad de las estadísticas">{grupos.map(([key,values])=><option key={key} value={key}>{values[0].unidad} · {values.length} registros</option>)}</select></label>
   </div>
   <div className="xp-chart-tabs" role="group" aria-label="Tipo de visualización">
-   {disponible.map(t=><button key={t} type="button" aria-pressed={active===t} className={active===t?'is-selected':''} onClick={()=>setTipo(t)}>{t==='tendencia'?<AreaIcon size={16}/>:t==='ranking'?<BarChart3 size={16}/>:<ChartPie size={16}/>} {t==='tendencia'?'Evolución':t==='ranking'?'Comparar':'Distribución'}</button>)}
+   {disponible.map(t=><button key={t} type="button" aria-pressed={active===t} className={active===t?'is-selected':''} onClick={()=>setTipo(t)}>{t==='tendencia'?<AreaIcon size={16}/>:t==='ranking'?<BarChart3 size={16}/>:t==='matriz'?<Grid3x3 size={16}/>:t==='medidores'?<Gauge size={16}/>:<ChartPie size={16}/>} {t==='tendencia'?'Evolución':t==='ranking'?'Comparar':t==='matriz'?'Matriz':t==='medidores'?'Medidores':'Distribución'}</button>)}
   </div>
   {empty?<div className="xp-chart-empty">No hay registros comparables con esta unidad y filtro.</div>:
    <AnimatePresence mode="wait"><motion.div key={active+'-'+unidad} className="xp-chart-plot" initial={reduced?false:{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={reduced?{}:{opacity:0,y:-12}} transition={{duration:.35,ease:[.2,.8,.2,1]}}>
@@ -78,7 +83,33 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
      </ResponsiveContainer>
     :active==='participacion'&&areParts?
      <div className="xp-pie-stage"><ResponsiveContainer width="100%" height={320}><PieChart><Pie data={ranking} dataKey="valor" nameKey="name" innerRadius="63%" outerRadius="84%" paddingAngle={3} cornerRadius={8} isAnimationActive={!reduced} animationDuration={1000} onClick={(_p,index)=>onOpen(ranking[index])}>{ranking.map((d,i)=><Cell key={d.id} fill={PALETTE[i%PALETTE.length]}/>)}</Pie><Tooltip contentStyle={tooltipStyle} formatter={x=>format(Number(x),2)+' '+unidad}/></PieChart></ResponsiveContainer><div className="xp-pie-legend">{ranking.map((d,i)=><button key={d.id} onClick={()=>onOpen(d)}><span style={{background:PALETTE[i%PALETTE.length]}}/>{d.name} <b>{format(d.valor,1)}</b></button>)}</div></div>
-    :<ResponsiveContainer width="100%" height={Math.max(315,ranking.length*42+70)}>
+    :active==='matriz'&&matriz?
+      <div className="xp-heatmap" role="group" aria-label="Matriz temporal por indicador y vigencia">
+       <div className="xp-heatmap-years"><span>Indicador</span>{matrixYears.map(y=><span key={y}>{y}</span>)}</div>
+       {repetidos.map((serie,i)=>{
+        const unique=[...new Map(serie.map(d=>[d.anio,d])).values()];
+        const max=Math.max(...unique.map(d=>d.valor));
+        const min=Math.min(...unique.map(d=>d.valor));
+        return <div className="xp-heatmap-row" key={i}><strong title={serie[0].nombre}>{serie[0].nombre}</strong>{matrixYears.map(year=>{
+         const item=unique.find(v=>v.anio===year);
+         const intensity=item?(max===min?.55:.25+.75*(item.valor-min)/(max-min)):0;
+         return <button key={year} disabled={!item} type="button" onClick={()=>item&&onOpen(item)} style={{background:item?'rgba(36,118,217,'+intensity.toFixed(2)+')':'#eff3f9'}} title={item?serie[0].nombre+' · '+year+': '+format(item.valor,2)+' '+unidad:'Sin observación en '+year} aria-label={item?serie[0].nombre+', '+year+', '+format(item.valor,2)+' '+unidad:'Sin dato '+year}/>;
+        })}</div>})}
+       <p>El tono compara valores dentro de una misma serie, no entre unidades diferentes. Cada celda abre su ficha.</p>
+      </div>
+     :active==='medidores'&&medidores?
+      <div className="xp-gauge-grid" role="group" aria-label="Indicadores porcentuales, escala 0 a 100">
+       {ranking.filter(x=>x.valor>=0&&x.valor<=100).slice(0,6).map((d,i)=>{
+        const circ=2*Math.PI*58;
+        return <button type="button" key={d.id} className="xp-gauge-item" onClick={()=>onOpen(d)} aria-label={'Ficha de '+d.nombre}>
+          <svg viewBox="0 0 160 160" role="img" aria-label={format(d.valor,1)+' por ciento'}><circle cx="80" cy="80" r="58" stroke="#e7edf6" strokeWidth="13" fill="none"/>
+          <motion.circle cx="80" cy="80" r="58" stroke={PALETTE[i%PALETTE.length]} strokeWidth="13" fill="none" strokeLinecap="round" transform="rotate(-90 80 80)" strokeDasharray={circ} initial={reduced?false:{strokeDashoffset:circ}} animate={{strokeDashoffset:circ*(1-d.valor/100)}} transition={{duration:1.25,ease:[.2,.8,.2,1]}}/>
+          <text x="80" y="85" textAnchor="middle" fill="#234a70" fontWeight="900" fontSize="24">{format(d.valor,1)}%</text></svg>
+          <strong>{d.nombre}</strong><span>{d.anio} · Ver ficha</span>
+        </button>;
+       })}
+      </div>
+         :<ResponsiveContainer width="100%" height={Math.max(315,ranking.length*42+70)}>
       <BarChart data={[...ranking].reverse()} layout="vertical" margin={{top:10,right:30,bottom:10,left:6}}>
        <defs><linearGradient id="xp-bar-shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#2e75ed"/><stop offset="75%" stopColor="#20a9ca"/><stop offset="100%" stopColor="#56d6c3"/></linearGradient></defs>
        <CartesianGrid stroke="#edf2f9" strokeDasharray="4 8" horizontal={false}/>
@@ -89,6 +120,6 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
       </BarChart>
      </ResponsiveContainer>}
    </motion.div></AnimatePresence>}
-  <div className="xp-chart-bottom"><Info size={15}/><span>{active==='tendencia'&&temporal?serie?.[0].nombre:active==='ranking'?'Comparación por '+unidad+' · vigencia '+latest:'Participación de categorías comparables'} · Pulsa una barra, sección o punto para consultar su procedencia. No se combinan unidades diferentes.</span><ZoomIn size={16}/></div>
+  <div className="xp-chart-bottom"><Info size={15}/><span>{active==='tendencia'&&temporal?serie?.[0].nombre:active==='ranking'?'Comparación por '+unidad+' · vigencia '+latest:active==='matriz'?'Matriz temporal por '+unidad:active==='medidores'?'Medidores porcentuales independientes':'Participación de categorías comparables'} · Pulsa una barra, sección o punto para consultar su procedencia. No se combinan unidades diferentes.</span><ZoomIn size={16}/></div>
  </section>;
 }

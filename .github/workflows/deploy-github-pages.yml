@@ -19,6 +19,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
+    outputs:
+      pages_artifact: ${{ steps.pages_name.outputs.name }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -49,8 +51,12 @@ jobs:
           printf 'No Jekyll processing needed\n' > out/.nojekyll
           echo 'GitHub Pages artifact ready'
       - uses: actions/configure-pages@v5
+      - name: Identify this Pages build
+        id: pages_name
+        run: echo "name=github-pages-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v3
         with:
+          name: ${{ steps.pages_name.outputs.name }}
           path: out
   deploy:
     needs: build
@@ -61,3 +67,5 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact }}

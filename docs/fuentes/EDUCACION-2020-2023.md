@@ -17,3 +17,16 @@ Esta es una transcripción de cifras agregadas; no sustituye la publicación del
 ## Observación para la biblioteca
 
 El documento original PDF es un anexo suministrado por el solicitante en `datos.zip`; debe conservarse en un repositorio de documentos institucionales con control editorial. No publicar automáticamente correspondencia o archivos que puedan contener información personal.
+
+## Otros indicadores extraídos de la ficha territorial aportada
+
+En `FICHA  TERRIDATA SAN PEDRO.pdf`, página 8, sección de vivienda, aparecen cifras complementarias procedentes del DANE/CNPV 2018:
+
+| Indicador | Código ICET | Año | Valor |
+|---|---|---|---|
+| Déficit habitacional cualitativo en cabeceras municipales | 24 | 2018 | 12,2 % |
+| Déficit habitacional cuantitativo en cabeceras municipales | 25 | 2018 | 2,04 % |
+| Déficit cualitativo en centros poblados y rural disperso | adicional | 2018 | 75,0 % |
+| Déficit cuantitativo en centros poblados y rural disperso | adicional | 2018 | 6,34 % |
+
+En página 10 aparecen tres componentes del valor agregado de 2023: primario 353,4; secundario 33,7 y terciario 225,6 miles de millones de COP. La **suma matemática 612,7** se ofrece como indicador ICET 9 **calculado a partir de los componentes publicados y sujeto al redondeo**. No se hace pasar por cifra total publicada literalmente.

@@ -25,6 +25,11 @@ function fuente(id:string,anio:number){
  return d;
 }
 const p2023=poblacion(2023);
+const p2024=poblacion(2024);
+const inter2024=fuente('OFI-FOR-INTER-2024',2024);
+const intra2024=fuente('OFI-FOR-INTRA-2024',2024);
+const pareja2024=fuente('OFI-FOR-PAREJA-2024',2024);
+
 const afiliados=fuente('OFI-PTS-AFILIADOS-2023',2023);
 const presupuesto=fuente('EXT-PRESUPUESTO-INGRESOS-2025',2025);
 const tributarios=fuente('EXT-PRESUPUESTO-TRIBUTARIOS-2025',2025);
@@ -47,6 +52,13 @@ const tasaHomicidios2025=(tasaH.valor*ph2025+tasaM.valor*pm2025)/p2025.total;
  * Es una medida calculada, no la cobertura certificada por el Ministerio para el día de corte.
  */
 export const indicadoresCalculados:ValorDocumental[]=[
+ {
+ id:'DER-ICET-61-2024',nombre:'Tasa reconstruida de casos médico-legales por violencia interpersonal e intrafamiliar',sector:'Seguridad',
+ valor:Math.round(porCienMil(inter2024.valor+intra2024.valor+pareja2024.valor,p2024.total)*100)/100,
+ unidad:'casos examinados por 100.000 habitantes',anio:2024,periodo:'2024',
+ fuente:inter2024.fuente,pagina:85,codigoIcet:'ICET-61',vinculacion:'relacionada',
+ nota:'CALCULADO (10 violencia interpersonal + 2 intrafamiliar + 10 de pareja) / 17.270 habitantes DANE PPED 2024 × 100.000. Clasificación Forensis 2024 en columnas separadas, no tasa ICET certificada ni víctimas únicas; verificar no superposición de categorías.'
+ },
  {
   id:'DER-ICET-57-2025',nombre:'Tasa total de homicidio intencional, ponderada por sexo',
   sector:'Seguridad',valor:Math.round(tasaHomicidios2025*100)/100,

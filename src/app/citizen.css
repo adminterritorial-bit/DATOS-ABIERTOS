@@ -1,0 +1,46 @@
+/* Ciudadanía: búsqueda transversal y biblioteca documental. */
+.ot-global-placement{position:fixed;right:22px;bottom:22px;z-index:65;pointer-events:auto}
+.ot-global-search{background:#0e62c4;color:white;border:1px solid #3a85db;border-radius:40px;box-shadow:0 12px 34px rgba(17,71,151,.22);padding:12px 17px;display:flex;align-items:center;gap:11px;font:700 12px "Century Gothic",Arial,sans-serif;cursor:pointer;transition:transform .18s,box-shadow .18s}
+.ot-global-search:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(17,71,151,.28)}
+.ot-global-search kbd{font-size:10px;border:1px solid rgba(255,255,255,.3);padding:3px 6px;border-radius:5px;font-family:inherit}
+.ot-cmd-backdrop{position:fixed;inset:0;background:rgba(9,26,52,.57);backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:clamp(35px,12vh,115px) 14px 22px;z-index:200;animation:ot-fade .18s ease}
+.ot-cmd-dialog{background:#fff;border-radius:18px;width:min(680px,100%);max-height:calc(100vh - 70px);display:flex;flex-direction:column;box-shadow:0 28px 86px rgba(9,26,52,.28);overflow:hidden}
+.ot-cmd-head{height:72px;display:flex;align-items:center;gap:14px;padding:0 23px;border-bottom:1px solid #e6edf6;color:#2170c5;flex-shrink:0}
+.ot-cmd-head input{background:none;border:0;outline:none;min-width:0;width:100%;font:500 14px "Century Gothic",Arial,sans-serif;color:#243e5b}
+.ot-cmd-head input::placeholder{color:#97a9bb}
+.ot-cmd-head button{border:0;background:#eef4fb;color:#436481;border-radius:8px;padding:8px;display:grid;place-items:center;cursor:pointer}
+.ot-cmd-results{overflow-y:auto;padding:12px 16px 16px}
+.ot-cmd-caption{font-size:10px;font-weight:800;letter-spacing:1.4px;color:#9aaec2;margin:11px 10px}
+.ot-cmd-result{display:flex;align-items:center;gap:14px;min-height:65px;border-radius:12px;padding:11px;color:#273e59;text-decoration:none;transition:background .16s,transform .16s}
+.ot-cmd-result:hover,.ot-cmd-result:focus-visible{background:#eaf3ff;transform:translateX(3px)}
+.ot-cmd-result-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:#edf5ff;color:#146acc;flex-shrink:0}
+.ot-cmd-result>span:nth-child(2){flex:1;min-width:0;display:block}
+.ot-cmd-result strong{display:block;font-size:12px;line-height:1.5}
+.ot-cmd-result small{display:block;font-size:10px;color:#8297ad;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ot-cmd-result>svg{color:#91a7ba;flex-shrink:0}
+.ot-cmd-empty{font-size:12px;color:#8297ad;padding:22px;text-align:center}
+.ot-cmd-foot{border-top:1px solid #edf1f7;color:#98a9ba;font-size:10px;text-align:center;padding:15px;margin:0}
+.ot-back-link{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#146ed5;text-decoration:none}
+.ot-library-heading{font:800 clamp(25px,3vw,34px)/1.28 Manrope,Arial,sans-serif;letter-spacing:-.7px;margin:10px 0;color:#1b3553}
+.ot-document-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+.ot-document-card{border:1px solid #e5edf6;background:#fff;padding:18px;border-radius:14px;min-width:0;display:flex;flex-direction:column;gap:10px;transition:transform .18s,box-shadow .18s}
+.ot-document-card:hover{transform:translateY(-3px);box-shadow:0 13px 25px rgba(38,89,149,.08)}
+.ot-document-top{display:flex;justify-content:space-between;align-items:center;color:#166fcf}
+.ot-document-top span{font-size:10px;color:#7f94aa}
+.ot-document-card h2{font:800 14px/1.55 Manrope,Arial,sans-serif;overflow-wrap:anywhere;color:#2a4562;margin:0}
+.ot-document-card p{font-size:11px;color:#8194a9;overflow-wrap:anywhere;line-height:1.6;margin:0}
+.ot-document-meta{margin-top:auto;display:grid;gap:8px;color:#637c94;font-size:10px;line-height:1.7;border-top:1px solid #eff3f8;padding-top:10px}
+.ot-document-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px}
+.ot-document-actions .ot-btn{white-space:normal;text-align:center}
+.ot-doc-notice{font-size:12px;color:#7186a1;padding:15px}
+.ot-document-modal{background:white;width:min(1100px,100%);height:min(90vh,850px);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 30px 85px rgba(11,35,69,.3)}
+.ot-document-modal-head{display:flex;align-items:center;gap:20px;justify-content:space-between;color:#2e4b69;font-size:12px}
+.ot-document-modal-head button{border:0;background:#eaf3ff;color:#156ac9;padding:10px 14px;border-radius:9px;cursor:pointer}
+.ot-document-modal iframe{width:100%;flex:1;min-height:0;border:1px solid #e7edf4;border-radius:9px}
+.ot-document-modal p{color:#7890a6;font-size:11px;line-height:1.5;margin:0}
+.ot-document-modal a{color:#126ed0}
+.ot-global-search:focus-visible,.ot-cmd-dialog a:focus-visible,.ot-cmd-dialog button:focus-visible{outline:3px solid #77b6fb;outline-offset:3px}
+@keyframes ot-fade{from{opacity:0}to{opacity:1}}
+@media(max-width:1050px){.ot-document-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:660px){.ot-global-placement{right:13px;bottom:13px}.ot-global-search{padding:11px 14px}.ot-global-search span{font-size:11px}.ot-global-search kbd{display:none}.ot-document-grid{grid-template-columns:1fr}.ot-cmd-dialog{max-height:85vh}.ot-cmd-backdrop{padding-top:25px}.ot-cmd-head{height:60px}}
+@media(prefers-reduced-motion:reduce){.ot-global-search,.ot-cmd-backdrop,.ot-cmd-result,.ot-document-card{transition:none!important;animation:none!important}.ot-cmd-result:hover,.ot-document-card:hover,.ot-global-search:hover{transform:none}}

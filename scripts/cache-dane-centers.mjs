@@ -31,6 +31,7 @@ try{
  if(!unique.size)throw Error('Consulta sin geometrías verificables para San Pedro');
  await writeFile(path,JSON.stringify({source:root,divipola:'76670',generatedAt:new Date().toISOString(),items:[...unique.values()]},null,2)+'\n');
  console.log('DANE: '+unique.size+' centros poblados/cabeceras verificados, geocodificados y empaquetados para GitHub Pages');
+ console.log('DANE_CENTER_CACHE='+JSON.stringify([...unique.values()]));
 }catch(err){
  console.log('DANE: sin actualización geoespacial '+String(err).slice(0,260)+'. Se conserva el último respaldo; el mapa base sigue funcional.');
  try{const original=JSON.parse(await readFile(path,'utf8'));console.log('DANE: cache existente '+original.items.length+' lugares')}catch{process.exitCode=1}

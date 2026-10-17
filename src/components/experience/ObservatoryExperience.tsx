@@ -1,5 +1,5 @@
 'use client';
-import {useMemo,useState} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
@@ -7,10 +7,14 @@ import {Activity,ArrowDownRight,ArrowRight,ArrowUpRight,BookOpen,ChartNoAxesComb
 import {usePublicFeed} from '@/lib/usePublicFeed';
 import CitizenSearch from '@/components/CitizenSearch';
 import CountingValue from './CountingValue';
+import TopBannerCarousel from './TopBannerCarousel';
+import SidebarTree from './SidebarTree';
+import RollingTitle from './RollingTitle';
 const ChartWall=dynamic(()=>import('./ChartWall'),{ssr:false,loading:()=> <div className="g4-skeleton">Preparando múltiples gráficas interactivas…</div>});
 import {reunirEstadisticas,filtrarEstadisticas,itemsPorIndicador} from '@/lib/territorialDataset';
 import type {DatoExplorador,ClaseDato} from '@/lib/territorialDataset';
 import {indicadoresICET} from '@/lib/icetCatalog';
+import {derivarProporciones} from '@/lib/comparableMetrics';
 import {codigoICET,macroDimensiones,temasTerritoriales,numeroTema} from '@/lib/territorialTaxonomy';
 import type {TemaTerritorial} from '@/lib/territorialTaxonomy';
 const AnimatedCharts=dynamic(()=>import('@/components/insights/AnimatedCharts'),{ssr:false,loading:()=> <div className="xp-loading">Preparando visualizaciones…</div>});
@@ -70,7 +74,7 @@ function StoryCard({item,onClick}:{item:DatoExplorador;onClick:()=>void}){
 export default function ObservatoryExperience(){
  const {feed,loading,error}=usePublicFeed();
  const reduced=useReducedMotion();
- const all=useMemo(()=>reunirEstadisticas(feed),[feed]);
+ const all=useMemo(()=>{const existing=reunirEstadisticas(feed);return [...existing,...derivarProporciones(existing)]},[feed]);
  const [macro,setMacro]=useState<string>('Todos');
  const [tema,setTema]=useState<string>('Todos');
  const [anio,setAnio]=useState<string>('Todos');
@@ -81,6 +85,7 @@ export default function ObservatoryExperience(){
  const [menu,setMenu]=useState(false);
  const [verMas,setVerMas]=useState(false);
  const [tituloClic,setTituloClic]=useState(false);
+ useEffect(()=>{const requested=new URLSearchParams(window.location.search).get('tema');if(requested&&temasTerritoriales.some(t=>t.id===requested))setTema(requested)},[]);
  const mapear=useMemo(()=>new Map(all.map(x=>[x.id,clasificarDato(x)])),[all]);
  const tematicos=useMemo(()=>all.filter(d=>(tema==='Todos'||mapear.get(d.id)===tema)&&(macro==='Todos'||temasTerritoriales.find(t=>t.id===mapear.get(d.id))?.macro===macro)),[all,tema,macro,mapear]);
  const filtered=useMemo(()=>filtrarEstadisticas(tematicos,buscar,anio==='Todos'?'Todos':Number(anio),clase),[tematicos,buscar,anio,clase]);
@@ -94,33 +99,25 @@ export default function ObservatoryExperience(){
  return <div className="xp-app">
   <a className="xp-skip" href="#xp-main">Ir al contenido estadístico</a>
   <aside className={'xp-side '+(menu?'is-open':'')} aria-label="Navegación temática del Observatorio">
-   <div className="xp-logo"><span className="xp-logo-mark g4-logo"><img src="/DATOS-ABIERTOS/escudo-san-pedro.png" alt="Escudo de la Alcaldía de San Pedro, Valle del Cauca" width="55" height="55"/></span><div><strong>SAN PEDRO</strong><small>Observatorio de datos abiertos</small></div></div>
-   <div className="xp-side-kicker">EXPLORA EL TERRITORIO</div>
-   <nav className="xp-primary-nav">
-    <button aria-pressed={tema==='Todos'&&macro==='Todos'} className={tema==='Todos'&&macro==='Todos'?'active':''} onClick={reset}><Compass size={18}/> Panorama general <ArrowRight size={15}/></button>
-    <button aria-pressed={vista==='territorio'} onClick={()=>{setVista('territorio');setMenu(false)}}><MapPinned size={18}/> Mapa real de San Pedro <ArrowRight size={15}/></button>
-    <button aria-pressed={vista==='catalogo'} onClick={()=>{setVista('catalogo');setMenu(false)}}><BookOpen size={18}/> Los 66 indicadores <ArrowRight size={15}/></button>
-   </nav>
-   <div className="xp-side-kicker">ÁREAS DE CONOCIMIENTO</div>
-   <nav className="xp-side-groups">{macroDimensiones.map(m=><div key={m} className="xp-nav-cluster"><button className={'xp-nav-group '+(macro===m?'selected':'')} aria-expanded={macro===m} onClick={()=>{setMacro(macro===m?'Todos':m);setTema('Todos');setVista('historias');setMenu(false)}}><span className="xp-cluster-dot"/>{m}<ChevronDown size={14}/></button>
-    <AnimatePresence initial={false}>{macro===m&&<motion.div initial={reduced?false:{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={reduced?{}:{height:0,opacity:0}} className="xp-subnav">{temasTerritoriales.filter(t=>t.macro===m).map(t=><button key={t.id} aria-pressed={tema===t.id} onClick={()=>seleccionarTema(t.id)} className={tema===t.id?'active':''}><IconTheme name={t.icono} size={16}/><span>{t.nombre}</span><small>{t.items.length}</small></button>)}</motion.div>}</AnimatePresence>
-   </div>)}</nav>
-   <div className="xp-sidebar-bottom"><span><span className="xp-online"/> {loading?'Conectando fuentes…':error?'Datos locales disponibles':'Fuentes conectadas'}</span><small>Municipio 76670 · Valle del Cauca</small><Link href="/documentos/">Consultar biblioteca <ExternalLink size={12}/></Link></div>
+   <div className="xp-logo n5-official-logo"><div className="g4-logo n5-crest-wrapper"><img src="/DATOS-ABIERTOS/escudo-san-pedro.png" alt="Alcaldía de San Pedro, Valle del Cauca: escudo y denominación oficial" width="234" height="95"/></div><small>OBSERVATORIO DE DATOS ABIERTOS</small></div>
+   <SidebarTree active={tema} onTopic={id=>{seleccionarTema(id);document.getElementById('n5-charts')?.scrollIntoView({behavior:'smooth'})}} onMap={()=>{setVista('territorio');setMenu(false);document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}} onExplore={()=>{window.location.assign('/DATOS-ABIERTOS/temas/')}} onHome={()=>{reset();setVista('historias');setMenu(false);window.scrollTo({top:0,behavior:'smooth'})}}/>
+   <div className="xp-sidebar-bottom"><small>Alcaldía de San Pedro · Valle del Cauca</small><Link href="/documentos/">Biblioteca documental <ExternalLink size={13}/></Link></div>
   </aside>
   {menu&&<div className="xp-menu-overlay" onClick={()=>setMenu(false)}/>}
   <main className="xp-main" id="xp-main">
    <header className="xp-header"><div className="xp-breadcrumb"><button className="xp-mobile-nav" onClick={()=>setMenu(!menu)} aria-label="Abrir navegación"><Menu size={21}/></button><span>Observatorio</span><ArrowRight size={13}/><strong>{topic?.nombre||(macro==='Todos'?'Panorama territorial':macro)}</strong></div><div className="xp-header-actions"><CitizenSearch feed={feed}/><span className="xp-period"><span/> Última consulta · {new Date().getFullYear()}</span><Link href="/comparar/" title="Explorador de series">Comparar datos <ArrowUpRight size={15}/></Link></div></header>
    <div className="xp-body">
-    <section className="xp-hero"><div className="xp-hero-content"><span className="xp-kicker"><Sparkles size={14}/> UNA NUEVA FORMA DE DESCUBRIR SAN PEDRO</span><button className="xp-hero-title" onClick={()=>{setTituloClic(v=>!v);setVista(vista==='territorio'?'historias':'territorio')}} aria-label="Alternar exploración estadística y territorial"><h1>{tituloClic?'Cada rincón tiene una historia.':topic?topic.pregunta:'Un territorio que cobra vida con sus datos.'}</h1><ArrowUpRight size={23}/></button><p>Explora historias, transforma estadísticas en visualizaciones y descubre el municipio desde fuentes públicas con fechas y procedencia visibles.</p><div className="xp-hero-actions"><button onClick={()=>{setVista('historias');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}>Descubrir las cifras <ArrowRight size={16}/></button><button className="xp-hero-outline" onClick={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}><MapPinned size={16}/> Explorar el mapa</button></div></div><div className="xp-hero-orbit" aria-hidden="true"><div className="xp-orbit xp-orbit-1"/><div className="xp-orbit xp-orbit-2"/><div className="xp-orbit xp-orbit-3"/><div className="xp-orbit-globe"><img src="/DATOS-ABIERTOS/escudo-san-pedro.png" width="145" height="145" alt=""/></div><span className="xp-orbit-label xp-label-1">DANE</span><span className="xp-orbit-label xp-label-2">76670</span><span className="xp-orbit-label xp-label-3">DATOS ABIERTOS</span></div></section>
+    <TopBannerCarousel/>
+    <div className="n5-under-banner"><div><span className="xp-overline">OBSERVATORIO MUNICIPAL · SAN PEDRO, VALLE DEL CAUCA</span><h1>Descubre nuestro municipio a través de sus datos.</h1><p>Gráficas que cuentan historias, un mapa para recorrer el territorio y cifras institucionales para todas las generaciones.</p></div><div className="n5-hero-links"><Link href="/temas/">Explorar categorías <ArrowRight size={16}/></Link><button onClick={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}>Abrir mapa interactivo <MapPinned size={16}/></button></div></div>
     <section className="xp-ticker" aria-label="Capacidades de consulta"><div><Database size={19}/><span><CountingValue value={all.length}/> <small>observaciones disponibles</small></span></div><div><Layers3 size={19}/><span><CountingValue value={temasTerritoriales.length}/> <small>temas de vida municipal</small></span></div><div><BookOpen size={19}/><span><CountingValue value={66}/> <small>preguntas del DANE</small></span></div><div><Compass size={19}/><span><CountingValue value={years.length}/> <small>vigencias documentadas</small></span></div></section>
-    <ChartWall datos={filtered} onOpen={setDetalle}/>
-    <section className="xp-theme-section"><div className="xp-section-heading"><div><span className="xp-overline">EXPLORA SEGÚN TUS INTERESES</span><h2>Los grandes temas de nuestro municipio.</h2><p>No más listados interminables. Elige una conversación para descubrir los datos relevantes.</p></div><button onClick={reset}><Filter size={16}/> Limpiar filtros</button></div><div className="xp-theme-grid">{temasTerritoriales.filter(t=>macro==='Todos'||t.macro===macro).map(t=><motion.button whileHover={reduced?{}:{y:-5}} whileTap={reduced?{}:{scale:.98}} type="button" key={t.id} onClick={()=>seleccionarTema(t.id)} aria-pressed={tema===t.id} className={'xp-theme '+(tema===t.id?'chosen':'')} style={{'--xp-topic':t.color} as React.CSSProperties}><span className="xp-theme-icon"><IconTheme name={t.icono} size={24}/></span><span className="xp-theme-meta">{t.items.length} indicadores DANE</span><strong>{t.nombre}</strong><small>{t.descripcion}</small><footer><span>{count(t)} registros temáticos</span><ArrowUpRight size={18}/></footer></motion.button>)}</div></section>
+    <div id="n5-charts"><div className="n5-topic-panel"><div><span className="xp-overline">SELECCIONA EL TEMA DEL TABLERO</span><h2><RollingTitle text={topic?.nombre||"Panorama municipal"}/></h2><p>{topic?.descripcion||"Cinco gráficas que se actualizan con las categorías y los filtros."}</p></div><label>Temática <select aria-label="Elegir temática para las cinco gráficas" value={tema} onChange={e=>seleccionarTema(e.target.value)}><option value="Todos">Todas las categorías</option>{temasTerritoriales.map(t=><option key={t.id} value={t.id}>{t.nombre}</option>)}</select></label></div><ChartWall datos={filtered} onOpen={setDetalle} title={topic?"Cinco gráficas: "+topic.nombre:"Cinco perspectivas de San Pedro"}/></div>
+    <div className="n5-go-themes"><div><span className="xp-overline">DESCUBRE MÁS</span><h2>14 categorías, una sola forma sencilla de explorarlas.</h2><p>Abre la biblioteca temática y elige educación, salud, ambiente, seguridad o cualquier otra área. El tablero adaptará las cinco gráficas.</p></div><Link href="/temas/">Ver biblioteca de temas <ArrowUpRight size={17}/></Link></div>
     <section className="xp-workspace" id="xp-lab"><div className="xp-section-heading"><div><span className="xp-overline">EL LABORATORIO DEL TERRITORIO</span><h2>{topic?topic.nombre:'Descubre qué cuentan las cifras.'}</h2><p>{topic?.descripcion||'Visualizaciones que puedes explorar, filtrar y consultar a detalle.'}</p></div><div className="xp-workspace-view" role="group" aria-label="Modo de exploración">{[['historias','Gráficas'],['territorio','Geografía'],['catalogo','Indicadores']].map(([k,v])=><button key={k} className={vista===k?'active':''} aria-pressed={vista===k} onClick={()=>setVista(k as typeof vista)}>{v}</button>)}</div></div>
     <div className="xp-filterbar"><label className="xp-searchbox"><Search size={19}/><input value={buscar} onChange={e=>setBuscar(e.target.value)} placeholder="Buscar cifras, temas, fuentes…" aria-label="Buscar en estadísticas del municipio"/>{buscar&&<button onClick={()=>setBuscar('')} aria-label="Limpiar búsqueda"><X size={14}/></button>}</label><label className="xp-dropdown"><span>Vigencia</span><select value={anio} onChange={e=>setAnio(e.target.value)}><option value="Todos">Todos los años</option>{years.map(y=><option key={y} value={y}>{y}</option>)}</select></label><label className="xp-dropdown"><span>Naturaleza</span><select value={clase} onChange={e=>setClase(e.target.value as 'Todas'|ClaseDato)}>{['Todas','Publicado','Calculado','Relacionado','Estimación'].map(x=><option key={x}>{x}</option>)}</select></label><button className="xp-reset" onClick={reset} aria-label="Restablecer todos los filtros"><SlidersHorizontal size={18}/></button></div>
     {vista==='historias'&&<>
-     <AnimatedCharts datos={filtered} titulo={topic?'Explora '+topic.nombre.toLocaleLowerCase('es'):'Tendencias y comparaciones'} onOpen={setDetalle}/>
-     <div className="xp-section-heading xp-heading-spaced"><div><span className="xp-overline">DATOS PARA DESCUBRIR</span><h2>Cada estadística tiene una historia.</h2><p>{filtered.length} observaciones en la selección, con año y fuente disponibles.</p></div><button onClick={()=>setVerMas(v=>!v)}>{verMas?'Mostrar menos':'Ver más estadísticas'} <ArrowRight size={15}/></button></div>
-     <div className="xp-stat-grid">{cards.map(d=><StoryCard key={d.id} item={d} onClick={()=>setDetalle(d)}/>)}</div>
+     <div className="n5-data-guide"><BookOpen size={21}/><p>Selecciona un dato de las fichas o utiliza el laboratorio de cinco gráficas de la parte superior para consultar sus relaciones y fuentes.</p></div>
+     <div className="xp-section-heading xp-heading-spaced"><div><span className="xp-overline">DATOS PARA DESCUBRIR</span><h2>Cada estadística tiene una historia.</h2><p>{filtered.length} observaciones en la selección, con año y fuente disponibles.</p></div><button onClick={()=>setVerMas(v=>!v)}>{verMas?'Ocultar registros':'Explorar registros'} <ArrowRight size={15}/></button></div>
+     {verMas&&<div className="xp-stat-grid">{cards.map(d=><StoryCard key={d.id} item={d} onClick={()=>setDetalle(d)}/>)}</div>}
      {!cards.length&&<div className="xp-empty">No hay cifras compatibles con los filtros seleccionados. Prueba otra vigencia o temática.</div>}
     </>}
     {vista==='territorio'&&<ArcgisLocalMap datos={all} activeTopic={tema} onTopicChange={(v)=>{setTema(v);setBuscar('');setAnio('Todos')}}/>}

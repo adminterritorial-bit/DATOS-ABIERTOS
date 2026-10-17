@@ -4,6 +4,7 @@ import './dashboard.css';
 import './citizen.css';
 import './experience.css';
 import './geo-v4.css';
+import './ux-v5.css';
 import '@arcgis/core/assets/esri/themes/light/main.css';
 import GlobalNavigation from '@/components/GlobalNavigation';
 export const metadata:Metadata={

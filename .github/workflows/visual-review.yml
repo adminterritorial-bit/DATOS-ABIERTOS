@@ -1,7 +1,7 @@
 name: Visual regression and responsive review
 on:
   push:
-    branches: ['feat/github-pages-deploy','feat/observatorio-qa-admin','feat/observatorio-navegacion','feat/observatorio-nav-unificada','feat/observatorio-experiencia-territorial-v3','feat/observatorio-v3-interacciones-refinadas','feat/arcgis-real-dashboard-v4']
+    branches: ['feat/github-pages-deploy','feat/observatorio-qa-admin','feat/observatorio-navegacion','feat/observatorio-nav-unificada','feat/observatorio-experiencia-territorial-v3','feat/observatorio-v3-interacciones-refinadas','feat/arcgis-real-dashboard-v4','feat/ux-v5-banners-graficas-mapa']
   workflow_dispatch:
 permissions:
   contents: read

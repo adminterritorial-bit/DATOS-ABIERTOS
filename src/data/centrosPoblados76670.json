@@ -1,1 +1,77 @@
-{"source":"DANE MGN DIVIPOLA 2025","divipola":"76670","items":[],"generatedAt":null}
+{
+  "source": "https://geoportal.dane.gov.co/mparcgis/rest/services/Divipola/Serv_DIVIPOLA_MGN_2025/FeatureServer/305/query",
+  "divipola": "76670",
+  "generatedAt": "2026-10-17T07:53:00Z",
+  "items": [
+    {
+      "code": "76670011",
+      "name": "MONTE GRANDE",
+      "longitude": -76.23789069230769,
+      "latitude": 3.991419615384617,
+      "area": 240789.81870838,
+      "altitude": 972,
+      "year": 2025,
+      "clas": "2"
+    },
+    {
+      "code": "76670000",
+      "name": "SAN PEDRO",
+      "longitude": -76.22822647619044,
+      "latitude": 3.994949206349206,
+      "area": 1116336.32180788,
+      "altitude": 1000,
+      "year": 2025,
+      "clas": "1"
+    },
+    {
+      "code": "76670007",
+      "name": "PRESIDENTE",
+      "longitude": -76.26288665816328,
+      "latitude": 3.9615246428571367,
+      "area": 380792.00460058,
+      "altitude": 976,
+      "year": 2025,
+      "clas": "2"
+    },
+    {
+      "code": "76670010",
+      "name": "GUAYABAL",
+      "longitude": -76.23167614285721,
+      "latitude": 4.005207380952382,
+      "area": 161008.27117225,
+      "altitude": 975,
+      "year": 2025,
+      "clas": "2"
+    },
+    {
+      "code": "76670008",
+      "name": "SAN JOSÉ",
+      "longitude": -76.26828689213896,
+      "latitude": 4.033090932358319,
+      "area": 533470.5265373,
+      "altitude": 940,
+      "year": 2025,
+      "clas": "2"
+    },
+    {
+      "code": "76670009",
+      "name": "TODOS LOS SANTOS",
+      "longitude": -76.23257136708861,
+      "latitude": 3.980750354430382,
+      "area": 318289.03484672,
+      "altitude": 981,
+      "year": 2025,
+      "clas": "2"
+    },
+    {
+      "code": "76670002",
+      "name": "BUENOS AIRES",
+      "longitude": -76.17374120481925,
+      "latitude": 3.9295378313253004,
+      "area": 120171.95126837,
+      "altitude": 2069,
+      "year": 2025,
+      "clas": "2"
+    }
+  ]
+}

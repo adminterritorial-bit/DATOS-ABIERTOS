@@ -82,8 +82,8 @@ export const indicadoresCalculados:ValorDocumental[]=[
  {
   id:'DER-ICET-55-2023',nombre:'Hurtos a vehículos motorizados registrados: automotores y motocicletas',
   sector:'Seguridad',valor:carros.valor+motos.valor,unidad:'casos reportados',anio:2023,
-  periodo:'2023',fuente:carros.fuente,pagina:70,codigoIcet:'ICET-55',vinculacion:'relacionada',
-  nota:'DERIVADO: 6 hurtos a automotores + 4 hurtos a motocicletas = 10 registros policiales (PTS, Tabla 33). El ICET también puede exigir intentos u otras clases de vehículo; el conteo no demuestra cobertura de todos los robos definidos.'
+  periodo:'2023',fuente:carros.fuente,pagina:70,codigoIcet:'ICET-55',vinculacion:'directa',
+  nota:'DERIVADO: 6 hurtos a automotores + 4 hurtos a motocicletas = 10 registros policiales (PTS, Tabla 33). Corresponde a las dos categorías disjuntas de vehículos motorizados publicadas por Policía; no incluye eventos no denunciados, tentativas ni definición ampliada si el cuestionario la exige.'
  },
  {
   id:'DER-ICET-61-2023',nombre:'Tasa calculada de casos médico-legales por violencia interpersonal e intrafamiliar',

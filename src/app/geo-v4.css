@@ -32,8 +32,8 @@
 .g4-search{margin:0 17px 13px;border:1px solid #dbe8f0;background:#fff;border-radius:13px;display:flex;align-items:center;gap:9px;color:#7b96a9;padding:0 12px;min-height:44px}
 .g4-search input{flex:1;min-width:0;border:0;background:transparent;outline:none;color:#2b526f;font-size:11px}
 .g4-categories{display:flex;gap:7px;overflow-x:auto;padding:0 17px 13px;scrollbar-width:thin}
-.g4-categories button{white-space:nowrap;border:1px solid #dbeaf0;background:#fff;color:#688ba0;border-radius:30px;padding:9px 13px;font-size:10px;font-weight:850;transition:transform .2s,background .2s}
-.g4-categories button:hover{transform:translateY(-2px)}.g4-categories button.active{background:#0e9d86;color:#fff;border-color:#0e9d86;box-shadow:0 6px 15px #18ae9729}
+.g4-categories button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid #dbeaf0;background:#fff;color:#688ba0;border-radius:30px;padding:9px 13px;font-size:10px;font-weight:850;transition:transform .2s,background .2s}
+.g4-categories button img{height:24px;width:20px;object-fit:contain;filter:drop-shadow(0 2px 3px #1d4f6f20)}.g4-categories button:hover{transform:translateY(-2px)}.g4-categories button.active{background:#0e9d86;color:#fff;border-color:#0e9d86;box-shadow:0 6px 15px #18ae9729}
 .g4-console-section{overflow-y:auto;flex:1;border-top:1px solid #e5edf5;padding:15px;scrollbar-color:#adcbd7 transparent}
 .g4-console-section>header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.g4-console-section>header span{font-size:9px;font-weight:900;letter-spacing:1.1px;color:#7b97ac}.g4-console-section>header strong{border-radius:9px;background:#e1f7f0;color:#109e81;padding:6px 10px;font-size:10px}
 .g4-records{display:grid;gap:9px}.g4-record{background:white;border:1px solid #e2edf3;border-radius:15px;padding:15px;text-align:left;display:grid;gap:11px;color:#274968;transition:transform .23s cubic-bezier(.16,.87,.25,1),box-shadow .23s,border-color .2s}.g4-record:hover,.g4-record.active{transform:translateY(-3px);box-shadow:0 10px 25px #115d8923;border-color:#58d2b4}

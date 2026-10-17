@@ -1,0 +1,30 @@
+name: Admin API security smoke
+on:
+  push:
+    branches: ['feat/observatorio-qa-admin']
+    paths: ['supabase/functions/observatorio-admin/**','.github/workflows/admin-security-smoke.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unauthorized:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check unauthorized routes are denied
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.error
+          base='https://dvdpgllezrmttrknbcjq.supabase.co/functions/v1/observatorio-admin'
+          with urllib.request.urlopen(base+'?config=1',timeout=30) as r:
+           info=json.loads(r.read())
+           assert r.status==200 and info.get('supabase_url','').endswith('dvdpgllezrmttrknbcjq.supabase.co')
+           assert info.get('anon_key')
+          for method in ['GET','POST']:
+           req=urllib.request.Request(base,method=method,headers={'Content-Type':'application/json'},data=b'{}' if method=='POST' else None)
+           try:
+            urllib.request.urlopen(req,timeout=30)
+            raise AssertionError('Anonymous '+method+' was not rejected')
+           except urllib.error.HTTPError as error:
+            assert error.code==401, (method,error.code)
+          print('Public config accessible; all unauthorized read/write requests rejected')
+          PY

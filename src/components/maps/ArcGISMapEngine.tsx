@@ -69,8 +69,8 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
       if(!p.code||!Number.isFinite(p.longitude)||!Number.isFinite(p.latitude)||known.has(p.code))continue;
       known.add(p.code);
       const point=new Point.default({longitude:p.longitude,latitude:p.latitude});
-      markerLayer.add(new Graphic.default({geometry:point,attributes:{kind:'place',name:p.name,code:p.code,area:p.area,altitude:p.altitude,year:p.year},symbol:flag('territory',57)}));
-      focusRef.current.set(p.code,()=>{void view.goTo({center:point,zoom:15},{duration:650}).catch(()=>{})});
+      markerLayer.add(new Graphic.default({geometry:point,attributes:{kind:'place',name:p.name,code:p.code,area:p.area,altitude:p.altitude,year:p.year},symbol:flag('territory',48)}));
+      focusRef.current.set(p.code,()=>{void view.goTo({center:point,zoom:13.5},{duration:650}).catch(()=>{})});
       pointsRef.current.push({point:{longitude:p.longitude,latitude:p.latitude},selection:{kind:'place',name:p.name,code:p.code,area:p.area??undefined,altitude:p.altitude??undefined,year:p.year}});
       locallySaved.push({code:p.code,name:p.name});
     }
@@ -121,7 +121,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
       seen.add(code);
       const centroid=(f.geometry as InstanceType<typeof Polygon.default>).centroid;
       if(!centroid||!Number.isFinite(centroid.longitude)||!Number.isFinite(centroid.latitude))continue;
-      focusRef.current.set(code,()=>{void view.goTo({center:centroid,zoom:15},{duration:650}).catch(()=>{})});
+      focusRef.current.set(code,()=>{void view.goTo({center:centroid,zoom:13.5},{duration:650}).catch(()=>{})});
       pointsRef.current.push({point:{longitude:Number(centroid.longitude),latitude:Number(centroid.latitude)},selection:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:Number(a.ZU_NAREA)||undefined,altitude:Number(a.ZU_NALTD)||undefined,year:Number(a.ZU_NANO)||2025}});
       markerLayer.add(new Graphic.default({geometry:centroid,attributes:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:a.ZU_NAREA,altitude:a.ZU_NALTD,year:a.ZU_NANO},symbol:flag('territory',57)}));
       count++;placeList.push({code,name:String(a.ZU_CNMBRE||'Centro poblado')});

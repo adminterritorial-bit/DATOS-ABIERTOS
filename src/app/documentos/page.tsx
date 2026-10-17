@@ -3,7 +3,7 @@ import Image from 'next/image';
 import {ArrowLeft,ExternalLink,FileText,BookOpen,ShieldCheck} from 'lucide-react';
 import '../icet/icet-dashboard.css';
 export const metadata={title:'Biblioteca de fuentes estadísticas | Observatorio San Pedro',description:'Fuentes y extractos municipales de estadística territorial, desarrollo y rendición de cuentas.'};
-const GH='https://github.com/adminterritorial-bit/DATOS-ABIERTOS/blob/feat/icet-dashboard-datos-reales/docs/fuentes/';
+const GH='https://github.com/adminterritorial-bit/DATOS-ABIERTOS/blob/main/docs/fuentes/';
 const FUENTES=[
  {grupo:'Series documentadas',titulo:'Educación 2020–2023: coberturas y matrícula',descripcion:'Transcripción trazable de la página 367 del informe de gestión y transición municipal.',url:GH+'EDUCACION-2020-2023.md',tipo:'Extracto verificable'},
  {grupo:'Series documentadas',titulo:'SISBÉN/RSH y Registro Único de Víctimas',descripcion:'Totales agregados, universos diferenciados, corte de septiembre de 2026 para RUV.',url:GH+'RSH-RUV-DATOS-AGREGADOS.md',tipo:'Extracto verificable'},

@@ -1,0 +1,25 @@
+name: SNIES · Educación Superior San Pedro
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/**']
+    paths: ['scripts/fuentes_snies.py', '.github/workflows/fuente-snies.yml']
+permissions:
+  contents: read
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install python-calamine==0.6.1
+      - name: Fetch official higher education profile
+        run: python scripts/fuentes_snies.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: snies-san-pedro-source-and-manifest
+          path: out/snies/
+          retention-days: 14

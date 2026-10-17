@@ -9,6 +9,7 @@ import {observacionesTerriData, type ObservacionTerritorial} from '@/lib/terriDa
 import {observacionesDocumentales,observacionesDocumentalesConAnio} from '@/lib/observacionesDocumentales2026';
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
 import {indicadoresCalculados} from '@/lib/indicadoresCalculados';
+import datosMasivos from '@/data/fuentesMasivas76670.json';
 import './icet-dashboard.css';
 type DatoVisual=ObservacionTerritorial & {nota?:string};
 
@@ -26,6 +27,8 @@ const DIRECTAS:Record<number,string>={
  26:'OFI-ICET-26-2018',
  32:'EXT-ICET-32-PENTA-2016',
  38:'DER-ICET-38-2023',
+ 43:'SALUD-DA-d65385a58-2017',
+ 44:'SALUD-DA-d153e100b-2011',
  36:'TERRI-014',
  41:'TERRI-015',
  45:'TERRI-012',
@@ -43,7 +46,13 @@ const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  estado:'DOCUMENTADO_EN_ARCHIVO',fechaGeneracion:r.periodo
 }));
 const externals=[...observacionesExternas,...indicadoresCalculados].filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo,nota:x.nota}));
-const OBS:DatoVisual[]=[...observacionesTerriData,...fuenteDocumental,...externals].filter(d=>d.divipola==='76670'&&Number.isFinite(d.valor));
+const basemasiva:DatoVisual[]=datosMasivos.observaciones
+ .filter(r=>r.divipola==='76670'&&typeof r.anio==='number'&&Number.isFinite(r.valor))
+ .map(r=>({id:r.id,titulo:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,
+  anio:r.anio as number,pagina:0,fuente:r.fuente,divipola:'76670',
+  estado:r.metodo,fechaGeneracion:'Registro de fuente pública',nota:r.nota}));
+const OBS:DatoVisual[]=Array.from(new Map([...observacionesTerriData,...fuenteDocumental,...externals,...basemasiva]
+ .filter(d=>d.divipola==='76670'&&Number.isFinite(d.valor)).map(d=>[d.id,d] as const)).values());
 const ASOCIADOS=indicadoresICET.flatMap(i=>{
  const d=OBS.find(row=>row.id===DIRECTAS[i.numero]);
  return d?[{indicador:i,observacion:d}]:[];

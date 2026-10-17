@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {ArrowDownToLine,ArrowLeft,ArrowRight,BookOpen,CalendarDays,ChartColumnIncreasing,ChevronDown,Database,ExternalLink,FileText,Filter,Info,MapPinned,Search,ShieldCheck,TrendingUp,Users,X} from 'lucide-react';
 import {indicadoresICET} from '@/lib/icetCatalog';
+import {ICET_DIRECTAS as DIRECTAS,ICET_RELACIONADAS as RELACIONADAS,ICET_VINCULOS as VINCULOS} from '@/lib/icetVinculos';
 import {observacionesTerriData, type ObservacionTerritorial} from '@/lib/terriDataExpanded';
 import {observacionesDocumentales,observacionesDocumentalesConAnio} from '@/lib/observacionesDocumentales2026';
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
@@ -13,51 +14,6 @@ import datosMasivos from '@/data/fuentesMasivas76670.json';
 import './icet-dashboard.css';
 type DatoVisual=ObservacionTerritorial & {nota?:string};
 
-/** Correspondencias directas por definición y unidad, nunca por semejanza del nombre. */
-const DIRECTAS:Record<number,string>={
- 9:'DOC-ICET-09-2023',
- 12:'DOC-FURAG-12-2021',
- 16:'TERRI-001',
- 18:'DOC-EDU-18-2023',
- 21:'DOC-EDU-21-2023',
- 22:'DOC-EDU-22-2023',
- 23:'TERRI-021',
- 24:'DOC-CNPV-24-2018',
- 25:'DOC-CNPV-25-2018',
- 26:'OFI-ICET-26-2018',
- 32:'EXT-ICET-32-PENTA-2016',
- 38:'DER-ICET-38-2023',
- 43:'SALUD-DA-d65385a58-2017',
- 44:'SALUD-DA-d153e100b-2011',
- 36:'TERRI-014',
- 41:'TERRI-015',
- 45:'TERRI-012',
- 46:'TERRI-016',
- 54:'OFI-FOR-ICET54-2023',
- 55:'DER-ICET-55-2023',
- 57:'DER-ICET-57-2025',
- 58:'OFI-FOR-ICET58-2023',
- 61:'OFI-FOR-ICET61-2024',
- 65:'UPME-ICEE-TOTAL-2024'
-};
-/** Estadísticas útiles de un tema ICET cuya definición no coincide exactamente con el numerador original. */
-const RELACIONADAS:Record<number,string>={
- 7:'TERRI-055',
- 8:'GOB-AGRO-SIEMBRA-2023',
- 14:'DER-CAT-PREDIOS-2024',
- 20:'OFI-ANALF-HOG-2018',
- 56:'FOR-MUJER-HOM-2023',
- 60:'EXT-POLICIA-HURTO-PERSONAS-2025',
- 62:'DOC-RUV-atencion',
- 4:'SSPD-APROVECHAMIENTO-PROPORCION-2024',
- 5:'SSPD-DISPOSICION-TOTAL-2024',
- 10:'DER-FIN-TRIBUTARIOS-2025',
- 42:'DOC-PAE-BENEFICIARIOS-2025',
- 59:'RUV-2025-HOMICIDIO-OCURRENCIA',
- 64:'TERRI-023',
- 66:'TERRI-027'
-};
-const VINCULOS:Record<number,string>={...RELACIONADAS,...DIRECTAS};
 const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  id:r.id,titulo:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,
  anio:r.anio,pagina:r.pagina,fuente:r.fuente,divipola:'76670',

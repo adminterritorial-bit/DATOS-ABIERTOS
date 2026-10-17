@@ -1,0 +1,46 @@
+name: Institucional · Generar logo del archivo oficial
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/**']
+    paths:
+      - 'ALCLADIA 2.ai'
+      - '.github/workflows/logo-institucional.yml'
+permissions:
+  contents: write
+jobs:
+  logo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rasterizar logo original del repositorio
+        run: |
+          command -v gs || (sudo apt-get update && sudo apt-get install -y ghostscript)
+          mkdir -p public
+          gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=pngalpha -r144 -dFirstPage=1 -dLastPage=1 -sOutputFile=/tmp/escudo-raw.png 'ALCLADIA 2.ai'
+          python -m pip install Pillow==11.3.0
+          python - <<'PY'
+          from PIL import Image, ImageChops
+          im=Image.open('/tmp/escudo-raw.png').convert('RGBA')
+          print('Original official vector rendered to', im.size)
+          corner=im.getpixel((0,0))
+          bg=Image.new('RGBA',im.size,corner)
+          bbox=ImageChops.difference(im,bg).getbbox()
+          if bbox: im=im.crop(bbox)
+          if im.width>800: im.thumbnail((800,800),Image.Resampling.LANCZOS)
+          im.save('public/escudo-san-pedro.png',optimize=True)
+          print('Official logo saved at',im.size)
+          PY
+      - name: Registrar logo sin alterar vector original
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add public/escudo-san-pedro.png
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: derive public institutional PNG from original Illustrator PDF"
+            git push origin HEAD:"$GITHUB_REF_NAME"
+          fi

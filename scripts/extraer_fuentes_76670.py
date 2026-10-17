@@ -145,6 +145,80 @@ def inspect_candidate_datasets():
             if rows:print("MUESTRA_FUENTE_"+label+"="+json.dumps({"columnas":cols[:25],"muestra":sanitized[:3]},ensure_ascii=False)[:11000])
         except Exception as e:item.update(estado="error_consulta",incidencia=str(e)[:300])
 
+
+def extract_sectoral_statistics():
+    # Dataset public national: indicators mortalidad/morbilidad, municipality+year
+    label="SALUD_MORTALIDAD_MORBILIDAD"
+    id="4e4i-ua65"
+    url="https://www.datos.gov.co/resource/"+id+".json"
+    src=REPORT["fuentes"][label]={"estado":"consultando","url":url}
+    try:
+        data=fetch(url,{"$where":"codmunicipio='76670'","$limit":50000,"$order":"a_o DESC"},timeout=100)
+        if not isinstance(data,list):raise ValueError("Respuesta no tabular")
+        # independent verification of both department and municipal code
+        rows=[r for r in data if str(r.get("codmunicipio"))=="76670" and str(r.get("coddepartamento")) in ("76","76.0") and "san pedro" in str(r.get("municipio","")).lower()]
+        src["filas_coincidentes"]=len(rows)
+        if len(data)>=50000:src["estado"]="limite_paginacion";return
+        src["estado"]="extraido" if rows else "sin_filas"
+        src["indicadores"]=sorted(set(str(x.get("indicador")) for x in rows))
+        src["anios"]=sorted(set(str(x.get("a_o")) for x in rows))
+        src["filas_agrupadas"]=[]
+        seen=set()
+        for r in rows:
+            name=str(r.get("indicador","")).strip()
+            yr=int(float(r.get("a_o"))) if number(r.get("a_o")) is not None else None
+            v=number(r.get("valor_indicador"))
+            if not name or v is None or yr is None:continue
+            k=(name,yr,v)
+            if k in seen:continue
+            seen.add(k)
+            src["filas_agrupadas"].append({"indicador":name,"anio":yr,"valor":v})
+        print("SALUD_76670_INDICADORES="+json.dumps(src["filas_agrupadas"][:300],ensure_ascii=False)[:28000])
+        # no units available in dataset: preserve original as value without invented % or rates.
+    except Exception as e:src.update(estado="error_consulta",incidencia=str(e)[:350])
+
+def extract_services_76670():
+    # Clean municipality+department instead of imprecise name search, which matches
+    # SAN PEDRO DE LOS MILAGROS (Antioquia) and other homonyms.
+    cases=[
+      ("SSPD_RESIDUOS_SAN_PEDRO","d7pt-p5fi",
+       "upper(departamento_rea_de_prestaci)='VALLE DEL CAUCA' AND upper(municipio_rea_de_prestaci)='SAN PEDRO'"),
+      ("SSPD_ACUEDUCTOS_SAN_PEDRO","yac9-kq7d",
+       "upper(departamento_prestacion)='VALLE DEL CAUCA' AND upper(municipio_prestacion)='SAN PEDRO'"),
+      ("SSPD_RUPS_SAN_PEDRO","4qkq-csdn",
+       "upper(departamento_prestacion)='VALLE DEL CAUCA' AND upper(municipio_prestacion)='SAN PEDRO'")
+    ]
+    for label,id,w in cases:
+        url="https://www.datos.gov.co/resource/"+id+".json"
+        src=REPORT["fuentes"][label]={"estado":"consultando","url":url}
+        try:
+            data=fetch(url,{"$where":w,"$limit":15000},timeout=100)
+            if not isinstance(data,list):raise ValueError("Formato no tabular")
+            src["filas_municipales"]=len(data)
+            if len(data)>=15000:src["estado"]="limite_paginacion";continue
+            src["estado"]="extraido" if data else "sin_filas"
+            if label=="SSPD_RESIDUOS_SAN_PEDRO":
+                key_year="a_o_del_cargue"
+                src["anios"]=dict(Counter(str(r.get(key_year)) for r in data))
+                src["sitios_destino"]=dict(Counter(str(r.get("tipo_de_sitio_destino")) for r in data))
+                grouped=defaultdict(lambda:{"filas":0,"ton_no_aprovechables":0.0,"ton_aprovechables":0.0,"ton_rechazo":0.0})
+                for r in data:
+                    year=str(r.get(key_year) or "sin_fecha")
+                    k=(year,str(r.get("tipo_de_sitio_destino") or ""))
+                    grouped[k]["filas"]+=1
+                    for field,dest in [("toneladas_de_residuos_no","ton_no_aprovechables"),
+                                       ("toneladas_de_residuos","ton_aprovechables"),
+                                       ("toneladas_del_rechazo_de","ton_rechazo")]:
+                        x=number(r.get(field))
+                        if x is not None:grouped[k][dest]+=x
+                src["por_anio_y_destino"]=[dict(anio=k[0],tipo_destino=k[1],**v) for k,v in grouped.items()]
+                print("RESIDUOS_76670="+json.dumps(src["por_anio_y_destino"][:70],ensure_ascii=False)[:16000])
+            else:
+                src["tipos_servicio"]=dict(Counter(str(r.get("servicio")) for r in data))
+                src["prestadores_operativos"]=len(set(str(r.get("nombre")) for r in data if str(r.get("estado","")).upper()=="OPERATIVA"))
+                print("SERVICIOS_76670_"+label+"="+json.dumps({"filas":len(data),"servicios":src["tipos_servicio"],"prestadores":src["prestadores_operativos"]},ensure_ascii=False))
+        except Exception as e:src.update(estado="error_consulta",incidencia=str(e)[:350])
+
 def discover():
     terms={"SISPRO":["SISPRO indicadores municipales salud","morbilidad municipios Colombia"],
            "INS":["SIVIGILA notificaciones evento municipio","tuberculosis dengue municipios"],
@@ -161,7 +235,7 @@ def discover():
         REPORT["fuentes"][sector+"_DISCOVERY"]={"estado":"busqueda_metadatos_no_confirma_cifras","datasets":result[:30]}
 
 if __name__=="__main__":
-    extract_upme();extract_ruv();discover();inspect_candidate_datasets()
+    extract_upme();extract_ruv();discover();inspect_candidate_datasets();extract_sectoral_statistics();extract_services_76670()
     output=OUT/"respuesta_gubernamental_76670.json"
     output.write_text(json.dumps(REPORT,ensure_ascii=False,indent=2),encoding="utf-8")
     print("MUNICIPIO 76670, REGISTROS REPRODUCIBLES",len(REPORT["observaciones"]))

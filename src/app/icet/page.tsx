@@ -5,6 +5,7 @@ import {formatear} from '@/lib/publicFeed';
 import {usePublicFeed} from '@/lib/usePublicFeed';
 import type {FeedPublico} from '@/lib/publicFeed';
 import {indicadoresICET} from '@/lib/icetCatalog';
+import {temasTerritoriales,numeroTema} from '@/lib/territorialTaxonomy';
 import {ICET_TOTAL,icetVigenciaActual,vincularICET} from '@/lib/icetMapping';
 import {ArrowLeft,ExternalLink,Database,TrendingUp} from 'lucide-react';
 export default function ICET(){
@@ -13,7 +14,7 @@ export default function ICET(){
  const linked=feed?vincularICET(feed):[];
  const latest=icetVigenciaActual(linked);
  const map=new Map(latest.map(x=>[x.codigo,x]));
- const areas=[...new Set(indicadoresICET.map(i=>i.area))];
+ const areas=temasTerritoriales.map(t=>t.nombre);
  return <main className="ot-app" style={{display:'block',minHeight:'100vh'}}><div className="ot-main" style={{maxWidth:1240}}>
  <Link href="/" style={{display:'inline-flex',alignItems:'center',gap:8,fontSize:12,fontWeight:800,color:'#126dd8'}}><ArrowLeft size={17}/> Inicio del Observatorio</Link>
  <div className="ot-hero" style={{marginTop:24,minHeight:230}}><div className="ot-hero-info"><div className="ot-overline"><span/> INTELIGENCIA TERRITORIAL · DANE</div><h1>Indicadores <em>ICET</em></h1><p>66 variables del instrumento, relacionadas con las cifras municipales recuperadas. Cada valor conserva su fuente, unidad y vigencia.</p></div><div className="ot-hero-graphic"><div className="ot-floating-box"><small>INDICADORES CON CIFRA</small><strong>{latest.length}/{ICET_TOTAL}</strong><small>Fuentes oficiales municipales</small></div></div></div>
@@ -35,7 +36,7 @@ export default function ICET(){
  <div className="ot-data-foot"><span>Vigencia: {registro.anio}</span><a href={registro.fuente_url} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:5,color:'#126fda'}}>Fuente <ExternalLink size={14}/></a></div></article>})}</div>
  </section>:<p className="ot-error">No está disponible la conexión estadística en este momento; no se mostrarán valores simulados.</p>}
  <section className="ot-panel" style={{marginTop:20}}><div className="ot-panel-head"><div><span className="ot-small-heading">CONSULTA DE LA BATERÍA COMPLETA</span><h2 style={{font:'800 21px Manrope',margin:'8px 0'}}>Diccionario de 66 indicadores</h2><p>La ausencia de una cifra no significa cero ni falta de gestión del municipio.</p></div></div>
- {areas.map(area=><details key={area} open={area==='Económico'||area==='Sociodemográfico'} style={{borderTop:'1px solid #e8eef6',padding:'15px 0'}}><summary style={{cursor:'pointer',fontSize:12,fontWeight:800,color:'#335878'}}>{area} · {indicadoresICET.filter(x=>x.area===area).length}</summary>
+ {areas.map(area=><details key={area} open={area==='Ambiente y sostenibilidad'} style={{borderTop:'1px solid #e8eef6',padding:'15px 0'}}><summary style={{cursor:'pointer',fontSize:12,fontWeight:800,color:'#335878'}}>{area} · {indicadoresICET.filter(x=>numeroTema.get(x.numero)?.nombre===area).length}</summary>
  <div style={{display:'grid',gap:0,marginTop:11}}>{indicadoresICET.filter(x=>x.area===area).map(ind=>{
   const row=map.get(ind.codigo);
   return <div key={ind.codigo} id={ind.codigo} style={{scrollMarginTop:25,display:'grid',gridTemplateColumns:'60px minmax(0,1fr) minmax(130px,200px)',gap:12,padding:'11px 7px',alignItems:'center',borderBottom:'1px solid #eff3f8',fontSize:11}}>

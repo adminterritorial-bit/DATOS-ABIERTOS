@@ -121,3 +121,11 @@ if __name__=="__main__":
         print("FUENTE",k,v.get("estado"),"FILAS",v.get("filas_municipales","-"),"ERROR",v.get("incidencia",""))
     print("OBSERVACIONES_PUBLICABLES_JSON="+json.dumps(REPORT["observaciones"],ensure_ascii=False)[:30000])
     print("ARTEFACTO_JSON="+str(output))
+    for key in ("RUV_por_hecho", "RUV_municipal"):
+        item=REPORT["fuentes"].get(key,{})
+        print("RUV_RESUMEN_"+key+"="+json.dumps({"cortes":item.get("cortes"),"tipos_reporte":item.get("tipos_reporte")},ensure_ascii=False)[:16000])
+        if key=="RUV_por_hecho":
+            rows=item.get("agregados_exploratorios_por_hecho",[])
+            print("RUV_HECHOS_ULTIMOS="+json.dumps(rows[-80:],ensure_ascii=False)[:25000])
+    for key in ("SISPRO_DISCOVERY","INS_DISCOVERY","SSPD_DISCOVERY"):
+        print("CATALOGO_"+key+"="+json.dumps(REPORT["fuentes"].get(key,{}).get("datasets",[])[:14],ensure_ascii=False)[:11000])

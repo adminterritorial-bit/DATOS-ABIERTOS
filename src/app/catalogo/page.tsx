@@ -1,4 +1,9 @@
-import {obtenerFeed} from '@/lib/publicFeed';
+'use client';
 import CatalogoClient from '@/components/CatalogoClient';
-export const dynamic='force-dynamic';
-export default async function Catalogo(){try{const d=await obtenerFeed();return <CatalogoClient rows={d.registros}/>;}catch{return <main style={{padding:40}}>La biblioteca de datos está temporalmente fuera de servicio. <a href="/">Volver al observatorio</a>.</main>}}
+import {usePublicFeed} from '@/lib/usePublicFeed';
+export default function Catalogo(){
+ const {feed,error,loading}=usePublicFeed();
+ if(loading)return <main style={{padding:40}} role="status">Consultando las estadísticas de San Pedro...</main>;
+ if(error)return <main style={{padding:40}} role="alert">Los datos no están disponibles en este momento. Intenta actualizar la página.</main>;
+ return <CatalogoClient rows={feed?.registros||[]}/>;
+}

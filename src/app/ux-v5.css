@@ -75,5 +75,5 @@
 /* Official municipal brand lock-up: full artwork, proportional, no crop. */
 .xp-side .xp-logo.n5-official-logo{display:flex;flex-direction:column;align-items:stretch;gap:10px;min-width:0;padding:0 4px 20px}
 .xp-side .n5-official-logo .g4-logo.n5-crest-wrapper{box-sizing:border-box;width:100%;max-width:239px;height:96px;flex:none;border-radius:17px;display:flex;align-items:center;justify-content:center;background:#fff!important;border:1px solid #deebe8;box-shadow:0 9px 27px #051b315a!important;overflow:hidden;padding:9px 12px}
-.xp-side .n5-official-logo .n5-crest-wrapper img{display:block;width:100%;height:100%;max-width:none;object-fit:contain;object-position:center;background:transparent;filter:none}
+.xp-side .n5-official-logo .n5-crest-wrapper img{display:block;width:100%;height:100%;max-width:none;object-fit:contain;object-position:center;background:transparent;filter:none;transform:translateY(10px)}
 .xp-side .n5-official-logo>small{display:block;text-align:center;color:#b5e5e2;letter-spacing:1.1px;font-size:9px;font-weight:850;line-height:1.5}

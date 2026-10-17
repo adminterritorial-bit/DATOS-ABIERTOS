@@ -8,6 +8,7 @@ import {indicadoresICET} from '@/lib/icetCatalog';
 import {observacionesTerriData, type ObservacionTerritorial} from '@/lib/terriDataExpanded';
 import {observacionesDocumentales,observacionesDocumentalesConAnio} from '@/lib/observacionesDocumentales2026';
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
+import {indicadoresCalculados} from '@/lib/indicadoresCalculados';
 import './icet-dashboard.css';
 
 /** Correspondencias directas por definición y unidad, nunca por semejanza del nombre. */
@@ -23,17 +24,21 @@ const DIRECTAS:Record<number,string>={
  25:'DOC-CNPV-25-2018',
  26:'OFI-ICET-26-2018',
  32:'EXT-ICET-32-PENTA-2016',
+ 38:'DER-ICET-38-2023',
  36:'TERRI-014',
  41:'TERRI-015',
  45:'TERRI-012',
- 46:'TERRI-016'
+ 46:'TERRI-016',
+ 54:'OFI-FOR-ICET54-2023',
+ 57:'OFI-FOR-ICET57-2023',
+ 58:'OFI-FOR-ICET58-2023'
 };
 const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  id:r.id,titulo:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,
  anio:r.anio,pagina:r.pagina,fuente:r.fuente,divipola:'76670',
  estado:'DOCUMENTADO_EN_ARCHIVO',fechaGeneracion:r.periodo
 }));
-const externals=observacionesExternas.filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo}));
+const externals=[...observacionesExternas,...indicadoresCalculados].filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo}));
 const OBS:ObservacionTerritorial[]=[...observacionesTerriData,...fuenteDocumental,...externals].filter(d=>d.divipola==='76670'&&Number.isFinite(d.valor));
 const ASOCIADOS=indicadoresICET.flatMap(i=>{
  const d=OBS.find(row=>row.id===DIRECTAS[i.numero]);

@@ -67,7 +67,7 @@ function IconTheme({name,size=18}:{name:string;size?:number}){
 }
 function StoryCard({item,onClick}:{item:DatoExplorador;onClick:()=>void}){
  return <motion.button layout type="button" className="xp-stat-card" whileHover={{y:-5}} whileTap={{scale:.98}} onClick={onClick}>
-  <div className="xp-stat-top"><span>{item.sector}</span><ArrowUpRight size={17}/></div><strong className="xp-stat-value">{nf(item.valor,2)} <span>{item.unidad}</span></strong>
+  <div className="xp-stat-top"><span>{item.sector}</span><ArrowUpRight size={17}/></div><strong className="xp-stat-value">{item.precision==='superior a'?'> ':['aproximado','estimación institucional'].includes(item.precision||'')?'≈ ':''}{nf(item.valor,2)} <span>{item.unidad}</span></strong>
   <h3>{item.nombre}</h3><footer><span>{item.anio} · {item.fuente}</span><span className="xp-stat-arrow"><ArrowRight size={15}/></span></footer>
  </motion.button>;
 }

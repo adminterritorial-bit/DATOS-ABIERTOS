@@ -10,6 +10,7 @@ import {observacionesDocumentales,observacionesDocumentalesConAnio} from '@/lib/
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
 import {indicadoresCalculados} from '@/lib/indicadoresCalculados';
 import './icet-dashboard.css';
+type DatoVisual=ObservacionTerritorial & {nota?:string};
 
 /** Correspondencias directas por definición y unidad, nunca por semejanza del nombre. */
 const DIRECTAS:Record<number,string>={
@@ -38,8 +39,8 @@ const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  anio:r.anio,pagina:r.pagina,fuente:r.fuente,divipola:'76670',
  estado:'DOCUMENTADO_EN_ARCHIVO',fechaGeneracion:r.periodo
 }));
-const externals=[...observacionesExternas,...indicadoresCalculados].filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo}));
-const OBS:ObservacionTerritorial[]=[...observacionesTerriData,...fuenteDocumental,...externals].filter(d=>d.divipola==='76670'&&Number.isFinite(d.valor));
+const externals=[...observacionesExternas,...indicadoresCalculados].filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo,nota:x.nota}));
+const OBS:DatoVisual[]=[...observacionesTerriData,...fuenteDocumental,...externals].filter(d=>d.divipola==='76670'&&Number.isFinite(d.valor));
 const ASOCIADOS=indicadoresICET.flatMap(i=>{
  const d=OBS.find(row=>row.id===DIRECTAS[i.numero]);
  return d?[{indicador:i,observacion:d}]:[];
@@ -60,7 +61,7 @@ export default function ICETDashboard(){
  const [anio,setAnio]=useState('Todos');
  const [busqueda,setBusqueda]=useState('');
  const [soloCifras,setSoloCifras]=useState(false);
- const [detalle,setDetalle]=useState<ObservacionTerritorial|null>(null);
+ const [detalle,setDetalle]=useState<DatoVisual|null>(null);
  const [mostrarCatalogo,setMostrarCatalogo]=useState(false);
  const [categoriaICET,setCategoriaICET]=useState('Todas');
  const [qICET,setQICET]=useState('');

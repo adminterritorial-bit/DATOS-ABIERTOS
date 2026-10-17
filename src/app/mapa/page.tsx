@@ -2,7 +2,7 @@
 
 import {useMemo,useState} from 'react';
 import Link from 'next/link';
-import {ArrowLeft,ArrowUpRight,Database,Layers,MapPin,Search,SlidersHorizontal,Activity,ExternalLink} from 'lucide-react';
+import {Calculator,ArrowLeft,ArrowUpRight,Database,Layers,MapPin,Search,SlidersHorizontal,Activity,ExternalLink} from 'lucide-react';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import {ICET_DIRECTAS,ICET_VINCULOS} from '@/lib/icetVinculos';
 import {observacionesTerriData} from '@/lib/terriDataExpanded';
@@ -106,7 +106,7 @@ export default function MapaEstadistico(){
  return <main className="gm-shell">
   <header className="gm-topbar">
    <div className="gm-identity"><span className="gm-emblem"><MapPin size={24}/></span><div><b>GEOVISOR TERRITORIAL</b><small>Observatorio de Datos Abiertos · San Pedro, Valle del Cauca</small></div></div>
-   <nav><Link href="/"><ArrowLeft size={15}/> Observatorio</Link><Link href="/icet/recuperados">Indicadores ICET <ArrowUpRight size={14}/></Link></nav>
+   <nav><Link href="/"><ArrowLeft size={15}/> Observatorio</Link><Link href="/estimador"><Calculator size={15}/> Estimador</Link><Link href="/icet/recuperados">Indicadores ICET <ArrowUpRight size={14}/></Link></nav>
   </header>
   <section className="gm-title-area"><div className="gm-eyebrow"><span/> MAPA MUNICIPAL · MGN DANE 2025</div>
    <h1>Explora el territorio <em>desde sus datos.</em></h1>

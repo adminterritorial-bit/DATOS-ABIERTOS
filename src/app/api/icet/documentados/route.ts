@@ -2,6 +2,7 @@ import {NextResponse} from 'next/server';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import {observacionesDocumentales} from '@/lib/observacionesDocumentales2026';
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
+import {indicadoresCalculados} from '@/lib/indicadoresCalculados';
 import {observacionesTerriData} from '@/lib/terriDataExpanded';
 
 export const dynamic='force-static';
@@ -12,7 +13,7 @@ export async function GET(){
   anio:x.anio,periodo:String(x.anio),fuente:x.fuente,pagina:x.pagina,
   icet:undefined,clase:'observacion',divipola:'76670'
  }));
- const anexos=[...observacionesDocumentales,...observacionesExternas].map(x=>({
+ const anexos=[...observacionesDocumentales,...observacionesExternas,...indicadoresCalculados].map(x=>({
   id:x.id,nombre:x.nombre,tema:x.sector,valor:x.valor,unidad:x.unidad,
   anio:x.anio,periodo:x.periodo,fuente:x.fuente,pagina:x.pagina,
   icet:x.codigoIcet,clase:x.vinculacion,divipola:'76670',nota:x.nota??null

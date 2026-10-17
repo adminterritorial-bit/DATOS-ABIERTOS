@@ -27,6 +27,7 @@ export const ICET_DIRECTAS:Record<number,string>={
 };
 
 export const ICET_RELACIONADAS:Record<number,string>={
+ 29:'INS-TB-ICET29-2018',
  7:'TERRI-055',
  8:'GOB-AGRO-SIEMBRA-2023',
  14:'DER-CAT-PREDIOS-2024',

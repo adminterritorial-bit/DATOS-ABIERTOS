@@ -12,7 +12,7 @@ const urlConsulta=API+'/query?'+new URLSearchParams({
 type Coord=[number,number];
 type Shape={type:string;geometry:{type:string;coordinates:Coord[][]|Coord[][][]};properties:{codigo:string;municipio:string}};
 type ArcZone={attributes:{ZU_CDIVI?:string;ZU_CNMBRE?:string;CLAS_CCDGO?:string;ZU_NAREA?:number;ZU_NALTD?:number;ZU_NANO?:number};geometry?:{rings:number[][][]}};
-const sanPedro=(municipalGeo as {features:Shape[]}).features.find(x=>x.properties.codigo==='76670');
+const sanPedro=(municipalGeo as unknown as {features:Shape[]}).features.find(x=>x.properties.codigo==='76670');
 function flat(g:Shape['geometry']):Coord[]{
  return (g.type==='Polygon'?(g.coordinates as Coord[][]).flat():(g.coordinates as Coord[][][]).flat(2));
 }

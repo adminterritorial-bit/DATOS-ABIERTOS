@@ -44,4 +44,9 @@ export const ICET_RELACIONADAS:Record<number,string>={
  66:'TERRI-027'
 };
 
-export const ICET_VINCULOS:Record<number,string>={...ICET_RELACIONADAS,...ICET_DIRECTAS};
+export const ICET_ESCENARIOS:Record<number,string>={
+ 27:'EST-ICET27-2018',
+ 28:'EST-ICET28-2018'
+};
+/** Priority: directly documented, contextual, then exploratory comparator scenario. */
+export const ICET_VINCULOS:Record<number,string>={...ICET_ESCENARIOS,...ICET_RELACIONADAS,...ICET_DIRECTAS};

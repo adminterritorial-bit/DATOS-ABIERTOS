@@ -7,6 +7,7 @@ import {ArrowDownToLine,ArrowLeft,ArrowRight,BookOpen,CalendarDays,ChartColumnIn
 import {indicadoresICET} from '@/lib/icetCatalog';
 import {observacionesTerriData, type ObservacionTerritorial} from '@/lib/terriDataExpanded';
 import {observacionesDocumentales,observacionesDocumentalesConAnio} from '@/lib/observacionesDocumentales2026';
+import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
 import './icet-dashboard.css';
 
 /** Correspondencias directas por definición y unidad, nunca por semejanza del nombre. */
@@ -17,6 +18,7 @@ const DIRECTAS:Record<number,string>={
  21:'DOC-EDU-21-2023',
  22:'DOC-EDU-22-2023',
  23:'TERRI-021',
+ 26:'OFI-ICET-26-2018',
  36:'TERRI-014',
  41:'TERRI-015',
  45:'TERRI-012',
@@ -27,7 +29,8 @@ const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  anio:r.anio,pagina:r.pagina,fuente:r.fuente,divipola:'76670',
  estado:'DOCUMENTADO_EN_ARCHIVO',fechaGeneracion:r.periodo
 }));
-const OBS:ObservacionTerritorial[]=[...observacionesTerriData,...fuenteDocumental].filter(d=>d.divipola==='76670'&&Number.isFinite(d.valor));
+const externals=observacionesExternas.filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo}));
+const OBS:ObservacionTerritorial[]=[...observacionesTerriData,...fuenteDocumental,...externals].filter(d=>d.divipola==='76670'&&Number.isFinite(d.valor));
 const ASOCIADOS=indicadoresICET.flatMap(i=>{
  const d=OBS.find(row=>row.id===DIRECTAS[i.numero]);
  return d?[{indicador:i,observacion:d}]:[];
@@ -100,6 +103,6 @@ export default function ICETDashboard(){
    </section>
    <footer className="ci-footer"><span>Observatorio territorial de San Pedro · Valle del Cauca · DIVIPOLA 76670</span><span>Las fuentes mantienen sus vigencias originales. Datos ausentes nunca se sustituyen por cero.</span></footer>
   </main>
-  {detalle&&<div className="ci-modal-mask" role="presentation" onClick={()=>setDetalle(null)}><section role="dialog" aria-modal="true" aria-label="Ficha del indicador" className="ci-modal" onClick={e=>e.stopPropagation()}><div className="ci-modal-head"><span>FICHA DE INFORMACIÓN ESTADÍSTICA</span><button aria-label="Cerrar ficha" onClick={()=>setDetalle(null)}><X size={19}/></button></div><h2>{detalle.titulo}</h2><div className="ci-modal-value">{N(detalle.valor,2)} <small>{detalle.unidad}</small></div><div className="ci-modal-meta"><div><small>Vigencia</small><strong>{detalle.anio}</strong></div><div><small>Territorio</small><strong>San Pedro · 76670</strong></div><div><small>Sector</small><strong>{detalle.sector}</strong></div><div><small>Documento</small><strong>{detalle.fuente}</strong></div><div><small>Página</small><strong>{detalle.pagina}</strong></div><div><small>Fecha ficha</small><strong>{detalle.fechaGeneracion}</strong></div></div><p><Info size={16}/> Valor documentado en el archivo citado. El período del dato no es la fecha de emisión o carga del documento.</p>{detalle.fuente.toLowerCase().includes("terridata")&&<a className="ci-modal-link" href={sourceLink} rel="noopener noreferrer" target="_blank">Consultar TerriData <ExternalLink size={15}/></a>}</section></div>}
+  {detalle&&<div className="ci-modal-mask" role="presentation" onClick={()=>setDetalle(null)}><section role="dialog" aria-modal="true" aria-label="Ficha del indicador" className="ci-modal" onClick={e=>e.stopPropagation()}><div className="ci-modal-head"><span>FICHA DE INFORMACIÓN ESTADÍSTICA</span><button aria-label="Cerrar ficha" onClick={()=>setDetalle(null)}><X size={19}/></button></div><h2>{detalle.titulo}</h2><div className="ci-modal-value">{N(detalle.valor,2)} <small>{detalle.unidad}</small></div><div className="ci-modal-meta"><div><small>Vigencia</small><strong>{detalle.anio}</strong></div><div><small>Territorio</small><strong>San Pedro · 76670</strong></div><div><small>Sector</small><strong>{detalle.sector}</strong></div><div><small>Documento</small><strong>{detalle.fuente}</strong></div><div><small>Página</small><strong>{detalle.pagina}</strong></div><div><small>Fecha ficha</small><strong>{detalle.fechaGeneracion}</strong></div></div><p><Info size={16}/> Valor documentado en el archivo citado. El período del dato no es la fecha de emisión o carga del documento.</p>{(detalle.fuente.toLowerCase().includes('terridata')||detalle.fuente.startsWith('https://'))&&<a className="ci-modal-link" href={detalle.fuente.startsWith('https://')?detalle.fuente:sourceLink} rel="noopener noreferrer" target="_blank">Consultar fuente original <ExternalLink size={15}/></a>}</section></div>}
  </div>;
 }

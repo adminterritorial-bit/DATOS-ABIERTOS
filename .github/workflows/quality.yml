@@ -18,6 +18,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Unit tests
         run: npm test
+      - name: Statistical integrity and territory guard
+        run: python3 scripts/check_statistical_integrity.py
       - name: Type checks
         run: npm run lint
       - name: Build

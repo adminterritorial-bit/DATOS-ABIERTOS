@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {obtenerFeed,formatear} from '@/lib/publicFeed';
+import type {ObservacionPublica} from '@/lib/publicFeed';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import {ArrowLeft,BookOpen,ExternalLink} from 'lucide-react';
 export const dynamic='force-dynamic';
@@ -9,7 +10,7 @@ const relaciones=[
  {icet:'ICET-36',source:'TERRI-014',year:2024,explica:'Atención del parto por personal calificado, dato de la ficha TerriData 2024.'}
 ];
 export default async function ICET(){
- let registros;try{registros=(await obtenerFeed()).registros}catch{registros=[]}
+ let registros:ObservacionPublica[]=[];try{registros=(await obtenerFeed()).registros}catch{registros=[]}
  const available=relaciones.flatMap(p=>{const registro=registros.find(x=>x.codigo===p.source&&x.anio===p.year);
   const meta=indicadoresICET.find(x=>x.codigo===p.icet);return registro&&meta?[{...p,registro,meta}]:[]});
  const areas=[...new Set(indicadoresICET.map(i=>i.area))];

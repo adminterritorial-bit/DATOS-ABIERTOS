@@ -13,6 +13,7 @@ const ChartWall=dynamic(()=>import('./ChartWall'),{ssr:false,loading:()=> <div c
 import {reunirEstadisticas,filtrarEstadisticas,itemsPorIndicador} from '@/lib/territorialDataset';
 import type {DatoExplorador,ClaseDato} from '@/lib/territorialDataset';
 import {indicadoresICET} from '@/lib/icetCatalog';
+import {derivarProporciones} from '@/lib/comparableMetrics';
 import {codigoICET,macroDimensiones,temasTerritoriales,numeroTema} from '@/lib/territorialTaxonomy';
 import type {TemaTerritorial} from '@/lib/territorialTaxonomy';
 const AnimatedCharts=dynamic(()=>import('@/components/insights/AnimatedCharts'),{ssr:false,loading:()=> <div className="xp-loading">Preparando visualizaciones…</div>});
@@ -72,7 +73,7 @@ function StoryCard({item,onClick}:{item:DatoExplorador;onClick:()=>void}){
 export default function ObservatoryExperience(){
  const {feed,loading,error}=usePublicFeed();
  const reduced=useReducedMotion();
- const all=useMemo(()=>reunirEstadisticas(feed),[feed]);
+ const all=useMemo(()=>{const existing=reunirEstadisticas(feed);return [...existing,...derivarProporciones(existing)]},[feed]);
  const [macro,setMacro]=useState<string>('Todos');
  const [tema,setTema]=useState<string>('Todos');
  const [anio,setAnio]=useState<string>('Todos');

@@ -1,18 +1,4 @@
-/* V4: diseño real de GIS y tablero ECharts. Módulos nuevos aislados, sin overrides de componentes heredados. */
-.g4-logo{height:66px!important;width:66px!important;flex:none;border-radius:18px!important;background:linear-gradient(155deg,#fff,#eafaf7)!important;box-shadow:0 12px 32px #081e4666, inset 0 0 0 2px #a7e8c8!important}
-.g4-logo img{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 5px 5px #16436f44)}
-.xp-app .xp-side{background:radial-gradient(ellipse at 12% 0%,#207971aa 0%,transparent 45%),radial-gradient(ellipse at 120% 56%,#3375b775 0%,transparent 48%),linear-gradient(150deg,#071c36 0%,#10395a 51%,#083c47 100%);border-right:1px solid #b0ecde31;box-shadow:12px 0 45px #0f385e25}
-.xp-app .xp-side:before{content:"";position:absolute;pointer-events:none;inset:0;background:linear-gradient(135deg,transparent 43%,#d1fdf409 43.1%,transparent 43.3%);background-size:52px 52px;opacity:.55}
-.xp-app .xp-logo{position:relative;z-index:1;gap:13px}
-.xp-app .xp-primary-nav button,.xp-app .xp-subnav button{position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.2,.88,.25,1),background .2s,color .2s,box-shadow .22s}
-.xp-app .xp-primary-nav button:hover,.xp-app .xp-subnav button:hover{transform:translateX(5px) scale(1.014);background:linear-gradient(105deg,#57dbc82d,#6aaafa29);box-shadow:inset 3px 0 #5bdbca,0 10px 24px #031e3c18}
-.xp-app .xp-primary-nav button.active,.xp-app .xp-subnav button.active{background:linear-gradient(120deg,#239e995c,#3d8dd947);box-shadow:inset 3px 0 #71f0d4,0 8px 22px #001c3440}
-.xp-app .xp-hero{background:radial-gradient(circle at 79% 10%,#30b59c57,transparent 40%),linear-gradient(125deg,#071d36,#115079 62%,#098177);box-shadow:0 24px 54px #0b365e2a,inset 0 1px 0 #b2f4ff5c}
-.xp-app .xp-orbit-globe{inset:55px;filter:drop-shadow(0 18px 27px #03264f88)}
-.xp-app .xp-orbit-globe img{width:155px;height:155px;object-fit:contain;filter:drop-shadow(0 10px 12px #0c214655)}
-.xp-app .xp-theme{background:linear-gradient(145deg,#fff 65%,#edf8ff);box-shadow:0 8px 23px #1647710a,inset 0 1px 0 #fff}
-.xp-app .xp-theme:hover{box-shadow:0 21px 38px #1c779c24,inset 0 1px 0 #fff}
-.xp-app .xp-ticker>div{background:linear-gradient(135deg,#fff,#f0faf9);box-shadow:0 12px 25px #0c5d6e09}
+/* V4: ArcGIS geoviewer and ECharts, independent of the existing XP layout rules. */
 .g4-explorer{--g4-navy:#14345a;--g4-green:#139d87;min-width:0;background:#fff;color:var(--g4-navy);border-radius:23px;border:1px solid #deebf1;overflow:hidden;box-shadow:0 20px 56px #174b7215}
 .g4-explorer button{font:inherit;cursor:pointer}
 .g4-explorer button:focus-visible,.g4-explorer a:focus-visible{outline:3px solid #2bb4b3;outline-offset:3px}

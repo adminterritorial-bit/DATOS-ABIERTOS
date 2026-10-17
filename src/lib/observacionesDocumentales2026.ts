@@ -28,6 +28,9 @@ for(const item of [
 for(const [year,value] of [[2020,1.6],[2021,4.5],[2022,1.8]]){
  historicos.push({id:'DOC-EDU-REL-'+year,nombre:'Tasa de deserción escolar intra-anual (reporte histórico)',sector:'Educación',valor:value,unidad:'%',anio:year,periodo:String(year),fuente:HIST,pagina:367,vinculacion:'relacionada',nota:'El informe histórico no precisa que sea exclusivamente sector oficial de básica y media. No homologar automáticamente con ICET-23.'});
 }
+const valorAgregado:ValorDocumental[]=[
+ {id:'DOC-ICET-09-2023',nombre:'Valor agregado municipal — suma de actividades económicas',sector:'Economía',valor:612.7,unidad:'miles de millones COP',anio:2023,periodo:'2023',fuente:'FICHA  TERRIDATA SAN PEDRO.pdf',pagina:10,codigoIcet:'ICET-09',vinculacion:'directa',nota:'Valor DERIVADO de componentes de igual unidad y vigencia: primarias 353,4 + secundarias 33,7 + terciarias 225,6 = 612,7. Suma sujeta al redondeo de componentes publicados, no cifra total citada textualmente.'}
+];
 const viviendaCnpv:ValorDocumental[]=[
  {id:'DOC-CNPV-24-2018',nombre:'Hogares urbanos con déficit cualitativo de vivienda',sector:'Vivienda',valor:12.2,unidad:'%',anio:2018,periodo:'CNPV 2018',fuente:'FICHA  TERRIDATA SAN PEDRO.pdf',pagina:8,codigoIcet:'ICET-24',vinculacion:'directa',nota:'Déficit habitacional cualitativo en cabeceras municipales. Fuente productora citada: DANE CNPV 2018.'},
  {id:'DOC-CNPV-25-2018',nombre:'Hogares urbanos con déficit cuantitativo de vivienda',sector:'Vivienda',valor:2.04,unidad:'%',anio:2018,periodo:'CNPV 2018',fuente:'FICHA  TERRIDATA SAN PEDRO.pdf',pagina:8,codigoIcet:'ICET-25',vinculacion:'directa',nota:'Déficit habitacional cuantitativo en cabeceras municipales. Fuente productora citada: DANE CNPV 2018.'},
@@ -65,5 +68,5 @@ const sisben:ValorDocumental[]=[
  ['secundaria','Matrícula secundaria sexto a noveno',914,'estudiantes'],
  ['media','Matrícula media décimo a undécimo',391,'estudiantes']
 ].map(([slug,nombre,valor,unidad])=>({id:'DOC-RSH-'+slug,nombre:String(nombre),valor:Number(valor),unidad:String(unidad),sector:['personas','hogares','viviendas','migrantes'].includes(String(slug))?'Demografía':['basica','secundaria','media'].includes(String(slug))?'Educación':String(slug).startsWith('salud')?'Salud':'Desarrollo social',anio:null,periodo:'El archivo suministrado no especifica fecha de corte',fuente:RSH,pagina:1,vinculacion:'adicional' as const,nota:'Registro Social de Hogares. Son universos distintos y no deben sumarse para construir una población municipal.'}));
-export const observacionesDocumentales=[...historicos,...viviendaCnpv,...furag,...ruv,...sisben];
+export const observacionesDocumentales=[...historicos,...valorAgregado,...viviendaCnpv,...furag,...ruv,...sisben];
 export const observacionesDocumentalesConAnio=observacionesDocumentales.filter((x):x is ValorDocumental & {anio:number}=>x.anio!==null);

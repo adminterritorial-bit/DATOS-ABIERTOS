@@ -6,6 +6,7 @@
 import type {ValorDocumental} from './observacionesDocumentales2026';
 import {observacionesExternas} from './observacionesFuentesExternas';
 import {poblacionDane} from './danePopulation';
+import {observacionesTerriData} from './terriDataExpanded';
 
 const DANE='https://www.dane.gov.co/index.php/estadisticas-por-tema/demografia-y-poblacion/proyecciones-de-poblacion';
 const pct=(numerador:number,denominador:number)=>{
@@ -33,10 +34,26 @@ const pareja=fuente('OFI-FOR-PAREJA-CASOS-2023',2023);
 const carros=fuente('OFI-PTS-HURTO-AUTOMOTORES-2023',2023);
 const motos=fuente('OFI-PTS-HURTO-MOTOS-2023',2023);
 
+const ph2025=8470; // Hombres, proyecciones DANE reproducidas por Telencuestas.
+const pm2025=8805; // Mujeres, mismo municipio y año.
+const p2025=poblacion(2025);
+if(ph2025+pm2025!==p2025.total)throw new Error('Desagregación de sexo incompatible con total DANE 2025');
+const tasaH=observacionesTerriData.find(r=>r.id==='TERRI-031'&&r.anio===2025&&r.divipola==='76670');
+const tasaM=observacionesTerriData.find(r=>r.id==='TERRI-033'&&r.anio===2025&&r.divipola==='76670');
+if(!tasaH||!tasaM)throw new Error('Faltan tasas por sexo del mismo año para calcular homicidios');
+const tasaHomicidios2025=(tasaH.valor*ph2025+tasaM.valor*pm2025)/p2025.total;
+
 /** El cociente de población afiliada en MAR/2023 se compara con la proyección ANUAL DANE 2023.
  * Es una medida calculada, no la cobertura certificada por el Ministerio para el día de corte.
  */
 export const indicadoresCalculados:ValorDocumental[]=[
+ {
+  id:'DER-ICET-57-2025',nombre:'Tasa total de homicidio intencional, ponderada por sexo',
+  sector:'Seguridad',valor:Math.round(tasaHomicidios2025*100)/100,
+  unidad:'homicidios por 100.000 habitantes',anio:2025,periodo:'2025',
+  fuente:'FICHA  TERRIDATA SAN PEDRO.pdf',pagina:8,codigoIcet:'ICET-57',vinculacion:'directa',
+  nota:'DERIVADO: (106,3 x 8.470 hombres + 22,7 x 8.805 mujeres) / 17.275 residentes DANE 2025 = 63,69 homicidios por 100.000 habitantes. Tasas específicas tomadas de la ficha TerriData 2025 (p. 8), y sexos de las proyecciones DANE 2025 publicadas como fuente secundaria en https://telencuestas.com/censos-de-poblacion/colombia/2025/valle-del-cauca/san-pedro . El total coincide con DANE PPED 2025, pero debe contrastarse la desagregación por sexo en el archivo original antes de certificar la tasa.'
+ },
  {
   id:'DER-ICET-38-2023',nombre:'Población afiliada al sistema de salud, calculada con registros públicos',
   sector:'Salud',valor:Math.round(pct(afiliados.valor,p2023.total)*100)/100,unidad:'%',

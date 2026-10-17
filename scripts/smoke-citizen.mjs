@@ -4,7 +4,7 @@ const errors=[];
 for(const device of [{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
  const page=await browser.newPage({viewport:{width:device.width,height:device.height}});
  page.on('pageerror',e=>errors.push(device.name+': '+String(e).slice(0,200)));
- const base='http://127.0.0.1:3000/DATOS-ABIERTOS';
+ const base=(process.env.OBSERVATORIO_BASE_URL||'http://127.0.0.1:3000/DATOS-ABIERTOS').replace(/\/$/,'');
  try{
   await page.goto(base+'/',{waitUntil:'networkidle',timeout:60000});
   await page.getByRole('button',{name:'Buscar en el Observatorio'}).click();

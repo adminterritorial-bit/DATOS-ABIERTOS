@@ -3,7 +3,7 @@
 import {useMemo,useState} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {ArrowDownToLine,ArrowLeft,ArrowRight,BookOpen,CalendarDays,ChartColumnIncreasing,ChevronDown,Database,ExternalLink,FileText,Filter,Info,MapPinned,Search,ShieldCheck,TrendingUp,Users,Water, X} from 'lucide-react';
+import {ArrowDownToLine,ArrowLeft,ArrowRight,BookOpen,CalendarDays,ChartColumnIncreasing,ChevronDown,Database,ExternalLink,FileText,Filter,Info,MapPinned,Search,ShieldCheck,TrendingUp,Users,X} from 'lucide-react';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import {observacionesTerriData, type ObservacionTerritorial} from '@/lib/terriDataExpanded';
 import './icet-dashboard.css';
@@ -90,3 +90,4 @@ export default function ICETDashboard(){
   </main>
   {detalle&&<div className="ci-modal-mask" role="presentation" onClick={()=>setDetalle(null)}><section role="dialog" aria-modal="true" aria-label="Ficha del indicador" className="ci-modal" onClick={e=>e.stopPropagation()}><div className="ci-modal-head"><span>FICHA DE INFORMACIÓN ESTADÍSTICA</span><button aria-label="Cerrar ficha" onClick={()=>setDetalle(null)}><X size={19}/></button></div><h2>{detalle.titulo}</h2><div className="ci-modal-value">{N(detalle.valor,2)} <small>{detalle.unidad}</small></div><div className="ci-modal-meta"><div><small>Vigencia</small><strong>{detalle.anio}</strong></div><div><small>Territorio</small><strong>San Pedro · 76670</strong></div><div><small>Sector</small><strong>{detalle.sector}</strong></div><div><small>Documento</small><strong>{detalle.fuente}</strong></div><div><small>Página</small><strong>{detalle.pagina}</strong></div><div><small>Fecha ficha</small><strong>{detalle.fechaGeneracion}</strong></div></div><p><Info size={16}/> Valor extraído de la ficha territorial aportada. El período del dato no es la fecha de emisión del documento.</p><a className="ci-modal-link" href={sourceLink} rel="noopener noreferrer" target="_blank">Consultar TerriData <ExternalLink size={15}/></a></section></div>}
  </div>;
+}

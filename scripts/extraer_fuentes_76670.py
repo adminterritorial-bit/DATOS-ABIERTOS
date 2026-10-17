@@ -234,8 +234,72 @@ def discover():
             except Exception as e:result.append({"consulta":q,"error":str(e)[:150]})
         REPORT["fuentes"][sector+"_DISCOVERY"]={"estado":"busqueda_metadatos_no_confirma_cifras","datasets":result[:30]}
 
+
+def create_dashboard_snapshot():
+    """Prepare publishable aggregated JSON from verified matching municipality rows.
+    Never promote a contextual value to an exact ICET measurement without definition.
+    """
+    import hashlib
+    output={"municipio":"San Pedro","divipola":CODE,"fecha_extraccion_utc":REPORT["extraido_utc"],
+      "fuentes":{
+       "UPME":"https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26",
+       "RUV":"https://www.datos.gov.co/d/9qih-4vkc",
+       "SALUD":"https://www.datos.gov.co/d/4e4i-ua65",
+       "SSPD":"https://www.datos.gov.co/d/4qkq-csdn"},
+      "observaciones":[],"cobertura":"Solo cifras y series documentadas; estadísticas relacionadas no sustituyen definición ICET"}
+    for r in REPORT["observaciones"]:
+        output["observaciones"].append(dict(r,sector="Servicios públicos",clase="directa" if r.get("icet") and r.get("metodo")=="PUBLICADO" else "adicional"))
+    matches={
+       "TASA DE FECUNDIDAD ESPECÍFICA EN MUJERES DE 15 A 19 AÑOS":"ICET-43",
+       "TASA DE MORTALIDAD EN LA NIÑEZ (MENORES DE 5 AÑOS DE EDAD)":"ICET-44",
+       "PORCENTAJE DE PARTOS ATENDIDOS POR PERSONAL CALIFICADO":"ICET-36",
+       "TASA DE MORTALIDAD EN MENORES DE UN AÑO DE EDAD":"ICET-45",
+       "TASA DE MORTALIDAD NEONATAL":"ICET-46"
+    }
+    for r in REPORT["fuentes"].get("SALUD_MORTALIDAD_MORBILIDAD",{}).get("filas_agrupadas",[]):
+        title=r["indicador"]; code=matches.get(title)
+        suffix=hashlib.sha1(title.encode()).hexdigest()[:9]
+        is_pct=title.startswith(("PORCENTAJE","PROPORCIÓN"))
+        output["observaciones"].append({
+          "id":"SALUD-DA-"+suffix+"-"+str(r["anio"]),"nombre":title,
+          "sector":"Salud","valor":r["valor"],"unidad":"%" if is_pct else "escala de la fuente por confirmar",
+          "anio":r["anio"],"fuente":output["fuentes"]["SALUD"],
+          "icet":code,"clase":"directa" if code else "adicional",
+          "metodo":"PUBLICADO","divipola":CODE,
+          "nota":"Registro del dataset público 4e4i-ua65, código municipio 76670/departamento 76. Tasas sin factor/unidad explícitos en el esquema, consultar ficha metodológica."})
+    for r in REPORT["fuentes"].get("RUV_por_hecho",{}).get("agregados_exploratorios_por_hecho",[]):
+        cut=r.get("fecha_corte","")
+        if cut not in ("31/12/2024","31/12/2025","31/08/2026"):continue
+        name=r.get("hecho","")
+        if not name:continue
+        year= int(cut[-4:])
+        code="ICET-59" if ("homicidio" in name.lower() or "desaparici" in name.lower()) else None
+        suffix=hashlib.sha1(name.encode()).hexdigest()[:8]
+        output["observaciones"].append({
+          "id":"RUV-"+suffix+"-"+cut.replace("/",""),"nombre":"RUV por ocurrencia: "+name,
+          "sector":"Víctimas","valor":r.get("per_ocu_sum_celdas"),"unidad":"suma de celdas por hecho",
+          "anio":year,"periodo":"Corte "+cut+" (acumulado histórico)",
+          "fuente":output["fuentes"]["RUV"],"icet":code,"clase":"relacionada" if code else "adicional",
+          "metodo":"AGREGADO_DOCUMENTAL","divipola":CODE,
+          "nota":"Suma de celdas desagregadas por hecho de ocurrencia. No equivale a personas únicas entre hechos, a casos ocurridos en el año del corte o a víctimas directas certificadas."})
+    for label,name,sector in [("SSPD_ACUEDUCTOS_SAN_PEDRO","Prestadores operativos de acueducto","Servicios públicos"),
+                              ("SSPD_RUPS_SAN_PEDRO","Prestadores únicos operativos de servicios públicos","Servicios públicos")]:
+        r=REPORT["fuentes"].get(label,{})
+        if r.get("estado")!="extraido":continue
+        value=r.get("prestadores_operativos")
+        if value is None:continue
+        output["observaciones"].append({
+          "id":label,"nombre":name,"sector":sector,"valor":value,"unidad":"prestadores",
+          "anio":None,"periodo":"Registro vigente al corte de extracción "+REPORT["extraido_utc"][:10],
+          "fuente":r["url"],"icet":None,"clase":"adicional","metodo":"AGREGADO_DOCUMENTAL","divipola":CODE,
+          "nota":"Entidades distintas según nombre y estado operativo en la ficha SSPD; no mide cobertura de usuarios ni calidad del agua."})
+    folder=pathlib.Path("src/data");folder.mkdir(parents=True,exist_ok=True)
+    destination=folder/"fuentesMasivas76670.json"
+    destination.write_text(json.dumps(output,ensure_ascii=False,indent=2),encoding="utf-8")
+    print("DASHBOARD_SNAPSHOT="+str(destination)+" OBSERVACIONES="+str(len(output["observaciones"])))
+
 if __name__=="__main__":
-    extract_upme();extract_ruv();discover();inspect_candidate_datasets();extract_sectoral_statistics();extract_services_76670()
+    extract_upme();extract_ruv();discover();inspect_candidate_datasets();extract_sectoral_statistics();extract_services_76670();create_dashboard_snapshot()
     output=OUT/"respuesta_gubernamental_76670.json"
     output.write_text(json.dumps(REPORT,ensure_ascii=False,indent=2),encoding="utf-8")
     print("MUNICIPIO 76670, REGISTROS REPRODUCIBLES",len(REPORT["observaciones"]))

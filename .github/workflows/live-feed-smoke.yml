@@ -3,9 +3,10 @@ on:
   push:
     branches: ['feat/**', main]
     paths:
-      - 'supabase/functions/observatorio-public-feed/**'
       - 'src/lib/publicFeed.ts'
+      - 'src/lib/icetMapping.ts'
       - '.github/workflows/live-feed-smoke.yml'
+      - 'supabase/migrations/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,18 +15,36 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Verify public endpoint, municipality and data count
+      - name: Verify municipal public endpoint, sector values, ICET joins and no private datasets
         run: |
           python - <<'PY'
-          import json, urllib.request, sys
+          import json,urllib.request
           url='https://dvdpgllezrmttrknbcjq.supabase.co/functions/v1/observatorio-public-feed'
-          with urllib.request.urlopen(url, timeout=28) as f:
-            assert f.status == 200, f.status
+          with urllib.request.urlopen(url,timeout=30) as f:
+            assert f.status==200
             data=json.loads(f.read())
-          assert data.get('divipola') == '76670', data.get('divipola')
-          records=data.get('registros')
-          assert isinstance(records,list) and len(records) >= 75, len(records or [])
+          assert data.get('divipola')=='76670'
+          records=data.get('registros',[])
+          assert len(records)>=160,len(records)
           assert all(x.get('fuente') and isinstance(x.get('valor'),(float,int)) for x in records)
-          assert not any(x.get('grupo') in ('POLICIA','ICET') for x in records)
-          print(f"PASS: {len(records)} observaciones reales publicas, municipio {data['divipola']}")
+          assert not any(x.get('grupo')=='ICET' for x in records)
+          links=data.get('vinculos_icet',[])
+          assert len(links)>=7,len(links)
+          mapping={x['codigo']:x['fuente_codigo'] for x in links}
+          for code,source,year,value,unit in [
+            ('ICET-16','DANE-POB-TOTAL',2025,17275,'personas'),
+            ('ICET-23','TERRI-021',2024,5.61,'%'),
+            ('ICET-36','TERRI-014',2024,100,'%'),
+            ('ICET-41','TERRI-015',2021,0,'x 100.000 nac. vivos'),
+            ('ICET-45','TERRI-012',2024,9.35,'x 1.000 nac. vivos'),
+            ('ICET-46','TERRI-016',2022,11.8,'x 1.000 nac. vivos'),
+            ('ICET-09','VAL-AGREGADO-2023',2023,612.7,'miles de millones $ COP')
+          ]:
+            assert mapping.get(code)==source,(code,mapping.get(code))
+            matches=[r for r in records if r['codigo']==source and r['anio']==year and r['unidad']==unit]
+            assert len(matches)==1,(code,matches)
+            assert abs(float(matches[0]['valor'])-value)<0.00001,(code,matches[0]['valor'])
+          assert any(r['codigo']=='AGRO-2023-TON' and r['valor']==533785 for r in records)
+          assert any(r['codigo']=='PRES-2025-TOTAL' and r['valor']==25694696107 for r in records)
+          print(f"PASS: {len(records)} series oficiales agregadas, {len(links)} ICET vinculados, fuentes y vigencias exactas")
           PY

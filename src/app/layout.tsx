@@ -3,6 +3,8 @@ import './globals.css';
 import './dashboard.css';
 import './citizen.css';
 import './experience.css';
+import './geo-v4.css';
+import '@arcgis/core/assets/esri/themes/light/main.css';
 import GlobalNavigation from '@/components/GlobalNavigation';
 export const metadata:Metadata={
  title:'Observatorio Territorial | Alcaldía de San Pedro',

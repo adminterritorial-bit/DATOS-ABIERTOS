@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/cache-dane-centers.mjs && next build",
     "start": "node scripts/serve-static.mjs",
     "lint": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs"
@@ -16,7 +16,9 @@
     "lucide-react": "^0.468.0",
     "pdf-lib": "^1.17.1",
     "motion": "^12.23.0",
-    "recharts": "^3.2.1"
+    "recharts": "^3.2.1",
+    "@arcgis/core": "^4.34.0",
+    "echarts": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

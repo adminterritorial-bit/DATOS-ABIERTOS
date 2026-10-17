@@ -1,96 +1,92 @@
 'use client';
-import {useEffect,useMemo,useState} from 'react';
+import {useMemo,useState} from 'react';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
-import {Compass,ExternalLink,Flag,Layers3,MapPin,Maximize2,Minus,Plus,RefreshCcw,X} from 'lucide-react';
-import municipalGeo from '@/data/geografiaMunicipal76670.json';
+import {ArrowRight,ArrowUpRight,BookOpen,Compass,ExternalLink,Filter,Flag,Layers3,LocateFixed,MapPin,Minus,Plus,Search,ShieldCheck,SlidersHorizontal,X} from 'lucide-react';
+import {AreaChart,Area,CartesianGrid,ResponsiveContainer,Tooltip,XAxis,YAxis} from 'recharts';
 import type {DatoExplorador} from '@/lib/territorialDataset';
-const API='https://geoportal.dane.gov.co/mparcgis/rest/services/Divipola/Serv_DIVIPOLA_MGN_2025/FeatureServer/305';
-const urlConsulta=API+'/query?'+new URLSearchParams({
- where:"MPIO_CDPMP='76670'",outFields:'ZU_CDIVI,ZU_CNMBRE,CLAS_CCDGO,ZU_NAREA,ZU_NALTD,ZU_NANO,MPIO_CDPMP',
- returnGeometry:'true',outSR:'4326',geometryPrecision:'5',f:'json'
-}).toString();
-type Coord=[number,number];
-type Shape={type:string;geometry:{type:string;coordinates:Coord[][]|Coord[][][]};properties:{codigo:string;municipio:string}};
-type ArcZone={attributes:{ZU_CDIVI?:string;ZU_CNMBRE?:string;CLAS_CCDGO?:string;ZU_NAREA?:number;ZU_NALTD?:number;ZU_NANO?:number};geometry?:{rings:number[][][]}};
-const sanPedro=(municipalGeo as unknown as {features:Shape[]}).features.find(x=>x.properties.codigo==='76670');
-function flat(g:Shape['geometry']):Coord[]{
- return (g.type==='Polygon'?(g.coordinates as Coord[][]).flat():(g.coordinates as Coord[][][]).flat(2));
+import {temasTerritoriales,numeroTema} from '@/lib/territorialTaxonomy';
+import type {GeoSelection} from './ArcGISMapEngine';
+const ArcGISMapEngine=dynamic(()=>import('./ArcGISMapEngine'),{ssr:false,loading:()=> <div className="g4-skeleton">Preparando ArcGIS Maps SDK y cartografía de San Pedro…</div>});
+const NF=new Intl.NumberFormat('es-CO',{maximumFractionDigits:2});
+const DANE='https://geoportal.dane.gov.co/mparcgis/rest/services/Divipola/Serv_DIVIPOLA_MGN_2025/FeatureServer/305';
+function flagForTopic(id:string){
+ if(['educacion'].includes(id))return 'education';
+ if(['atencion','epidemiologia','mortalidad'].includes(id))return 'health';
+ if(['ambiente','suelo','servicios'].includes(id))return 'environment';
+ if(['seguridad','victimas','transporte'].includes(id))return 'safety';
+ return 'municipal';
 }
-const points=sanPedro?flat(sanPedro.geometry):[];
-const bound=points.reduce((a,[x,y])=>({left:Math.min(a.left,x),right:Math.max(a.right,x),top:Math.max(a.top,y),bottom:Math.min(a.bottom,y)}),{left:180,right:-180,top:-90,bottom:90});
-const w=920,h=560,pad=62;
-const scale=Math.min((w-2*pad)/(bound.right-bound.left),(h-2*pad)/(bound.top-bound.bottom));
-const project=([lon,lat]:Coord):Coord=>[w/2+(lon-(bound.left+bound.right)/2)*scale,h/2-(lat-(bound.top+bound.bottom)/2)*scale];
-function ringPath(rings:Coord[][]){
- return rings.map(r=>r.map((coord,i)=>{const [x,y]=project(coord);return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}).join(' ')+' Z').join(' ');
+function topicMatch(d:DatoExplorador,topic:string){
+ if(d.codigoICET?.startsWith('ICET-'))return numeroTema.get(Number(d.codigoICET.slice(-2)))?.id===topic;
+ const s=(d.sector+' '+d.nombre).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const phrases:Record<string,RegExp>={
+  ambiente:/ambiente|residuo|recicl|forestal|riesgo|ecolog|vertimiento/,
+  suelo:/suelo|catastro|agric|pecuar|rural|cultivo|predial/,
+  servicios:/energia|agua potable|acueducto|alcantarillado|saneamiento|servicio publico|aseo/,
+  poblacion:/poblacion|demografia|habitantes|natalidad|fecundidad/,
+  educacion:/educacion|matricula|escuela|colegio|desercion|alfabet|estudiantes/,
+  vivienda:/vivienda|deficit|pobreza|hogares/,
+  epidemiologia:/dengue|tubercul|malaria|hepatitis|sivigila|vih|epidemiolog/,
+  atencion:/afiliacion|salud|medic|vacuna|nacidos|embarazo/,
+  mortalidad:/mortalidad|defuncion|fallecimiento|causa de muerte/,
+  economia:/economia|valor agregado|finanzas|presupuesto|recaudo|ingreso fiscal/,
+  gobierno:/gobierno|alcaldia|administracion|institucion|desempeno/,
+  transporte:/automotor|transito|vial|movilidad|vehiculo/,
+  seguridad:/homicidio|hurtos?|delito|feminicidio|suicidio|violencia|seguridad/,
+  victimas:/victima|conflicto armado|desplazamiento|reparacion|ruv/
+ };
+ return Boolean(phrases[topic]?.test(s));
 }
-const boundary=sanPedro?(sanPedro.geometry.type==='Polygon'
- ?ringPath(sanPedro.geometry.coordinates as Coord[][])
- :(sanPedro.geometry.coordinates as Coord[][][]).map(ringPath).join(' ')):'';
-function center(rings:number[][][]):Coord|null{
- if(!rings?.length||!rings[0]?.length)return null;
- const ring=rings[0];
- const pts=ring.filter(x=>x.length>1&&Number.isFinite(x[0])&&Number.isFinite(x[1]));
- if(!pts.length)return null;
- // Bounds midpoint of actual DANE geometry, not a speculative site location.
- return [pts.reduce((n,x)=>Math.min(n,x[0]),180)/2+pts.reduce((n,x)=>Math.max(n,x[0]),-180)/2,
- pts.reduce((n,x)=>Math.min(n,x[1]),90)/2+pts.reduce((n,x)=>Math.max(n,x[1]),-90)/2];
+interface Props{datos:DatoExplorador[];activeTopic?:string;onTopicChange?:(topic:string)=>void}
+function ChartSmall({series}:{series:DatoExplorador[]}){
+ const points=[...new Map([...series].sort((a,b)=>a.anio-b.anio).map(x=>[x.anio,x])).values()].map(x=>({anio:String(x.anio),valor:x.valor}));
+ if(points.length<2)return null;
+ return <div className="g4-popup-chart"><span>Evolución de la misma serie y unidad</span><ResponsiveContainer width="100%" height={132}><AreaChart data={points}><defs><linearGradient id="g4-mini" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3ccfb4" stopOpacity=".4"/><stop offset="1" stopColor="#3ccfb4" stopOpacity="0"/></linearGradient></defs><XAxis dataKey="anio" tick={{fontSize:9,fill:'#6786a0'}} axisLine={false} tickLine={false}/><YAxis width={46} tick={{fontSize:9,fill:'#6786a0'}} axisLine={false} tickLine={false}/><CartesianGrid vertical={false} strokeDasharray="4 4" stroke="#e9f0f7"/><Tooltip formatter={n=>NF.format(Number(n))}/><Area dataKey="valor" stroke="#13ae94" strokeWidth={3} type="monotone" fill="url(#g4-mini)" isAnimationActive animationDuration={740}/></AreaChart></ResponsiveContainer></div>;
 }
-const fmt=(n:number,d=1)=>new Intl.NumberFormat('es-CO',{maximumFractionDigits:d}).format(n);
-export default function ArcgisLocalMap({datos}:{datos:DatoExplorador[]}){
+export default function ArcgisLocalMap({datos,activeTopic='Todos',onTopicChange}:Props){
  const reduced=useReducedMotion();
- const [zonas,setZonas]=useState<ArcZone[]>([]);
- const [loading,setLoading]=useState(true);
- const [error,setError]=useState('');
- const [zone,setZone]=useState<ArcZone|null>(null);
- const [zoom,setZoom]=useState(1);
- const [showZones,setShowZones]=useState(true);
- useEffect(()=>{
-  const abort=new AbortController();
-  const timer=setTimeout(()=>abort.abort(),18000);
-  fetch(urlConsulta,{signal:abort.signal}).then(async r=>{
-   if(!r.ok)throw Error('Servicio cartográfico sin respuesta ('+r.status+')');
-   const data=await r.json() as {features?:ArcZone[];error?:{message?:string}};
-   if(data.error)throw Error(data.error.message||'Consulta ArcGIS rechazada');
-   if(!Array.isArray(data.features))throw Error('Geometría del servicio no disponible');
-   setZonas(data.features.filter(x=>x.geometry?.rings?.length&&x.attributes?.ZU_CNMBRE));
-  }).catch(e=>{if(!abort.signal.aborted)setError(e instanceof Error?e.message:'No disponible')}).finally(()=>{clearTimeout(timer);if(!abort.signal.aborted)setLoading(false)});
-  return ()=>{clearTimeout(timer);abort.abort()};
- },[]);
- const layers=useMemo(()=>zonas.flatMap(z=>{const c=z.geometry?.rings?center(z.geometry.rings):null;if(!c)return[];const pt=project(c);return [{zone:z,pt,code:z.attributes.ZU_CDIVI||'',name:z.attributes.ZU_CNMBRE||'Centro poblado'}]}),[zonas]);
- const pob=datos.filter(d=>/poblaci[oó]n municipal total proyectada|poblaci[oó]n total proyectada/i.test(d.nombre)&&d.unidad.toLowerCase().includes('person')).sort((a,b)=>b.anio-a.anio)[0];
- const sel=zone?.attributes;
- return <section className="xp-geo">
- <div className="xp-geo-head"><div><span className="xp-overline">GEOGRAFÍA VIVA · ARC GIS REST</span><h2>San Pedro, desde su territorio</h2><p>Límites DANE 2025, con centros poblados consultados directamente en el servicio oficial.</p></div><div className="xp-geo-controls"><button onClick={()=>setShowZones(v=>!v)} aria-pressed={showZones}><Layers3 size={16}/> Centros poblados</button><button onClick={()=>setZoom(z=>Math.max(1,z-.35))} aria-label="Alejar mapa"><Minus size={17}/></button><button onClick={()=>setZoom(z=>Math.min(2.5,z+.35))} aria-label="Acercar mapa"><Plus size={17}/></button><button onClick={()=>setZoom(1)} aria-label="Restablecer escala"><Maximize2 size={16}/></button></div></div>
- <div className="xp-geo-stage">
- <svg viewBox={'0 0 '+w+' '+h} className="xp-geo-svg" role="img" aria-label="Contorno cartográfico DANE de San Pedro y marcadores de los centros poblados obtenidos en ArcGIS">
-  <defs><linearGradient id="xp-land" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#bceaf2"/><stop offset="1" stopColor="#c9d8ff"/></linearGradient><pattern id="xp-grid" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M 44 0 L 0 0 0 44" fill="none" stroke="#e6eff7" strokeWidth="1"/></pattern><filter id="xp-land-shadow"><feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#3c79b6" floodOpacity=".2"/></filter></defs>
-  <rect width={w} height={h} fill="#f5f9ff"/><rect width={w} height={h} fill="url(#xp-grid)"/>
-  <g transform={`translate(${w/2} ${h/2}) scale(${zoom}) translate(${-w/2} ${-h/2})`}>
-   <path d={boundary} fill="url(#xp-land)" stroke="#3888b6" strokeWidth={2/zoom} filter="url(#xp-land-shadow)" strokeLinejoin="round" fillRule="evenodd"/>
-   {showZones&&layers.map((p,i)=><g key={p.code+'-'+i} className="xp-zone-pin" tabIndex={0} role="button" aria-label={'Consultar '+p.name} onClick={()=>setZone(p.zone)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setZone(p.zone)}}}>
-    <circle cx={p.pt[0]} cy={p.pt[1]} r={19/zoom} fill="#fff" opacity=".84"/>
-    <circle cx={p.pt[0]} cy={p.pt[1]} r={13/zoom} fill="#1269ce" stroke="#fff" strokeWidth={2.6/zoom}/>
-    <path d={'M '+(p.pt[0]-4/zoom)+' '+(p.pt[1]-5/zoom)+' v '+10/zoom+' M '+(p.pt[0]-4/zoom)+' '+(p.pt[1]-5/zoom)+' h '+8/zoom+' v '+6/zoom+' h '+(-8/zoom)} stroke="#fff" strokeWidth={1.7/zoom} fill="none"/>
-    <title>{p.name} · geometría oficial, abre ficha</title>
-   </g>)}
-  </g>
-  <g className="xp-geo-compass"><circle cx="48" cy="48" r="25" fill="white" stroke="#dce9f6"/><path d="M48 26 L43 43 L53 43 Z" fill="#1d67bb"/><text x="48" y="62" textAnchor="middle" fontSize="12" fill="#4b6986" fontWeight="800">N</text></g>
-  <text x="23" y="528" fill="#54718f" fontSize="12" fontWeight="700">DANE · DIVIPOLA 76670 · MGN 2025</text>
- </svg>
- <div className="xp-map-notes"><div><MapPin size={16}/> <b>San Pedro</b> · Valle del Cauca</div><div><Flag size={16}/>{loading?'Consultando ArcGIS…':error?'Límite municipal disponible':layers.length+' zonas georreferenciadas'}</div></div>
- </div>
- <div className="xp-geo-footer">{error?<p><Compass size={15}/> Los centros poblados no pudieron consultarse ahora: {error}. Se conserva el límite oficial del municipio. <a href={API} target="_blank" rel="noopener noreferrer">Consultar servicio <ExternalLink size={13}/></a></p>:<p>Los pines corresponden exclusivamente a polígonos devueltos por el servicio ArcGIS del DANE. Haz clic para consultar sus atributos geográficos.</p>}
- <p><strong>Precisión territorial:</strong> la cifra municipal de población {pob?('('+fmt(pob.valor,0)+' personas, '+pob.anio+')'):''} no se distribuye entre centros poblados ni veredas si la fuente no suministra esa desagregación.</p></div>
- <AnimatePresence>{zone&&<motion.div className="xp-zone-backdrop" initial={reduced?false:{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setZone(null)}>
- <motion.section role="dialog" aria-modal="true" aria-label={'Información de '+sel?.ZU_CNMBRE} initial={reduced?false:{scale:.94,y:24}} animate={{scale:1,y:0}} transition={{type:'spring',stiffness:280,damping:28}} onClick={e=>e.stopPropagation()}>
-  <button className="xp-modal-close" aria-label="Cerrar ficha territorial" onClick={()=>setZone(null)}><X size={17}/></button>
-  <span className="xp-overline">FICHA GEOESPACIAL · DANE 2025</span>
-  <h2>{sel?.ZU_CNMBRE||'Zona oficial'}</h2>
-  <p>{sel?.CLAS_CCDGO==='1'?'Cabecera municipal':sel?.CLAS_CCDGO==='2'?'Centro poblado':'Zona clasificada por DANE'} · Código {sel?.ZU_CDIVI}</p>
-  <div className="xp-zone-facts"><div><span>Área geográfica registrada</span><strong>{typeof sel?.ZU_NAREA==='number'?fmt(sel.ZU_NAREA/1000000,3)+' km²':'Sin dato'}</strong></div><div><span>Altitud media</span><strong>{typeof sel?.ZU_NALTD==='number'?fmt(sel.ZU_NALTD,0)+' m':'Sin dato'}</strong></div><div><span>Población específica</span><strong>Sin cifra desagregada</strong></div></div>
-  <div className="xp-zone-reality"><Flag size={18}/><p>Las alertas, problemas y habitantes solo se presentarán para esta zona cuando exista un registro oficial con el mismo código o geometría. Los datos agregados del municipio no se trasladan a un centro poblado.</p></div>
-  <a href={API} target="_blank" rel="noopener noreferrer" className="xp-geo-source">Fuente ArcGIS DANE <ExternalLink size={16}/></a>
- </motion.section></motion.div>}</AnimatePresence>
+ const [selection,setSelection]=useState<GeoSelection|null>(null);
+ const [topic,setTopic]=useState('Todos');
+ const [q,setQ]=useState('');
+ const [layers,setLayers]=useState(true);
+ const [status,setStatus]=useState('Preparando mapa geográfico…');
+ const [places,setPlaces]=useState<{code:string;name:string}[]>([]);
+ const [focusKey,setFocusKey]=useState('');
+ const [command,setCommand]=useState<{type:'home'|'in'|'out';nonce:number}>({type:'home',nonce:0});
+ const [detail,setDetail]=useState<DatoExplorador|null>(null);
+ const chosen=activeTopic!=='Todos'?activeTopic:topic;
+ const mapped=useMemo(()=>datos.filter(d=>chosen==='Todos'||topicMatch(d,chosen)).filter(d=>d.clase!=='Estimación'),[datos,chosen]);
+ const result=useMemo(()=>{
+  const normalized=q.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const rows=mapped.filter(d=>!normalized||(d.nombre+' '+d.sector+' '+d.fuente).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(normalized));
+  return [...new Map([...rows].sort((a,b)=>b.anio-a.anio).map(d=>[d.nombre+'|'+d.unidad,d])).values()].slice(0,20);
+ },[mapped,q]);
+ const localPlaces=places.filter(p=>p.name.toLocaleLowerCase('es').includes(q.toLocaleLowerCase('es')));
+ const change=(id:string)=>{setTopic(id);onTopicChange?.(id);setDetail(null)};
+ const zoom=(type:'home'|'in'|'out')=>{setCommand({type,nonce:Date.now()});if(type==='home')setFocusKey('home')};
+ const serie=detail?datos.filter(d=>d.nombre===detail.nombre&&d.unidad===detail.unidad&&d.clase===detail.clase):[];
+ return <section className="g4-explorer">
+  <div className="g4-topline"><div><span className="g4-eyebrow"><span/> CARTOGRAFÍA INTERACTIVA · ARCGIS MAPS SDK</span><h2>San Pedro se explora, no se imagina.</h2><p>Mapa navegable con calles reales, límites DANE y banderas ancladas al territorio. Los indicadores municipales se consultan por sectores.</p></div><div className="g4-map-pill"><MapPin size={16}/> DIVIPOLA 76670</div></div>
+  <div className="g4-layout">
+   <div className="g4-map-column">
+    <div className="g4-map-toolbar"><div className="g4-layer-chip"><Layers3 size={17}/><span>CAPAS</span></div><button aria-pressed={layers} onClick={()=>setLayers(s=>!s)} className={layers?'is-active':''}><Flag size={16}/> Centros DANE</button><button onClick={()=>{setSelection({kind:'municipal',name:'San Pedro · consulta municipal',code:'76670'});setDetail(null)}}><BookOpen size={16}/> Indicadores</button><span className="g4-grow"/><button onClick={()=>zoom('out')} aria-label="Alejar mapa"><Minus size={18}/></button><button onClick={()=>zoom('in')} aria-label="Acercar mapa"><Plus size={18}/></button><button onClick={()=>zoom('home')} aria-label="Centrar en San Pedro"><LocateFixed size={18}/></button></div>
+    <div className="g4-map-scene"><ArcGISMapEngine visible={layers} onSelect={s=>{setSelection(s);setDetail(null);setQ('')}} onStatus={setStatus} onPlaces={setPlaces} focusKey={focusKey} cameraCommand={command}/><div className="g4-map-floating-legend"><img src="/DATOS-ABIERTOS/geo-flags/territory.svg" alt="Bandera de sitio cartografiado"/><span>Ubicación DANE georreferenciada</span></div><div className="g4-map-copyright">© OpenStreetMap contributors · © DANE MGN 2025 · Powered by Esri</div></div>
+    <div className="g4-map-status"><span className="g4-dot"/><p>{status}</p><a href={DANE} target="_blank" rel="noopener noreferrer">Fuente <ExternalLink size={13}/></a></div>
+   </div>
+   <aside className="g4-console" aria-label="Panel de control y consulta territorial">
+     <div className="g4-console-header"><div className="g4-emblem"><Flag size={22}/></div><div><span className="g4-eyebrow">EXPLORADOR CIUDADANO</span><h3>Tu municipio, en perspectiva.</h3></div></div>
+     <label className="g4-search"><Search size={18}/><input value={q} placeholder="Busca una cifra o un lugar…" onChange={e=>setQ(e.target.value)} aria-label="Buscar indicadores y lugares"/></label>
+     <div className="g4-categories" role="group" aria-label="Categoría cartográfica"><button aria-pressed={chosen==='Todos'} className={chosen==='Todos'?'active':''} onClick={()=>change('Todos')}>Todos</button>{temasTerritoriales.map(t=><button key={t.id} aria-pressed={chosen===t.id} className={chosen===t.id?'active':''} onClick={()=>change(t.id)}><img src={'/DATOS-ABIERTOS/geo-flags/'+flagForTopic(t.id)+'.svg'} alt="" width="20" height="22"/>{t.nombre}</button>)}</div>
+     <div className="g4-console-section">
+      <header><span>{selection?.kind==='place'?'LUGAR DEL DANE':selection?.kind==='municipal'?'CONSULTA MUNICIPAL':'INDICADORES DEL MUNICIPIO'}</span><strong>{result.length} fichas</strong></header>
+      {selection?.kind==='place'?<div className="g4-place-detail"><h3>{selection.name}</h3><p>Centro poblado o cabecera obtenido de la capa DANE 2025, código {selection.code}.</p><div className="g4-place-info">{typeof selection.area==='number'&&<span>Área <b>{NF.format(selection.area/1e6)} km²</b></span>}{typeof selection.altitude==='number'&&<span>Altitud <b>{NF.format(selection.altitude)} m</b></span>}</div><p className="g4-place-scope">Los indicadores siguientes corresponden al municipio completo; solo se atribuirán al lugar cuando los registros incluyan ese código de zona.</p><button onClick={()=>setSelection({kind:'municipal',name:'San Pedro · consulta municipal',code:'76670'})}>Ver consulta municipal <ArrowRight size={16}/></button></div>:null}
+      {!!localPlaces.length&&q&&<div className="g4-location-results"><span>Lugares encontrados</span>{localPlaces.map(p=><button key={p.code} onClick={()=>{setFocusKey(p.code);setSelection({kind:'place',name:p.name,code:p.code});setQ('')}}><MapPin size={15}/>{p.name}<ArrowUpRight size={14}/></button>)}</div>}
+      <div className="g4-records">{result.map(d=><button key={d.id} className={'g4-record '+(detail?.id===d.id?'active':'')} onClick={()=>{setDetail(d);if(!selection)setSelection({kind:'municipal',name:'San Pedro · consulta municipal',code:'76670'})}}><span className="g4-record-top"><span>{d.sector} · {d.anio}</span><ArrowUpRight size={15}/></span><strong>{d.nombre}</strong><span className="g4-record-bottom"><b>{NF.format(d.valor)} <small>{d.unidad}</small></b><span>{d.clase}</span></span></button>)}</div>
+     </div>
+   </aside>
+  </div>
+  <AnimatePresence>{detail&&<motion.div className="g4-dialog-backdrop" initial={reduced?false:{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setDetail(null)}><motion.section role="dialog" aria-modal="true" aria-label={'Ficha de '+detail.nombre} className="g4-dialog" initial={reduced?false:{y:32,opacity:0}} animate={{y:0,opacity:1}} exit={{y:32,opacity:0}} onClick={e=>e.stopPropagation()}><button aria-label="Cerrar ventana" className="g4-close" onClick={()=>setDetail(null)}><X size={19}/></button><span className="g4-eyebrow">FICHA DEL INDICADOR · {detail.anio}</span><h2>{detail.nombre}</h2><strong className="g4-number">{NF.format(detail.valor)} <small>{detail.unidad}</small></strong><ChartSmall series={serie}/><dl><div><dt>Alcance</dt><dd>Municipio de San Pedro, DIVIPOLA 76670</dd></div><div><dt>Vigencia</dt><dd>{detail.anio}</dd></div><div><dt>Fuente</dt><dd>{detail.fuente}</dd></div><div><dt>Naturaleza</dt><dd>{detail.clase}</dd></div></dl>{detail.nota&&<p className="g4-note">{detail.nota}</p>}<footer>{detail.fuenteUrl?<a href={detail.fuenteUrl} target="_blank" rel="noopener noreferrer">Abrir fuente original <ExternalLink size={15}/></a>:<Link href="/documentos/">Consultar biblioteca <BookOpen size={15}/></Link>}<button onClick={()=>setDetail(null)}>Regresar al mapa</button></footer></motion.section></motion.div>}</AnimatePresence>
  </section>;
 }

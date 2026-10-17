@@ -1,7 +1,7 @@
 {
   "municipio": "San Pedro",
   "divipola": "76670",
-  "fecha_extraccion_utc": "2026-10-17T03:26:05.494426+00:00",
+  "fecha_extraccion_utc": "2026-10-17T03:34:00.755000+00:00",
   "fuentes": {
     "UPME": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26",
     "RUV": "https://www.datos.gov.co/d/9qih-4vkc",

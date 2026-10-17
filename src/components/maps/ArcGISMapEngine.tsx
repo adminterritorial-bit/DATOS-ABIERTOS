@@ -21,6 +21,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
  const goHome=useRef<(()=>void)|null>(null);
  const zoomRef=useRef<((step:number)=>void)|null>(null);
  const focusRef=useRef<Map<string,()=>void>>(new Map());
+ const pointsRef=useRef<{point:{longitude:number;latitude:number};selection:GeoSelection}[]>([]);
  const selectRef=useRef(onSelect),statusRef=useRef(onStatus),readyRef=useRef(onReady),placesRef=useRef(onPlaces);
  const [failure,setFailure]=useState('');
  const [retry,setRetry]=useState(0);
@@ -57,6 +58,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
     const flag=(file:string,size=64)=>new PictureMarkerSymbol.default({url:basePath+'/geo-flags/'+file+'.svg',width:size,height:size*1.25,yoffset:20});
     const city=new Graphic.default({geometry:new Point.default({longitude:center[0],latitude:center[1]}),attributes:{kind:'municipal',code:'76670',name:'San Pedro · consulta municipal'},symbol:flag('municipal',72)});
     consultLayer.add(city);
+    pointsRef.current=[{point:{longitude:center[0],latitude:center[1]},selection:{kind:'municipal',name:'San Pedro · consulta municipal',code:'76670'}}];
     await view.when();
     if(destroyed){view.destroy();return}
     const home=()=>{const geographicBounds=polygon.extent;if(geographicBounds)void view.goTo(geographicBounds.expand(1.25),{duration:650}).catch(()=>{})};
@@ -69,21 +71,42 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
       const point=new Point.default({longitude:p.longitude,latitude:p.latitude});
       markerLayer.add(new Graphic.default({geometry:point,attributes:{kind:'place',name:p.name,code:p.code,area:p.area,altitude:p.altitude,year:p.year},symbol:flag('territory',57)}));
       focusRef.current.set(p.code,()=>{void view.goTo({center:point,zoom:15},{duration:650}).catch(()=>{})});
+      pointsRef.current.push({point:{longitude:p.longitude,latitude:p.latitude},selection:{kind:'place',name:p.name,code:p.code,area:p.area??undefined,altitude:p.altitude??undefined,year:p.year}});
       locallySaved.push({code:p.code,name:p.name});
     }
     placesRef.current?.(locallySaved);
     statusRef.current('Mapa real activo · '+locallySaved.length+' lugares DANE en respaldo · portal municipal');
 
     const click=view.on('click',async ev=>{
+      if(destroyed)return;
+      let selected:GeoSelection|undefined;
       const result=await view.hitTest(ev,{include:[markerLayer,consultLayer]}).catch(()=>null);
-      if(!result||destroyed)return;
-      const hit=result.results.find((r)=>'graphic'in r&&r.graphic?.attributes?.kind);
-      const a=hit&&'graphic'in hit?hit.graphic?.attributes:undefined;
-      if(!a)return;
-      if(a.kind==='municipal')selectRef.current({kind:'municipal',name:'San Pedro · indicadores municipales',code:'76670'});
-      else if(a.kind==='place')selectRef.current({kind:'place',name:String(a.name||'Centro poblado'),code:String(a.code||''),area:Number(a.area)||undefined,altitude:Number(a.altitude)||undefined,year:Number(a.year)||2025});
+      const found=result?.results.find(r=>'graphic'in r&&r.graphic?.attributes?.kind);
+      const attrs=found&&'graphic'in found?found.graphic?.attributes:undefined;
+      if(attrs?.kind==='municipal')selected={kind:'municipal',name:'San Pedro · consulta municipal',code:'76670'};
+      else if(attrs?.kind==='place')selected={kind:'place',name:String(attrs.name||'Centro poblado'),code:String(attrs.code||''),area:Number(attrs.area)||undefined,altitude:Number(attrs.altitude)||undefined,year:Number(attrs.year)||2025};
+      // SVG markers may be hit-tested at their anchor rather than the visible tip of a 2.5D flag.
+      // Pixel-space proximity is explicitly screen-based and never changes verified coordinates.
+      if(!selected){
+       let nearest=Infinity;
+       for(const target of pointsRef.current){
+        const projected=view.toScreen(new Point.default(target.point));
+        if(!projected)continue;
+        const distance=Math.hypot(projected.x-ev.x,projected.y-ev.y);
+        if(distance<nearest&&distance<=54){nearest=distance;selected=target.selection}
+       }
+      }
+      if(selected)selectRef.current(selected);
     });
-    cleanup=()=>{click.remove();view.destroy();viewRef.current=null;graphicsRef.current=null;goHome.current=null;zoomRef.current=null;focusRef.current.clear();readyRef.current?.(false)};
+    const hover=view.on('pointer-move',ev=>{
+      let near=false;
+      for(const target of pointsRef.current){
+       const pos=view.toScreen(new Point.default(target.point));
+       if(pos&&Math.hypot(pos.x-ev.x,pos.y-ev.y)<=48){near=true;break}
+      }
+      if(view.container)view.container.style.cursor=near?'pointer':'grab';
+    });
+    cleanup=()=>{click.remove();hover.remove();view.destroy();viewRef.current=null;graphicsRef.current=null;goHome.current=null;zoomRef.current=null;focusRef.current.clear();pointsRef.current=[];readyRef.current?.(false)};
     graphicsRef.current=markerLayer as unknown as {visible:boolean};markerLayer.visible=visible;
     // A remote source can be blocked by CORS. This cannot remove the OSM basemap or municipal access.
     try{
@@ -99,6 +122,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
       const centroid=(f.geometry as InstanceType<typeof Polygon.default>).centroid;
       if(!centroid||!Number.isFinite(centroid.longitude))continue;
       focusRef.current.set(code,()=>{void view.goTo({center:centroid,zoom:15},{duration:650}).catch(()=>{})});
+      pointsRef.current.push({point:{longitude:centroid.longitude,latitude:centroid.latitude},selection:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:Number(a.ZU_NAREA)||undefined,altitude:Number(a.ZU_NALTD)||undefined,year:Number(a.ZU_NANO)||2025}});
       markerLayer.add(new Graphic.default({geometry:centroid,attributes:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:a.ZU_NAREA,altitude:a.ZU_NALTD,year:a.ZU_NANO},symbol:flag('territory',57)}));
       count++;placeList.push({code,name:String(a.ZU_CNMBRE||'Centro poblado')});
      }

@@ -35,7 +35,7 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
  const temporal=serie?[...serie].sort((a,b)=>a.anio-b.anio).map(x=>({name:String(x.anio),valor:x.valor,source:x})):null;
  const comparables=base.filter(x=>x.anio===latest);
  const ranking=Array.from(new Map(comparables.map(x=>[x.nombre,x])).values()).sort((a,b)=>b.valor-a.valor).slice(0,9).map((x,i)=>({...x,name:x.nombre.length>28?x.nombre.slice(0,26)+'…':x.nombre,indice:i}));
- const areParts=ranking.length>=2&&!barUnitExcluded(unidad)&&ranking.every(r=>r.valor>=0)&&ranking.reduce((n,r)=>n+r.valor,0)<=102;
+ const areParts=ranking.length>=2&&ranking.length<=6&&!barUnitExcluded(unidad)&&ranking.every(r=>r.valor>=0)&&Math.abs(ranking.reduce((n,r)=>n+r.valor,0)-100)<1.5&&ranking.every(r=>r.nombre.toLowerCase().split(' ').slice(0,2).join(' ')===ranking[0].nombre.toLowerCase().split(' ').slice(0,2).join(' '));
  const disponible:ChartMode[]=areParts?['ranking','tendencia','participacion']:['ranking','tendencia'];
  const chosen=tipo==='participacion'&&!areParts?'ranking':tipo;
  const active=chosen==='tendencia'&&!temporal?'ranking':chosen;
@@ -61,7 +61,7 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
       </AreaChart>
      </ResponsiveContainer>
     :active==='participacion'&&areParts?
-     <div className="xp-pie-stage"><ResponsiveContainer width="100%" height={320}><PieChart><Pie data={ranking} dataKey="valor" nameKey="name" innerRadius="63%" outerRadius="84%" paddingAngle={3} cornerRadius={8} isAnimationActive={!reduced} animationDuration={1000} onClick={(_p,index)=>onOpen(comparables[index]||ranking[index])}>{ranking.map((d,i)=><Cell key={d.id} fill={PALETTE[i%PALETTE.length]}/>)}</Pie><Tooltip contentStyle={tooltipStyle} formatter={x=>format(Number(x),2)+' '+unidad}/></PieChart></ResponsiveContainer><div className="xp-pie-legend">{ranking.map((d,i)=><button key={d.id} onClick={()=>onOpen(d)}><span style={{background:PALETTE[i%PALETTE.length]}}/>{d.name} <b>{format(d.valor,1)}</b></button>)}</div></div>
+     <div className="xp-pie-stage"><ResponsiveContainer width="100%" height={320}><PieChart><Pie data={ranking} dataKey="valor" nameKey="name" innerRadius="63%" outerRadius="84%" paddingAngle={3} cornerRadius={8} isAnimationActive={!reduced} animationDuration={1000} onClick={(_p,index)=>onOpen(ranking[index])}>{ranking.map((d,i)=><Cell key={d.id} fill={PALETTE[i%PALETTE.length]}/>)}</Pie><Tooltip contentStyle={tooltipStyle} formatter={x=>format(Number(x),2)+' '+unidad}/></PieChart></ResponsiveContainer><div className="xp-pie-legend">{ranking.map((d,i)=><button key={d.id} onClick={()=>onOpen(d)}><span style={{background:PALETTE[i%PALETTE.length]}}/>{d.name} <b>{format(d.valor,1)}</b></button>)}</div></div>
     :<ResponsiveContainer width="100%" height={Math.max(315,ranking.length*42+70)}>
       <BarChart data={[...ranking].reverse()} layout="vertical" margin={{top:10,right:30,bottom:10,left:6}}>
        <defs><linearGradient id="xp-bar-shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#2e75ed"/><stop offset="75%" stopColor="#20a9ca"/><stop offset="100%" stopColor="#56d6c3"/></linearGradient></defs>

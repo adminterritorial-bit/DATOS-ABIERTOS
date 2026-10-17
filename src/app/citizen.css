@@ -44,3 +44,8 @@
 @media(max-width:1050px){.ot-document-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:660px){.ot-global-placement{right:13px;bottom:13px}.ot-global-search{padding:11px 14px}.ot-global-search span{font-size:11px}.ot-global-search kbd{display:none}.ot-document-grid{grid-template-columns:1fr}.ot-cmd-dialog{max-height:85vh}.ot-cmd-backdrop{padding-top:25px}.ot-cmd-head{height:60px}}
 @media(prefers-reduced-motion:reduce){.ot-global-search,.ot-cmd-backdrop,.ot-cmd-result,.ot-document-card{transition:none!important;animation:none!important}.ot-cmd-result:hover,.ot-document-card:hover,.ot-global-search:hover{transform:none}}
+
+.ot-global-placement{display:flex;align-items:center;gap:10px}
+.ot-global-documents{background:#fff;border:1px solid #e2ebf5;border-radius:40px;box-shadow:0 12px 24px rgba(17,71,151,.10);padding:12px 15px;display:inline-flex;align-items:center;gap:9px;cursor:pointer;color:#1764bb;font:800 11px "Century Gothic",Arial,sans-serif}
+.ot-global-documents:focus-visible{outline:3px solid #77b6fb;outline-offset:3px}
+@media(max-width:660px){.ot-global-documents{font-size:0;padding:11px}.ot-global-documents svg{width:18px;height:18px}}

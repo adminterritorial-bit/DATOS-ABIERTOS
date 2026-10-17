@@ -1,6 +1,8 @@
 name: Extracción municipal 76670 · UPME y RUV
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 11 * * 1' # lunes 06:00 Colombia (UTC-5)
   push:
     branches:
       - feat/icet-recuperacion-documental

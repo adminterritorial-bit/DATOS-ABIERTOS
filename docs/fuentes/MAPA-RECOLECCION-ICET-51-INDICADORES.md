@@ -73,6 +73,17 @@ Fecha de búsqueda: 16/10/2026. Uso: insumo técnico para alimentar dashboard we
 | 65 | Cobertura de energía eléctrica | SSPD/SUI; IPSE/UPME; operador; DANE CNPV |
 | 66 | Porcentaje de la población con acceso a métodos de saneamiento adecuados | SSPD/SUI; IPSE/UPME; operador; DANE CNPV |
 
+## Fuentes adicionales identificadas en el rastreo
+
+**ICET 65 — Cobertura de energía eléctrica:** UPME publica el índice ICEE con **anexos descargables por municipio** en 2023 y 2024; es una fuente directa prometedora para San Pedro 76670, distinta de la cobertura rural TerriData.
+- Metodología y anexos: https://www.upme.gov.co/simec/energia-electrica/cobertura/indice-de-cobertura-de-energia-electrica-icee/
+- Archivo municipal 2024: https://docs.upme.gov.co/SIMEC/Energia%20Electrica/Documents/Informes_cobertura/Anexo_ICEE_2024_dpto_mpio.xlsx
+- Archivo municipal 2023: https://docs.upme.gov.co/SIMEC/Energia%20Electrica/Documents/Informes_cobertura/Anexo_ICEE_2023_dpto_mpio.xlsx
+
+**ICET 17, 19, 21, 22, 23 — Educación:** el Ministerio de Educación anunció el 8/7/2026 los archivos «Cobertura en cifras por municipios y departamentos 2025»: https://www.mineducacion.gov.co/portal/anos/2026/350799:Informacion-Cobertura-en-cifras-2025. En la consulta web los enlaces directos `articles-350799_recurso_15.xlsm` y `recurso_16.xlsb` arrojaron 404, así que **no inventar cifras**: reintentar desde navegación del portal o buscar copia oficial de archivo reubicado.
+
+**ICET 57 — Tasa de homicidios:** consultar https://www.minjusticia.gov.co/programas-co/politica-criminal/Paginas/SIPC-Tasa-de-Homicidios-Basada-en-reporte-de-homicidios-de-la-Policia-Nacional.aspx, que declara medición municipal basada en DIJIN y DANE. **ICET 55/60/61:** explorar registros policiales `CANTIDAD`, no usar `filas` como número confirmado de casos.
+
 ## Datos adicionales incorporados al código
 
 - ICET #32: 108,8 % de cobertura administrativa pentavalente menores de 1 año, 2016, PDT 2020–2023, p. 181, y metodología MinSalud de tercera dosis. Cobertura administrativa superior al 100 % no es error por sí solo.

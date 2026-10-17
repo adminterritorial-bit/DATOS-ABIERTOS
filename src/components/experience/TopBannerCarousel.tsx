@@ -5,10 +5,10 @@ import {ChevronLeft,ChevronRight,Pause,Play,ArrowUpRight} from 'lucide-react';
 import Link from 'next/link';
 const BASE='/DATOS-ABIERTOS/banners/';
 export const slides=[
- {name:'Observatorio de Datos',src:BASE+'observatorio.webp',text:'Datos que cuentan lo que somos',link:'/temas/'},
- {name:'San Pedro en el mapa',src:BASE+'geografia.webp',text:'Conoce tu territorio, punto a punto',link:'/mapa/'},
- {name:'Un nuevo futuro se avecina',src:BASE+'futuro.webp',text:'Descubre las historias detrás de los datos',link:'/temas/'},
- {name:'Creado por Juan E. Perez T.',src:BASE+'creditos.webp',text:'Tecnología que acerca a las personas',link:'/documentos/'}
+ {name:'Observatorio de Datos',src:BASE+'observatorio.avif',text:'Datos que cuentan lo que somos',link:'/temas/'},
+ {name:'San Pedro en el mapa',src:BASE+'geografia.avif',text:'Conoce tu territorio, punto a punto',link:'/mapa/'},
+ {name:'Un nuevo futuro se avecina',src:BASE+'futuro.avif',text:'Descubre las historias detrás de los datos',link:'/temas/'},
+ {name:'Creado por Juan E. Perez T.',src:BASE+'creditos.avif',text:'Tecnología que acerca a las personas',link:'/documentos/'}
 ];
 export default function TopBannerCarousel(){
  const [index,setIndex]=useState(0),[paused,setPaused]=useState(false),[failed,setFailed]=useState<Record<number,boolean>>({}),[loaded,setLoaded]=useState<Record<number,boolean>>({});

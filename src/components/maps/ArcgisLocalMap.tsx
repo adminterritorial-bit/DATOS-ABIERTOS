@@ -11,6 +11,13 @@ import type {GeoSelection} from './ArcGISMapEngine';
 const ArcGISMapEngine=dynamic(()=>import('./ArcGISMapEngine'),{ssr:false,loading:()=> <div className="g4-skeleton">Preparando ArcGIS Maps SDK y cartografía de San Pedro…</div>});
 const NF=new Intl.NumberFormat('es-CO',{maximumFractionDigits:2});
 const DANE='https://geoportal.dane.gov.co/mparcgis/rest/services/Divipola/Serv_DIVIPOLA_MGN_2025/FeatureServer/305';
+function flagForTopic(id:string){
+ if(['educacion'].includes(id))return 'education';
+ if(['atencion','epidemiologia','mortalidad'].includes(id))return 'health';
+ if(['ambiente','suelo','servicios'].includes(id))return 'environment';
+ if(['seguridad','victimas','transporte'].includes(id))return 'safety';
+ return 'municipal';
+}
 function topicMatch(d:DatoExplorador,topic:string){
  if(d.codigoICET?.startsWith('ICET-'))return numeroTema.get(Number(d.codigoICET.slice(-2)))?.id===topic;
  const s=(d.sector+' '+d.nombre).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -71,7 +78,7 @@ export default function ArcgisLocalMap({datos,activeTopic='Todos',onTopicChange}
    <aside className="g4-console" aria-label="Panel de control y consulta territorial">
      <div className="g4-console-header"><div className="g4-emblem"><Flag size={22}/></div><div><span className="g4-eyebrow">EXPLORADOR CIUDADANO</span><h3>Tu municipio, en perspectiva.</h3></div></div>
      <label className="g4-search"><Search size={18}/><input value={q} placeholder="Busca una cifra o un lugar…" onChange={e=>setQ(e.target.value)} aria-label="Buscar indicadores y lugares"/></label>
-     <div className="g4-categories" role="group" aria-label="Categoría cartográfica"><button aria-pressed={chosen==='Todos'} className={chosen==='Todos'?'active':''} onClick={()=>change('Todos')}>Todos</button>{temasTerritoriales.map(t=><button key={t.id} aria-pressed={chosen===t.id} className={chosen===t.id?'active':''} onClick={()=>change(t.id)}>{t.nombre}</button>)}</div>
+     <div className="g4-categories" role="group" aria-label="Categoría cartográfica"><button aria-pressed={chosen==='Todos'} className={chosen==='Todos'?'active':''} onClick={()=>change('Todos')}>Todos</button>{temasTerritoriales.map(t=><button key={t.id} aria-pressed={chosen===t.id} className={chosen===t.id?'active':''} onClick={()=>change(t.id)}><img src={'/DATOS-ABIERTOS/geo-flags/'+flagForTopic(t.id)+'.svg'} alt="" width="20" height="22"/>{t.nombre}</button>)}</div>
      <div className="g4-console-section">
       <header><span>{selection?.kind==='place'?'LUGAR DEL DANE':selection?.kind==='municipal'?'CONSULTA MUNICIPAL':'INDICADORES DEL MUNICIPIO'}</span><strong>{result.length} fichas</strong></header>
       {selection?.kind==='place'?<div className="g4-place-detail"><h3>{selection.name}</h3><p>Centro poblado o cabecera obtenido de la capa DANE 2025, código {selection.code}.</p><div className="g4-place-info">{typeof selection.area==='number'&&<span>Área <b>{NF.format(selection.area/1e6)} km²</b></span>}{typeof selection.altitude==='number'&&<span>Altitud <b>{NF.format(selection.altitude)} m</b></span>}</div><p className="g4-place-scope">Los indicadores siguientes corresponden al municipio completo; solo se atribuirán al lugar cuando los registros incluyan ese código de zona.</p><button onClick={()=>setSelection({kind:'municipal',name:'San Pedro · consulta municipal',code:'76670'})}>Ver consulta municipal <ArrowRight size={16}/></button></div>:null}

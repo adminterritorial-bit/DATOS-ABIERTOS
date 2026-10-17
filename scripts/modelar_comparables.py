@@ -83,7 +83,7 @@ def distance(a,b,pop,year):
  return logdist+2*urban_dist
 def weighted_rate(target,comparators,values,pop,year):
  neighbors=sorted([c for c in comparators if c in values and c!=target and pop[(c,year)]['total']>0],
-     key=lambda c:distance(target,c,pop,year))[:5]
+     key=lambda c:distance(target,c,pop,year))[:7]
  if not neighbors:return None
  # Positive smoothing accounts for distance, not automatically inventing local observations.
  weights={c:1/(0.20+distance(target,c,pop,year)) for c in neighbors}
@@ -109,10 +109,20 @@ def main():
  pop=pop_dane(); ins=ins_counts();runt=runt_counts()
  data={'municipio':'San Pedro','divipola':'76670','modelo':'análogos territoriales por distancia demográfica (población + fracción urbana)',
     'poblacion_dane':{'fuente':SRC_DANE,'base_2018':pop[('76670',2018)],'base_2026':pop[('76670',2026)]},
-    'version':'1.0','estimaciones':[],'observaciones_comparadores':[]}
+    'version':'1.1','estimaciones':[],'rechazadas':[],'observaciones_comparadores':[]}
  def append(icet,label,vals,year,unit,scale,source,variable,note,min_neighbors=2):
   v=weighted_eval('76670',vals,pop,year)
   if not v or len(v['vecinos'])<min_neighbors:return
+  if all(float(vals[c])==0 for c in v['vecinos']):
+   data['rechazadas'].append({'icet':icet,'motivo':'Municipios comparables sin eventos notificados: no transformar ausencia de filas en estimación oficial cero'})
+   return
+  if scale=='cuenta':
+   positive_rates=[vals[c]/pop[(c,year)]['total'] for c in v['vecinos'] if vals[c]>0]
+   if len(positive_rates)<4 or max(positive_rates)/min(positive_rates)>8:
+    data['rechazadas'].append({'icet':icet,'motivo':'RUNT tiene sesgo de municipio de matriculación: tasas vecinales difieren más de 8 veces o hay escasa cobertura. Modelo rechazado, no publicar total municipal estimado.',
+       'rango_vehiculos_por_habitante':[round(min(positive_rates),5),round(max(positive_rates),5)]})
+    print('MODELO_RECHAZADO',icet,'heterogeneidad intermunicipal extrema')
+    return
   target=pop[('76670',year)]['total']
   result=v['proporcion']*target if scale=='cuenta' else v['proporcion']*scale
   multiplier=1 if scale=='cuenta' else scale

@@ -10,18 +10,18 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   const r=await page.goto('http://localhost:3000/DATOS-ABIERTOS/',{waitUntil:'domcontentloaded',timeout:70000});
   if(r?.status()!==200)errors.push(viewport.name+': HTTP '+r?.status());
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
-  await page.locator('.xp-theme').first().waitFor();
-  if(await page.locator('.xp-theme').count()!==14)errors.push(viewport.name+': taxonomy tiles !=14');
-  if(await page.locator('.xp-theme[aria-pressed="true"]').count()>1)errors.push(viewport.name+': multiple topic selected');
+  await page.locator('.n5-navigation').waitFor();
+  await page.locator('.n5-banner-frame').waitFor();
+  if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': expected exactly five stable chart panels');
   const over=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3);
   if(over)errors.push(viewport.name+': horizontal overflow');
 
   await page.locator('.g4-logo img').waitFor({timeout:12000});
   await page.waitForTimeout(1300);
-  if(await page.locator('.g4-chart-card').count()<3)errors.push(viewport.name+': fewer than three simultaneous chart panels');
+  if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': five-chart layout missing');
   await page.screenshot({path:'artifacts/visual/'+viewport.name+'.png',fullPage:true});
-  await page.getByRole('button',{name:/Educación y aprendizaje/}).last().click();
-  if(!(await page.locator('.xp-theme.chosen').count()))errors.push(viewport.name+': topic filter did not apply');
+  await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).selectOption('educacion');
+  if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': topic swap altered panel count');
   await page.getByRole('button',{name:'Indicadores',exact:true}).click();
   if(!await page.locator('.xp-indicator-row').count())errors.push(viewport.name+': no indicator catalog');
   await page.getByRole('button',{name:'Geografía',exact:true}).click();
@@ -44,12 +44,16 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   await page.locator('.g4-console .g4-record').first().click();
   await page.getByRole('dialog',{name:/Ficha de/}).waitFor({timeout:10000});
   await page.getByRole('button',{name:'Cerrar ventana'}).click();
+  await page.getByRole('button',{name:'Lugares 7'}).click().catch(()=>{});
+  const firstPlace=page.locator('.n5-place-list button').first();
+  if(await firstPlace.count()){await firstPlace.click();await page.getByRole('dialog',{name:/Información del lugar/}).waitFor({timeout:10000});await page.getByRole('button',{name:'Cerrar información del lugar'}).click()}
   await page.locator('.g4-map-viewport').screenshot({path:'artifacts/visual/geo-'+viewport.name+'.png'});
+
 
   if(viewport.name==='mobile'){
    await page.getByRole('button',{name:'Abrir navegación'}).click();
    if(!await page.locator('.xp-side.is-open').count())errors.push('mobile sidebar cannot open');
-   await page.getByRole('button',{name:/Panorama general/}).click();
+   await page.getByRole('button',{name:/Inicio · Mi Observatorio/}).click();
   }
  }catch(e){errors.push(viewport.name+': '+String(e).slice(0,300))}
  await page.close();

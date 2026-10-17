@@ -16,7 +16,7 @@ export async function GET(){
  const anexos=[...observacionesDocumentales,...observacionesExternas,...indicadoresCalculados].map(x=>({
   id:x.id,nombre:x.nombre,tema:x.sector,valor:x.valor,unidad:x.unidad,
   anio:x.anio,periodo:x.periodo,fuente:x.fuente,pagina:x.pagina,
-  icet:x.codigoIcet,clase:x.vinculacion,divipola:'76670',nota:x.nota??null
+  icet:x.codigoIcet,clase:x.vinculacion,metodo:x.id.startsWith('DER-')?'CALCULADO':'PUBLICADO',divipola:'76670',nota:x.nota??null
  }));
  const cobertura=new Set(anexos.filter(x=>x.clase==='directa'&&x.icet).map(x=>x.icet));
  const directas=new Set([16,23,36,41,45,46].map(n=>'ICET-'+String(n).padStart(2,'0')));

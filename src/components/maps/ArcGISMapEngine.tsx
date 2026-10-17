@@ -58,7 +58,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
     consultLayer.add(city);
     await view.when();
     if(destroyed){view.destroy();return}
-    const home=()=>{void view.goTo(polygon.extent.expand(1.25),{duration:650}).catch(()=>{})};
+    const home=()=>{const geographicBounds=polygon.extent;if(geographicBounds)void view.goTo(geographicBounds.expand(1.25),{duration:650}).catch(()=>{})};
     goHome.current=home;zoomRef.current=(step)=>{void view.goTo({zoom:Math.min(18,Math.max(9,view.zoom+step))},{duration:380}).catch(()=>{})};home();readyRef.current?.(true);
     statusRef.current('Mapa real activo · límite DANE 2025 · 1 punto de consulta municipal');
     const click=view.on('click',async ev=>{

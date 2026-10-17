@@ -46,16 +46,40 @@ def main():
    di=next((i for i,x in enumerate(headers) if "DEPARTAMENTO" in x or "DEPTO" in x),None)
    ti=next((i for i,x in enumerate(headers) if any(y in x for y in ["DELITO","CONDUCTA","TIPO_DE_DELITO"])),None)
    if mi is None or di is None or ti is None:continue
+   # Export only a whitelist of statistical column names (never personal identifiers).
+   report.setdefault("campos_estadisticos_detectados", []).append({
+     "hoja": sheet_name,
+     "cantidad": [h for h in headers if "CANTIDAD" in h or h in ("NUMERO_CASOS","TOTAL")],
+     "tiempo": [h for h in headers if "FECHA" in h or "ANO" in h or "ANIO" in h],
+     "unidad": [h for h in headers if "VICTIMA" in h or "HECHO" in h or "REGISTRO" in h],
+   })
+   qi=next((i for i,h in enumerate(headers) if h in ("CANTIDAD","CANTIDAD_DE_CASOS","CANTIDAD_DELITOS")),None)
    counts=collections.Counter()
+   cantidades=collections.Counter()
+   filas_con_cantidad=collections.Counter()
    total=0
    for row in rows[header_idx+1:]:
     if len(row)<=max(mi,di,ti):continue
     municipio,dept=norm(row[mi]),norm(row[di])
     if municipio!="SAN PEDRO" or dept not in {"VALLE","VALLE DEL CAUCA"}:continue
-    tipo=norm(row[ti]);counts[tipo or "SIN_CLASIFICAR"]+=1;total+=1
-   output.append({"hoja":sheet_name,"filas_territoriales":total,"clasificaciones":[{"tipo":k,"filas":v} for k,v in sorted(counts.items())]})
+    tipo=norm(row[ti]) or "SIN_CLASIFICAR"
+    counts[tipo]+=1;total+=1
+    if qi is not None and qi<len(row):
+     try:
+      n=float(str(row[qi]).replace(",","."))
+      if not n.is_integer() or n<0: raise ValueError("not a nonnegative integer")
+      cantidades[tipo]+=int(n);filas_con_cantidad[tipo]+=1
+     except (ValueError,TypeError,OverflowError): pass
+   output.append({"hoja":sheet_name,"filas_territoriales":total,
+     "columna_cantidad":headers[qi] if qi is not None else None,
+     "clasificaciones":[{"tipo":k,"filas":v,"suma_cantidad":cantidades[k] if qi is not None and filas_con_cantidad[k]==v else None,
+      "filas_con_cantidad_valida":filas_con_cantidad[k] if qi is not None else None} for k,v in sorted(counts.items())]})
   report["resultados"]=output
   report["total_registros_municipales"]=sum(x["filas_territoriales"] for x in output)
+  report["sumas_solo_si_columna_cantidad_valida"]=sum(
+   d["suma_cantidad"] for sheet in output for d in sheet["clasificaciones"]
+   if d["suma_cantidad"] is not None
+  )
   report["estado"]="borrador_extraido_no_homologado"
   if not output:report["estado"]="sin_columna_territorial_confirmada"
   print("Extracción completada. Filas agregadas:",report["total_registros_municipales"],"hojas:",len(output))

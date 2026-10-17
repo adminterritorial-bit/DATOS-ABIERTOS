@@ -97,6 +97,54 @@ def extract_ruv():
                 item["nota"]="La suma de celdas por hecho NO acredita víctimas únicas, ni directamente las variables ICET-59/62/63."
         except Exception as e:item.update(estado="error_consulta",incidencia=str(e)[:350])
 
+
+def inspect_candidate_datasets():
+    # Discovery of public source schemas; only use values if municipality and meaning match.
+    ids={
+      "SISPRO_MORTALIDAD_MORBILIDAD":"4e4i-ua65",
+      "SSPD_RESIDUOS_GENERADOS":"d7pt-p5fi",
+      "ACUEDUCTOS_VALLE":"yac9-kq7d",
+      "ACUEDUCTOS_COLOMBIA":"6j4v-nnai",
+      "SSPD_RUPS":"4qkq-csdn",
+      "SALUD_RESOLUCION_256":"m8se-7v3b",
+      "INS_SIVIGILA_2019":"qvnt-2igj",
+    }
+    for label,dataset in ids.items():
+        item=REPORT["fuentes"][label]={"dataset":dataset,"estado":"consultando","url":"https://www.datos.gov.co/d/"+dataset}
+        try:
+            meta=fetch("https://www.datos.gov.co/api/views/"+dataset+".json",timeout=35)
+            cols=[{"campo":c.get("fieldName"),"etiqueta":c.get("name"),"tipo":c.get("dataTypeName")} for c in meta.get("columns",[]) if c.get("fieldName")]
+            item["columnas"]=cols
+            name_map={c["campo"].lower():c["campo"] for c in cols}
+            field=next((name_map[v] for v in ("cod_ciudad_muni","codigo_dane_municipio","codigo_municipio","cod_mpio","codmunicipio","divipola","cod_dane","codigo_dane","cod_municipio","municipio") if v in name_map),None)
+            if not field:
+                field=next((c["campo"] for c in cols if "municip" in c["campo"].lower()),None)
+            if not field:
+                item["estado"]="columnas_sin_codigo_municipio";continue
+            field_type=next((c["tipo"] for c in cols if c["campo"]==field),"text")
+            if "code" in field.lower() or "cod" in field.lower() or field.lower()=="divipola":
+                w=field+"=76670" if field_type=="number" else field+"='76670'"
+            else:
+                w="upper("+field+") like '%SAN PEDRO%'"
+            item["filtro"]=w
+            rows=fetch("https://www.datos.gov.co/resource/"+dataset+".json",{"$where":w,"$limit":15},timeout=60)
+            if not isinstance(rows,list):raise ValueError("Listado Socrata no recibido")
+            item["filas_muestra"]=len(rows)
+            # Inspect at most 5 anonymous tabular rows for data meaning/territory,
+            # never expose personal identifiers or health microdata in logs.
+            sanitized=[]
+            for row in rows[:5]:
+                slim={}
+                for c in cols:
+                    key=c["campo"]; k=key.lower()
+                    if any(x in k for x in ("nombre_persona","apellido","identific","documento","telefono","direccion","correo","email","paciente")):continue
+                    if key in row:slim[key]=str(row[key])[:95]
+                sanitized.append(slim)
+            item["muestra"]=sanitized
+            item["estado"]="muestra_municipal_extraida" if rows else "sin_filas_coincidentes"
+            if rows:print("MUESTRA_FUENTE_"+label+"="+json.dumps({"columnas":cols[:25],"muestra":sanitized[:3]},ensure_ascii=False)[:11000])
+        except Exception as e:item.update(estado="error_consulta",incidencia=str(e)[:300])
+
 def discover():
     terms={"SISPRO":["SISPRO indicadores municipales salud","morbilidad municipios Colombia"],
            "INS":["SIVIGILA notificaciones evento municipio","tuberculosis dengue municipios"],
@@ -113,7 +161,7 @@ def discover():
         REPORT["fuentes"][sector+"_DISCOVERY"]={"estado":"busqueda_metadatos_no_confirma_cifras","datasets":result[:30]}
 
 if __name__=="__main__":
-    extract_upme();extract_ruv();discover()
+    extract_upme();extract_ruv();discover();inspect_candidate_datasets()
     output=OUT/"respuesta_gubernamental_76670.json"
     output.write_text(json.dumps(REPORT,ensure_ascii=False,indent=2),encoding="utf-8")
     print("MUNICIPIO 76670, REGISTROS REPRODUCIBLES",len(REPORT["observaciones"]))

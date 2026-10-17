@@ -49,3 +49,12 @@
 .ot-global-documents{background:#fff;border:1px solid #e2ebf5;border-radius:40px;box-shadow:0 12px 24px rgba(17,71,151,.10);padding:12px 15px;display:inline-flex;align-items:center;gap:9px;cursor:pointer;color:#1764bb;font:800 11px "Century Gothic",Arial,sans-serif}
 .ot-global-documents:focus-visible{outline:3px solid #77b6fb;outline-offset:3px}
 @media(max-width:660px){.ot-global-documents{font-size:0;padding:11px}.ot-global-documents svg{width:18px;height:18px}}
+
+.ot-series-options{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}
+.ot-series-choice{flex:1 1 190px;max-width:350px;background:#f8fbff;border:1px solid #e3ebf4;border-radius:10px;padding:13px;text-align:left;display:grid;gap:6px;cursor:pointer;color:#3c5977;transition:border-color .18s,background .18s,transform .18s}
+.ot-series-choice strong{font:800 11px/1.5 "Century Gothic",Arial,sans-serif}.ot-series-choice span{font-size:10px;color:#8a9fb4}
+.ot-series-choice.chosen{background:#e9f3ff;border-color:#4290dd;box-shadow:0 0 0 1px rgba(23,110,213,.06)}
+.ot-series-choice:not(:disabled):hover{transform:translateY(-2px);border-color:#9dc8ed}
+.ot-series-choice:disabled{opacity:.4;cursor:not-allowed}
+.ot-compare-table{width:100%;border-collapse:collapse;text-align:left;font-size:11px;color:#48657f}.ot-compare-table th{background:#ecf4ff;padding:13px;min-width:120px}.ot-compare-table td{padding:12px 13px;border-bottom:1px solid #e9f0f7}.ot-compare-table tr:nth-child(even){background:#fbfdff}
+@media(prefers-reduced-motion:reduce){.ot-series-choice{transition:none}.ot-series-choice:not(:disabled):hover{transform:none}}

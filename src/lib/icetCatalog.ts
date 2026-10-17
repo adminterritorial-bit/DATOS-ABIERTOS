@@ -6,7 +6,7 @@
  */
 export interface IndicadorICET {
   codigo: string; numero: number; nombre: string; area: string;
-  secretaria: string; valor2025: number | null; estado: 'pendiente';
+  secretaria: string;
   campos: string[]; fuentesPropuestas: string[];
 }
 const base = [
@@ -369,6 +369,6 @@ export function camposICET(n:number, nombre:string):string[]{
 }
 export const indicadoresICET: IndicadorICET[] = base.map(({numero,nombre,area})=>({
  codigo:'ICET-'+String(numero).padStart(2,'0'), numero, nombre, area,
- secretaria:dependenciaICET(numero), valor2025:null, estado:'pendiente' as const,
+ secretaria:dependenciaICET(numero),
  campos:camposICET(numero,nombre), fuentesPropuestas:numero>=55&&numero<=61?['Policía Nacional','MinDefensa','DANE']:numero>=62&&numero<=63?['Unidad para las Víctimas','Enlace municipal']:numero>=27&&numero<=54?['SISPRO','INS','DANE']:['DANE','DNP','Entidad productora competente']
 }));

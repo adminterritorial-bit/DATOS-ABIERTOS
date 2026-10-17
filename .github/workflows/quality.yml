@@ -24,3 +24,26 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
+      - name: HTTP smoke for dashboard, data API and PDF
+        run: |
+          set -euo pipefail
+          npm run start -- --port 3000 > /tmp/observatorio-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid 2>/dev/null || true' EXIT
+          for i in $(seq 1 35); do
+            if curl -fsS http://127.0.0.1:3000/ -o /tmp/observatorio.html; then break; fi
+            sleep 2
+          done
+          grep -q 'Observatorio' /tmp/observatorio.html
+          curl -fsS http://127.0.0.1:3000/api/indicadores -o /tmp/indicadores.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/indicadores.json'))
+          assert d['divipola']=='76670'
+          assert d['total']>=75,d['total']
+          assert any(x.get('anio')==2025 and x.get('codigo')=='DANE-POB-TOTAL' and int(x['valor'])==17275 for x in d['observaciones'])
+          print('Live Next SSR + API: success',d['total'])
+          PY
+          curl -fsS 'http://127.0.0.1:3000/api/reporte?anio=2025&sector=Panorama' -o /tmp/reporte.pdf
+          head -c 4 /tmp/reporte.pdf | grep -q '%PDF'
+          test $(wc -c </tmp/reporte.pdf) -gt 1600

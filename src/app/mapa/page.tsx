@@ -98,6 +98,8 @@ export default function MapaEstadistico(){
    .sort((a,b)=>(b.anio??0)-(a.anio??0));
  },[esSanPedro,municipio,tema,anio,clase,query]);
  const byIndicator=new Map(indicadoresICET.map(i=>[i.codigo,i]));
+ const serieDetalle=detalle&&esSanPedro?DATOS.filter(d=>d.nombre===detalle.nombre&&d.anio!==null).sort((a,b)=>(a.anio??0)-(b.anio??0)):[];
+ const puntosSerie=serieDetalle.slice(-30);
  const directos=Object.keys(ICET_DIRECTAS).length;
  const representados=Object.keys(ICET_VINCULOS).length;
  return <main className="gm-shell">
@@ -166,6 +168,10 @@ export default function MapaEstadistico(){
   <footer className="gm-footer"><span>Geoportal DANE MGN 2025 · ICEE UPME 2024 · Observatorio de San Pedro</span><span>Los datos de municipios vecinos no se atribuyen a San Pedro.</span></footer>
   {detalle&&<div className="gm-modal-bg" role="presentation" onClick={()=>setDetalle(null)}><div className="gm-modal" role="dialog" aria-modal="true" aria-label="Ficha de trazabilidad" onClick={e=>e.stopPropagation()}>
    <button aria-label="Cerrar" className="gm-close" onClick={()=>setDetalle(null)}>×</button><span className="gm-eyebrow"><Database size={14}/> FICHA DE TRAZABILIDAD</span><h2>{detalle.nombre}</h2><strong className="gm-modal-figure">{num(detalle.valor)} <small>{detalle.unidad}</small></strong>
+   {puntosSerie.length>=2&&<section className="gm-trend"><h3>Serie histórica de este dato</h3><div className="gm-trend-grid">{puntosSerie.map((d,i)=>{
+ const biggest=Math.max(...puntosSerie.map(x=>x.valor),1);
+ return <div key={d.id+'-'+i} className="gm-trend-col"><span>{num(d.valor)}</span><div style={{height:Math.max(3,Math.min(100,d.valor/biggest*100))+'%'}}/><small>{d.anio}</small></div>;
+ })}</div><p>Comparación entre valores que comparten la misma denominación. Consultar la ficha de cada vigencia antes de afirmar equivalencia metodológica.</p></section>}
    <div className="gm-modal-fields"><span><small>Municipio</small>{active?.nombre}</span><span><small>Vigencia</small>{detalle.anio??'Corte de extracción'}</span><span><small>Naturaleza</small>{detalle.tipo}</span><span><small>Indicador relacionado</small>{detalle.icet??'Estadística adicional'}</span></div>
    {detalle.nota&&<p className="gm-note">{detalle.nota}</p>}
    {detalle.fuente.startsWith('http')?<a className="gm-source" href={detalle.fuente} target="_blank" rel="noopener noreferrer"><ExternalLink size={16}/> Consultar fuente pública</a>:<p className="gm-note">Fuente documental: {detalle.fuente} (ver biblioteca documental del proyecto).</p>}

@@ -42,6 +42,13 @@ const DIRECTAS:Record<number,string>={
 };
 /** Estadísticas útiles de un tema ICET cuya definición no coincide exactamente con el numerador original. */
 const RELACIONADAS:Record<number,string>={
+ 7:'TERRI-055',
+ 8:'GOB-AGRO-SIEMBRA-2023',
+ 14:'DER-CAT-PREDIOS-2024',
+ 20:'OFI-ANALF-HOG-2018',
+ 56:'FOR-MUJER-HOM-2023',
+ 60:'EXT-POLICIA-HURTO-PERSONAS-2025',
+ 62:'DOC-RUV-atencion',
  4:'SSPD-APROVECHAMIENTO-PROPORCION-2024',
  5:'SSPD-DISPOSICION-TOTAL-2024',
  10:'DER-FIN-TRIBUTARIOS-2025',

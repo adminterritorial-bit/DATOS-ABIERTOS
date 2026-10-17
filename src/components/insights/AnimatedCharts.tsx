@@ -56,7 +56,7 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
        <CartesianGrid stroke="#e9eff9" strokeDasharray="4 8" vertical={false}/>
        <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{fill:'#7590ae',fontSize:11}}/>
        <YAxis tickLine={false} axisLine={false} width={52} tick={{fill:'#8b9eb6',fontSize:11}} tickFormatter={x=>format(x,0)}/>
-       <Tooltip contentStyle={tooltipStyle} formatter={value=>[format(Number(value),2)+' '+unidad,serie[0].nombre]}/>
+       <Tooltip contentStyle={tooltipStyle} formatter={value=>[format(Number(value),2)+' '+unidad,serie?.[0]?.nombre||'Indicador']}/>
        <Area type="monotone" dataKey="valor" stroke="#287bf1" strokeWidth={3.5} fill="url(#xp-area-fill)" dot={{r:4,fill:'#fff',stroke:'#287bf1',strokeWidth:2}} activeDot={{r:7,stroke:'#fff',strokeWidth:3,fill:'#287bf1',onClick:(_evt:unknown,payload:any)=>{if(payload?.payload?.source)onOpen(payload.payload.source)}}} isAnimationActive={!reduced} animationDuration={1150}/>
       </AreaChart>
      </ResponsiveContainer>
@@ -69,7 +69,7 @@ export default function AnimatedCharts({datos,titulo,onOpen}:Props){
        <XAxis type="number" tickLine={false} axisLine={false} tick={{fill:'#7a90ab',fontSize:11}} tickFormatter={x=>format(x,0)}/>
        <YAxis dataKey="name" type="category" width={175} tickLine={false} axisLine={false} tick={{fill:'#496882',fontSize:11}}/>
        <Tooltip cursor={{fill:'rgba(50,121,241,.05)'}} contentStyle={tooltipStyle} formatter={x=>format(Number(x),2)+' '+unidad}/>
-       <Bar dataKey="valor" fill="url(#xp-bar-shine)" radius={[0,10,10,0]} maxBarSize={23} isAnimationActive={!reduced} animationDuration={950} onClick={(v)=>{const row=ranking.find(x=>x.nombre===v?.nombre);if(row)onOpen(row)}}/>
+       <Bar dataKey="valor" fill="url(#xp-bar-shine)" radius={[0,10,10,0]} maxBarSize={23} isAnimationActive={!reduced} animationDuration={950} onClick={(v)=>{const payload=v as unknown as {payload?:{id?:string}};const row=ranking.find(x=>x.id===payload?.payload?.id);if(row)onOpen(row)}}/>
       </BarChart>
      </ResponsiveContainer>}
    </motion.div></AnimatePresence>}

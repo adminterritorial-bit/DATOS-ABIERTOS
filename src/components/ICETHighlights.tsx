@@ -12,3 +12,4 @@ export default function ICETHighlights({feed}:{feed:FeedPublico|null}){
     <span className="ot-small-heading">{codigo} · {registro.anio}</span><h4 style={{minHeight:0,margin:'12px 0'}}>{registro.nombre}</h4><strong style={{marginTop:'auto'}}>{formatear(Number(registro.valor),2)} <small>{registro.unidad}</small></strong><div className="ot-data-foot"><span>{relacion.equivalencia==='derivada'?'Suma derivada':'Fuente primaria recuperada'}</span><span><BookOpen size={14}/></span></div>
   </article>)}</div>
  </section>
+}

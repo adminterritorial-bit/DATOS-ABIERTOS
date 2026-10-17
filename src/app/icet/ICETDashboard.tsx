@@ -10,6 +10,7 @@ import {observacionesTerriData, type ObservacionTerritorial} from '@/lib/terriDa
 import {observacionesDocumentales,observacionesDocumentalesConAnio} from '@/lib/observacionesDocumentales2026';
 import {observacionesExternas} from '@/lib/observacionesFuentesExternas';
 import {indicadoresCalculados} from '@/lib/indicadoresCalculados';
+import {observacionesINS} from '@/lib/observacionesINS';
 import datosMasivos from '@/data/fuentesMasivas76670.json';
 import './icet-dashboard.css';
 type DatoVisual=ObservacionTerritorial & {nota?:string};
@@ -19,7 +20,7 @@ const fuenteDocumental=observacionesDocumentalesConAnio.map(r=>({
  anio:r.anio,pagina:r.pagina,fuente:r.fuente,divipola:'76670',
  estado:'DOCUMENTADO_EN_ARCHIVO',fechaGeneracion:r.periodo
 }));
-const externals=[...observacionesExternas,...indicadoresCalculados].filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo,nota:x.nota}));
+const externals=[...observacionesExternas,...indicadoresCalculados,...observacionesINS].filter(x=>x.anio!==null).map(x=>({id:x.id,titulo:x.nombre,sector:x.sector,valor:x.valor,unidad:x.unidad,anio:x.anio as number,pagina:x.pagina,fuente:x.fuente,divipola:'76670',estado:'FUENTE_OFICIAL',fechaGeneracion:x.periodo,nota:x.nota}));
 const basemasiva:DatoVisual[]=datosMasivos.observaciones
  .filter(r=>r.divipola==='76670'&&typeof r.anio==='number'&&Number.isFinite(r.valor))
  .map(r=>({id:r.id,titulo:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,

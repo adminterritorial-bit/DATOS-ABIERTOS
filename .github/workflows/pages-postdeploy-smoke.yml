@@ -11,13 +11,17 @@ jobs:
   public-url:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 18
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Confirm production pages are reachable over HTTPS
         run: |
           set -euo pipefail
           root='https://adminterritorial-bit.github.io/DATOS-ABIERTOS'
-          for route in / /mapa/ /estimador/ /icet/recuperados/ /documentos/ /comparar/ /catalogo/; do
+          for route in / /mapa/ /estimador/ /icet/recuperados/ /documentos/ /comparar/ /catalogo/ /rendicion/ /territorios/; do
             echo "Checking ${root}${route}"
             success=0
             for attempt in $(seq 1 24); do
@@ -35,3 +39,20 @@ jobs:
           curl -LfsS --max-time 30 "${root}/escudo-san-pedro.png" -o /tmp/logo.png
           test $(wc -c </tmp/logo.png) -gt 1000
           echo "PASS: public HTTPS pages, geographic, estimation, ICET, library, comparators and logo"
+      - name: Install browser test dependencies
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --no-save playwright@1.56.1 --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Verify published user journeys in six viewports
+        env:
+          OBSERVATORIO_BASE_URL: https://adminterritorial-bit.github.io/DATOS-ABIERTOS
+        run: |
+          node scripts/visual-review.mjs
+          node scripts/smoke-citizen.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sanpedro-public-production-visual
+          path: artifacts/visual/
+          retention-days: 14

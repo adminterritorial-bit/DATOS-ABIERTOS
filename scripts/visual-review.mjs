@@ -3,11 +3,12 @@ import {chromium} from 'playwright';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 fs.mkdirSync('artifacts/visual',{recursive:true});
 const errors=[];
+const base=(process.env.OBSERVATORIO_BASE_URL||'http://localhost:3000/DATOS-ABIERTOS').replace(/\/$/,'');
 for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2560,height:1440},{name:'4k',width:3840,height:2160},{name:'desktop',width:1440,height:900},{name:'tablet',width:1024,height:768},{name:'mobile',width:390,height:844}]){
  const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height},deviceScaleFactor:1});
  page.on('pageerror',e=>errors.push(viewport.name+': '+e.message.slice(0,250)));
  try{
-  const r=await page.goto('http://localhost:3000/DATOS-ABIERTOS/',{waitUntil:'domcontentloaded',timeout:70000});
+  const r=await page.goto(base+'/',{waitUntil:'domcontentloaded',timeout:70000});
   if(r?.status()!==200)errors.push(viewport.name+': HTTP '+r?.status());
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
   await page.locator('.n5-navigation').waitFor();
@@ -63,21 +64,23 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.getByRole('dialog',{name:/Ficha de/}).waitFor({timeout:10000});
   await page.getByRole('button',{name:'Cerrar ventana'}).click();
   await page.locator('.n5-place-list').waitFor({timeout:17000});
+  if(await page.locator('.n5-place-list button').count()!==7)errors.push(viewport.name+': expected seven DANE places');
+  if(await page.locator('.g4-map-error').count())errors.push(viewport.name+': cartography failed');
   const firstPlace=page.locator('.n5-place-list button').first();
   if(await firstPlace.count()){await firstPlace.click();await page.getByRole('dialog',{name:/Información del lugar/}).waitFor({timeout:10000});await page.locator('.n5-place-popup').screenshot({path:'artifacts/visual/popup-'+viewport.name+'.png'});await page.getByRole('button',{name:'Cerrar información del lugar'}).click()}
   await page.locator('.g4-map-viewport').screenshot({path:'artifacts/visual/geo-'+viewport.name+'.png'});
 
 
   if(viewport.name==='desktop'){
-    await page.goto('http://localhost:3000/DATOS-ABIERTOS/temas/',{waitUntil:'domcontentloaded',timeout:70000});
+    await page.goto(base+'/temas/',{waitUntil:'domcontentloaded',timeout:70000});
     await page.locator('.n5-themes-grid .n5-tile').first().waitFor({timeout:16000});
     if(await page.locator('.n5-themes-grid .n5-tile').count()!==14)errors.push('theme explorer: expected fourteen topic cards');
     await page.getByRole('button',{name:/Educación y aprendizaje/}).first().click();
     if(await page.locator('.n5-data-panel').count()!==5)errors.push('theme explorer: five charts did not remain stable');
     await page.screenshot({path:'artifacts/visual/topics-desktop.png',fullPage:true});
-    await page.goto('http://localhost:3000/DATOS-ABIERTOS/',{waitUntil:'domcontentloaded',timeout:70000});
+    await page.goto(base+'/',{waitUntil:'domcontentloaded',timeout:70000});
   }
-  await page.goto('http://localhost:3000/DATOS-ABIERTOS/rendicion/',{waitUntil:'domcontentloaded'});
+  await page.goto(base+'/rendicion/',{waitUntil:'domcontentloaded'});
   await page.getByRole('heading',{name:'Las cifras detrás de la gestión.'}).waitFor();
   if(await page.locator('.v6-budget-bars>button').count()!==8)errors.push(viewport.name+': budget components missing');
   await page.locator('.v6-budget-bars>button').first().click();
@@ -96,10 +99,10 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.getByRole('textbox',{name:'Buscar en rendición de cuentas'}).fill('esterilizaciones');
   if(await page.locator('tbody tr').count()!==1)errors.push('Municipal search failed');
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))errors.push(viewport.name+': municipal page overflow');
-  await page.goto('http://localhost:3000/DATOS-ABIERTOS/catalogo/?buscar=Personas%20beneficiadas%20por%20cultura',{waitUntil:'domcontentloaded'});
+  await page.goto(base+'/catalogo/?buscar=Personas%20beneficiadas%20por%20cultura',{waitUntil:'domcontentloaded'});
   await page.getByRole('table').waitFor();
   if(!await page.getByText('> 8.000',{exact:false}).count())errors.push('Catalog lost greater-than precision');
-  await page.goto('http://localhost:3000/DATOS-ABIERTOS/territorios/',{waitUntil:'domcontentloaded'});
+  await page.goto(base+'/territorios/',{waitUntil:'domcontentloaded'});
   await page.getByRole('heading',{name:'San Pedro, en perspectiva.'}).waitFor();
   if(await page.locator('.v6-energy-rates>div').count()!==7)errors.push('Energy territories missing');
   await page.screenshot({path:'artifacts/visual/comparadores-'+viewport.name+'.png',fullPage:true});
@@ -111,7 +114,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.locator('.v6-series-label select').selectOption('4');
   if(!await page.getByText('82,3 % de personas de 5 años y más · 2025').count())errors.push('National series selection failed');
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))errors.push(viewport.name+': territorial page overflow');
-  await page.goto('http://localhost:3000/DATOS-ABIERTOS/',{waitUntil:'domcontentloaded'});
+  await page.goto(base+'/',{waitUntil:'domcontentloaded'});
   if(viewport.name==='mobile'){
    await page.getByRole('button',{name:'Abrir navegación'}).click();
    if(!await page.locator('.xp-side.is-open').count())errors.push('mobile sidebar cannot open');
@@ -122,4 +125,5 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
 }
 await browser.close();
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}
+console.log('Verified URL: '+base);
 console.log('PASS: 4:1 timed carousel, 5 charts, 14 separate topic cards, ArcGIS popup, mobile folder sidebar and no page overflow');

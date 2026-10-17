@@ -120,9 +120,9 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPla
       if(!code||seen.has(code)||!f.geometry||f.geometry.type!=='polygon')continue;
       seen.add(code);
       const centroid=(f.geometry as InstanceType<typeof Polygon.default>).centroid;
-      if(!centroid||!Number.isFinite(centroid.longitude))continue;
+      if(!centroid||!Number.isFinite(centroid.longitude)||!Number.isFinite(centroid.latitude))continue;
       focusRef.current.set(code,()=>{void view.goTo({center:centroid,zoom:15},{duration:650}).catch(()=>{})});
-      pointsRef.current.push({point:{longitude:centroid.longitude,latitude:centroid.latitude},selection:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:Number(a.ZU_NAREA)||undefined,altitude:Number(a.ZU_NALTD)||undefined,year:Number(a.ZU_NANO)||2025}});
+      pointsRef.current.push({point:{longitude:Number(centroid.longitude),latitude:Number(centroid.latitude)},selection:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:Number(a.ZU_NAREA)||undefined,altitude:Number(a.ZU_NALTD)||undefined,year:Number(a.ZU_NANO)||2025}});
       markerLayer.add(new Graphic.default({geometry:centroid,attributes:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:a.ZU_NAREA,altitude:a.ZU_NALTD,year:a.ZU_NANO},symbol:flag('territory',57)}));
       count++;placeList.push({code,name:String(a.ZU_CNMBRE||'Centro poblado')});
      }

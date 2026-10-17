@@ -28,6 +28,14 @@ for(const item of [
 for(const [year,value] of [[2020,1.6],[2021,4.5],[2022,1.8]]){
  historicos.push({id:'DOC-EDU-REL-'+year,nombre:'Tasa de deserción escolar intra-anual (reporte histórico)',sector:'Educación',valor:value,unidad:'%',anio:year,periodo:String(year),fuente:HIST,pagina:367,vinculacion:'relacionada',nota:'El informe histórico no precisa que sea exclusivamente sector oficial de básica y media. No homologar automáticamente con ICET-23.'});
 }
+const furag:ValorDocumental[]=[
+ [2018,57.0],[2019,61.4],[2020,65.7],[2021,70.7]
+].map(([anio,valor])=>({
+ id:'DOC-FURAG-12-'+anio,nombre:'Índice de Desempeño Institucional (IDI)',
+ sector:'Gestión municipal',valor,unidad:'puntos (escala 0-100)',anio,
+ periodo:String(anio),fuente:HIST,pagina:360,codigoIcet:'ICET-12',vinculacion:'directa' as const,
+ nota:'Resultado municipal FURAG consignado en el informe de gestión. Las mediciones 2018–2021 tienen advertencias oficiales de comparabilidad con 2022 en adelante.'
+}));
 const ruv:ValorDocumental[]=[
  ['ocurrencia','Víctimas por ocurrencia acumuladas',4866],
  ['declaracion','Víctimas por declaración acumuladas',5117],
@@ -51,5 +59,5 @@ const sisben:ValorDocumental[]=[
  ['secundaria','Matrícula secundaria sexto a noveno',914,'estudiantes'],
  ['media','Matrícula media décimo a undécimo',391,'estudiantes']
 ].map(([slug,nombre,valor,unidad])=>({id:'DOC-RSH-'+slug,nombre:String(nombre),valor:Number(valor),unidad:String(unidad),sector:['personas','hogares','viviendas','migrantes'].includes(String(slug))?'Demografía':['basica','secundaria','media'].includes(String(slug))?'Educación':String(slug).startsWith('salud')?'Salud':'Desarrollo social',anio:null,periodo:'El archivo suministrado no especifica fecha de corte',fuente:RSH,pagina:1,vinculacion:'adicional' as const,nota:'Registro Social de Hogares. Son universos distintos y no deben sumarse para construir una población municipal.'}));
-export const observacionesDocumentales=[...historicos,...ruv,...sisben];
+export const observacionesDocumentales=[...historicos,...furag,...ruv,...sisben];
 export const observacionesDocumentalesConAnio=observacionesDocumentales.filter((x):x is ValorDocumental & {anio:number}=>x.anio!==null);

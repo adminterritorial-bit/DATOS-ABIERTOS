@@ -1,110 +1,111 @@
-# Auditoría de cobertura documental de 66 indicadores ICET — municipio 76670
+# Auditoría operativa, geográfica y matemática de los 66 indicadores ICET
 
-**Corte operativo:** 16 de octubre de 2026. Este archivo sirve para **alimentar el dashboard web**, no para certificar retroactivamente que las estadísticas estuvieron publicadas en el portal municipal en la vigencia ICET 2025.
+Municipio: **San Pedro, Valle del Cauca. DIVIPOLA 76670.** Corte del trabajo: octubre 2026.
 
-**Indicadores definidos:** 66.
-**Con cifra asociada a la definición, histórica o calculada:** 24.
-**Con estadística relacionada pero de otro alcance:** 15.
-**Con estimación de referencia de municipios comparables:** 2.
-**Sin una cifra compatible sustentable por ahora, pero con receta de estimación ejecutable:** 25.
+## Cobertura estadística verificada
 
-**Cobertura operativa:** 41/66 cuentan con alguna cifra asociada (24 definicional/histórica/derivada, 15 contextual, 2 extrapolaciones exploratorias). Las 25 recetas restantes permiten construir una línea base solo al ingresar componentes reales y fuentes, nunca imputando cero por ausencia de observación.
+- **66/66** definiciones existentes en catálogo.
+- **24/66** con alguna observación municipal histórica o cálculo asociado a la definición.
+- **15/66** con estadística contextual (otro universo, otra definición o alcance más estrecho) para ofrecer contenido real sin engañar.
+- **2/66** con **escenario regional exploratorio** calculado y diagnosticado a partir de INS 2018 y población oficial DANE PPED: #27 hepatitis B **0,19** notificaciones/100k y #28 malaria **1,72** notificaciones/100k. No son incidencias observadas de San Pedro.
+- **25/66** con una receta matemática ejecutable y fuentes de componentes identificadas, pero sin un valor numérico municipal sustentado todavía.
+- **41/66** con al menos una cifra relacionada o un escenario modelado que puede visualizarse. **No es 41/66 de cumplimiento ICET oficial 2025.**
+- Los **25 restantes** pueden usarse en `/estimador?icet=N` aportando componentes de fuentes oficiales; no tienen valor imputado ficticio.
 
-**Importante:** los valores calculados, históricos, unidades en verificación y los valores relacionados NO deben presentarse como resultados oficiales recientes; cada ficha detalla método, fuente, período y limitaciones. "Completar la pantalla" no habilita atribuir resultados departamentales a San Pedro.
+Para tuberculosis #29, una fuente **directa del INS** encontró **3 casos notificados en 2018** (2 pulmonares y 1 extrapulmonar). Reconstrucción local **17,70 notificaciones/100.000** con población municipal DANE 2018. Se prefiere esta información local al escenario de vecinos **17,30/100.000**; la clasificación sigue siendo relacionada hasta verificar residencia y definición epidemiológica.
 
-## Cruce revisado directamente contra el código operativo
+## Tabla exacta de integración
 
-| # | Indicador oficial | Uso de la cifra | ID de observación del dashboard | Productor / documento |
-|---:|---|---|---|---|
-| 1 | Porcentaje de aguas residuales urbanas tratadas | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 2 | Tasa de personas afectadas a causa de eventos recurrentes | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 3 | Negocios verdes verificados | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 4 | Porcentaje de residuos sólidos efectivamente aprovechados | Estadística relacionada | SSPD-APROVECHAMIENTO-PROPORCION-2024 | SSPD anexos 2024 |
-| 5 | Porcentaje de residuos sólidos urbanos dispuestos adecuadamente | Estadística relacionada | SSPD-DISPOSICION-TOTAL-2024 | SSPD anexos 2024 |
-| 6 | Residuos peligrosos aprovechados y tratados | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 7 | Hectáreas de pequeña y mediana propiedad rural, formalizadas | Estadística relacionada | TERRI-055 | DNP ficha TerriData |
-| 8 | Vocación de uso del suelo (caracterización y zonificación) | Estadística relacionada | GOB-AGRO-SIEMBRA-2023 | Gobernación del Valle |
-| 9 | Valor agregado por municipio | Valor publicado o calculado | DOC-ICET-09-2023 | Documento municipal |
-| 10 | Porcentaje de presupuesto municipal financiado con recursos propios | Estadística relacionada | DER-FIN-TRIBUTARIOS-2025 | Cálculo reproducible |
-| 11 | Parque automotor por municipio (particular, oficial, público) incluyendo motocicletas | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 12 | Índice de desempeño institucional | Valor publicado o calculado | DOC-FURAG-12-2021 | Documento municipal |
-| 13 | Porcentaje de mujeres en cargos directivos del Estado Colombiano | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 14 | Predios del país con catastro multipropósito formado y/o actualizado total o parcialmente | Estadística relacionada | DER-CAT-PREDIOS-2024 | Cálculo reproducible |
-| 15 | La esperanza de vida al nacer (total, hombre, mujer) | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 16 | Total población | Valor publicado o calculado | TERRI-001 | DNP ficha TerriData |
-| 17 | Brecha entre cobertura neta urbano-rural en educación preescolar, básica y media | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 18 | Cobertura en educación superior | Valor publicado o calculado | DOC-EDU-18-2023 | Documento municipal |
-| 19 | Porcentaje de matrícula oficial con conexión a internet | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 20 | Tasa de analfabetismo para la población de 15 años y más | Estadística relacionada | OFI-ANALF-HOG-2018 | Fuente trazada por ID |
-| 21 | Tasa de cobertura bruta en educación media | Valor publicado o calculado | DOC-EDU-21-2023 | Documento municipal |
-| 22 | Tasa de cobertura bruta en transición | Valor publicado o calculado | DOC-EDU-22-2023 | Documento municipal |
-| 23 | Tasa de deserción intra-anual del sector oficial en educación básica y media | Valor publicado o calculado | TERRI-021 | DNP ficha TerriData |
-| 24 | Hogares urbanos con déficit cualitativo de vivienda (CNPV 2018) | Valor publicado o calculado | DOC-CNPV-24-2018 | Documento municipal |
-| 25 | Hogares urbanos con déficit cuantitativo de vivienda (CNPV 2018) | Valor publicado o calculado | DOC-CNPV-25-2018 | Documento municipal |
-| 26 | Medida de pobreza multidimensional Censal | Valor publicado o calculado | OFI-ICET-26-2018 | Fuente trazada por ID |
-| 27 | Incidencia de la hepatitis B por cada 100.000 habitantes | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 28 | Incidencia de malaria | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 29 | Incidencia de tuberculosis | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 30 | Letalidad por dengue | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 31 | Número de médicos | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 32 | Porcentaje de menores de 1 año con tercera dosis de pentavalente | Valor publicado o calculado | EXT-ICET-32-PENTA-2016 | Fuente trazada por ID |
-| 33 | Porcentaje de mujeres de 15 a 19 años con embarazo subsiguiente | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 34 | Porcentaje de mujeres de 15 a 19 años que son madres o están embarazadas de su primer hijo | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 35 | Porcentaje de niñas y niños en primera infancia que cuentan con las atenciones priorizadas en el marco de la atención integral | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 36 | Porcentaje de partos atendidos por personal calificado | Valor publicado o calculado | TERRI-014 | DNP ficha TerriData |
-| 37 | Porcentaje de personas con criterio de tratamiento y diagnóstico de hepatitis C crónica a quienes se les inicia el tratamiento | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 38 | Porcentaje de población afiliada al sistema de seguridad social en salud | Valor publicado o calculado | DER-ICET-38-2023 | Cálculo reproducible |
-| 39 | Porcentaje de transmisión materno-infantil de la hepatitis B | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 40 | Porcentaje niños y niñas de 1 año con vacunación de triple viral | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 41 | Razón de mortalidad materna (42 días) | Valor publicado o calculado | TERRI-015 | DNP ficha TerriData |
-| 42 | Tasa de cobertura del Programa de Alimentación Escolar | Estadística relacionada | DOC-PAE-BENEFICIARIOS-2025 | Documento municipal |
-| 43 | Tasa de fecundidad específica en mujeres adolescentes de 15 a 19 años | Valor publicado o calculado | SALUD-DA-d65385a58-2017 | Salud Datos Abiertos |
-| 44 | Tasa de mortalidad de niños menores de 5 años | Valor publicado o calculado | SALUD-DA-d153e100b-2011 | Salud Datos Abiertos |
-| 45 | Tasa de mortalidad infantil | Valor publicado o calculado | TERRI-012 | DNP ficha TerriData |
-| 46 | Tasa de mortalidad neonatal | Valor publicado o calculado | TERRI-016 | DNP ficha TerriData |
-| 47 | Tasa de mortalidad por desnutrición en menores de 5 años | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 48 | Tasa de mortalidad por tumores malignos en menores de 18 años | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 49 | Tasa de mortalidad por VIH/SIDA | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 50 | Tasa de mortalidad prematura de las enfermedades crónicas de las vías respiratorias inferiores | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 51 | Tasa de mortalidad prematura por cáncer de mama, cuello uterino, colon y recto, pulmón, próstata, estómago, linfoma no Hodgkin y Leucemia en adultos | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 52 | Tasa de mortalidad prematura por diabetes | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 53 | Tasa de mortalidad prematura por enfermedades no transmisibles en población entre 30 y hasta 70 años | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 54 | Tasa General de mortalidad por accidentes de tránsito terrestre | Valor publicado o calculado | OFI-FOR-ICET54-2023 | Medicina Legal |
-| 55 | Número de robos de vehículos motorizados | Valor publicado o calculado | DER-ICET-55-2023 | Cálculo reproducible |
-| 56 | Tasa de feminicidio (homicidios de mujeres asesinadas por razones de género, por cada 100.000 mujeres) | Estadística relacionada | FOR-MUJER-HOM-2023 | Fuente trazada por ID |
-| 57 | Tasa de homicidios | Valor publicado o calculado | DER-ICET-57-2025 | Cálculo reproducible |
-| 58 | Tasa de mortalidad por lesiones autoinfligidas intencionalmente | Valor publicado o calculado | OFI-FOR-ICET58-2023 | Medicina Legal |
-| 59 | Tasa de víctimas directas de homicidio y desaparición forzada registradas en RUV | Estadística relacionada | RUV-2025-HOMICIDIO-OCURRENCIA | RUV Datos Abiertos |
-| 60 | Tasa de victimización de hurto a personas | Estadística relacionada | EXT-POLICIA-HURTO-PERSONAS-2025 | Fuente trazada por ID |
-| 61 | Tasa de violencia interpersonal | Valor publicado o calculado | OFI-FOR-ICET61-2024 | Medicina Legal |
-| 62 | Víctimas con atención o acompañamiento psicosocial individual, familiar, comunitaria y/o grupal | Estadística relacionada | DOC-RUV-atencion | Documento municipal |
-| 63 | Víctimas que superaron la situación de vulnerabilidad (nueva medición) | Receta calculable con componentes externos documentados | `/estimador` (seleccionar ICET) | Fuentes sectoriales de receta |
-| 64 | Acceso a agua potable adecuado | Estadística relacionada | TERRI-023 | DNP ficha TerriData |
-| 65 | Cobertura de energía eléctrica | Valor publicado o calculado | UPME-ICEE-TOTAL-2024 | UPME ICEE 2024 |
-| 66 | Porcentaje de la población con acceso a métodos de saneamiento adecuados | Estadística relacionada | TERRI-027 | DNP ficha TerriData |
+| ICET | Definición | Categoría de dato accesible | Identificador o calculadora |
+|---:|---|---|---|
+| 1 | Porcentaje de aguas residuales urbanas tratadas | Receta ejecutable, sin dato de entrada | `/estimador?icet=1` |
+| 2 | Tasa de personas afectadas a causa de eventos recurrentes | Receta ejecutable, sin dato de entrada | `/estimador?icet=2` |
+| 3 | Negocios verdes verificados | Receta ejecutable, sin dato de entrada | `/estimador?icet=3` |
+| 4 | Porcentaje de residuos sólidos efectivamente aprovechados | Relacionada (otra definición) | `SSPD-APROVECHAMIENTO-PROPORCION-2024` |
+| 5 | Porcentaje de residuos sólidos urbanos dispuestos adecuadamente | Relacionada (otra definición) | `SSPD-DISPOSICION-TOTAL-2024` |
+| 6 | Residuos peligrosos aprovechados y tratados | Receta ejecutable, sin dato de entrada | `/estimador?icet=6` |
+| 7 | Hectáreas de pequeña y mediana propiedad rural, formalizadas | Relacionada (otra definición) | `TERRI-055` |
+| 8 | Vocación de uso del suelo (caracterización y zonificación) | Relacionada (otra definición) | `GOB-AGRO-SIEMBRA-2023` |
+| 9 | Valor agregado por municipio | Publicada / derivada con fuente | `DOC-ICET-09-2023` |
+| 10 | Porcentaje de presupuesto municipal financiado con recursos propios | Relacionada (otra definición) | `DER-FIN-TRIBUTARIOS-2025` |
+| 11 | Parque automotor por municipio (particular, oficial, público) incluyendo motocicletas | Receta ejecutable, sin dato de entrada | `/estimador?icet=11` |
+| 12 | Índice de desempeño institucional | Publicada / derivada con fuente | `DOC-FURAG-12-2021` |
+| 13 | Porcentaje de mujeres en cargos directivos del Estado Colombiano | Receta ejecutable, sin dato de entrada | `/estimador?icet=13` |
+| 14 | Predios del país con catastro multipropósito formado y/o actualizado total o parcialmente | Relacionada (otra definición) | `DER-CAT-PREDIOS-2024` |
+| 15 | La esperanza de vida al nacer (total, hombre, mujer) | Receta ejecutable, sin dato de entrada | `/estimador?icet=15` |
+| 16 | Total población | Publicada / derivada con fuente | `TERRI-001` |
+| 17 | Brecha entre cobertura neta urbano-rural en educación preescolar, básica y media | Receta ejecutable, sin dato de entrada | `/estimador?icet=17` |
+| 18 | Cobertura en educación superior | Publicada / derivada con fuente | `DOC-EDU-18-2023` |
+| 19 | Porcentaje de matrícula oficial con conexión a internet | Receta ejecutable, sin dato de entrada | `/estimador?icet=19` |
+| 20 | Tasa de analfabetismo para la población de 15 años y más | Relacionada (otra definición) | `OFI-ANALF-HOG-2018` |
+| 21 | Tasa de cobertura bruta en educación media | Publicada / derivada con fuente | `DOC-EDU-21-2023` |
+| 22 | Tasa de cobertura bruta en transición | Publicada / derivada con fuente | `DOC-EDU-22-2023` |
+| 23 | Tasa de deserción intra-anual del sector oficial en educación básica y media | Publicada / derivada con fuente | `TERRI-021` |
+| 24 | Hogares urbanos con déficit cualitativo de vivienda (CNPV 2018) | Publicada / derivada con fuente | `DOC-CNPV-24-2018` |
+| 25 | Hogares urbanos con déficit cuantitativo de vivienda (CNPV 2018) | Publicada / derivada con fuente | `DOC-CNPV-25-2018` |
+| 26 | Medida de pobreza multidimensional Censal | Publicada / derivada con fuente | `OFI-ICET-26-2018` |
+| 27 | Incidencia de la hepatitis B por cada 100.000 habitantes | Estimación regional exploratoria | `EST-ICET27-2018` |
+| 28 | Incidencia de malaria | Estimación regional exploratoria | `EST-ICET28-2018` |
+| 29 | Incidencia de tuberculosis | Relacionada (otra definición) | `INS-TB-ICET29-2018` |
+| 30 | Letalidad por dengue | Receta ejecutable, sin dato de entrada | `/estimador?icet=30` |
+| 31 | Número de médicos | Receta ejecutable, sin dato de entrada | `/estimador?icet=31` |
+| 32 | Porcentaje de menores de 1 año con tercera dosis de pentavalente | Publicada / derivada con fuente | `EXT-ICET-32-PENTA-2016` |
+| 33 | Porcentaje de mujeres de 15 a 19 años con embarazo subsiguiente | Receta ejecutable, sin dato de entrada | `/estimador?icet=33` |
+| 34 | Porcentaje de mujeres de 15 a 19 años que son madres o están embarazadas de su primer hijo | Receta ejecutable, sin dato de entrada | `/estimador?icet=34` |
+| 35 | Porcentaje de niñas y niños en primera infancia que cuentan con las atenciones priorizadas en el marco de la atención integral | Receta ejecutable, sin dato de entrada | `/estimador?icet=35` |
+| 36 | Porcentaje de partos atendidos por personal calificado | Publicada / derivada con fuente | `TERRI-014` |
+| 37 | Porcentaje de personas con criterio de tratamiento y diagnóstico de hepatitis C crónica a quienes se les inicia el tratamiento | Receta ejecutable, sin dato de entrada | `/estimador?icet=37` |
+| 38 | Porcentaje de población afiliada al sistema de seguridad social en salud | Publicada / derivada con fuente | `DER-ICET-38-2023` |
+| 39 | Porcentaje de transmisión materno-infantil de la hepatitis B | Receta ejecutable, sin dato de entrada | `/estimador?icet=39` |
+| 40 | Porcentaje niños y niñas de 1 año con vacunación de triple viral | Receta ejecutable, sin dato de entrada | `/estimador?icet=40` |
+| 41 | Razón de mortalidad materna (42 días) | Publicada / derivada con fuente | `TERRI-015` |
+| 42 | Tasa de cobertura del Programa de Alimentación Escolar | Relacionada (otra definición) | `DOC-PAE-BENEFICIARIOS-2025` |
+| 43 | Tasa de fecundidad específica en mujeres adolescentes de 15 a 19 años | Publicada / derivada con fuente | `SALUD-DA-d65385a58-2017` |
+| 44 | Tasa de mortalidad de niños menores de 5 años | Publicada / derivada con fuente | `SALUD-DA-d153e100b-2011` |
+| 45 | Tasa de mortalidad infantil | Publicada / derivada con fuente | `TERRI-012` |
+| 46 | Tasa de mortalidad neonatal | Publicada / derivada con fuente | `TERRI-016` |
+| 47 | Tasa de mortalidad por desnutrición en menores de 5 años | Receta ejecutable, sin dato de entrada | `/estimador?icet=47` |
+| 48 | Tasa de mortalidad por tumores malignos en menores de 18 años | Receta ejecutable, sin dato de entrada | `/estimador?icet=48` |
+| 49 | Tasa de mortalidad por VIH/SIDA | Receta ejecutable, sin dato de entrada | `/estimador?icet=49` |
+| 50 | Tasa de mortalidad prematura de las enfermedades crónicas de las vías respiratorias inferiores | Receta ejecutable, sin dato de entrada | `/estimador?icet=50` |
+| 51 | Tasa de mortalidad prematura por cáncer de mama, cuello uterino, colon y recto, pulmón, próstata, estómago, linfoma no Hodgkin y Leucemia en adultos | Receta ejecutable, sin dato de entrada | `/estimador?icet=51` |
+| 52 | Tasa de mortalidad prematura por diabetes | Receta ejecutable, sin dato de entrada | `/estimador?icet=52` |
+| 53 | Tasa de mortalidad prematura por enfermedades no transmisibles en población entre 30 y hasta 70 años | Receta ejecutable, sin dato de entrada | `/estimador?icet=53` |
+| 54 | Tasa General de mortalidad por accidentes de tránsito terrestre | Publicada / derivada con fuente | `OFI-FOR-ICET54-2023` |
+| 55 | Número de robos de vehículos motorizados | Publicada / derivada con fuente | `DER-ICET-55-2023` |
+| 56 | Tasa de feminicidio (homicidios de mujeres asesinadas por razones de género, por cada 100.000 mujeres) | Relacionada (otra definición) | `FOR-MUJER-HOM-2023` |
+| 57 | Tasa de homicidios | Publicada / derivada con fuente | `DER-ICET-57-2025` |
+| 58 | Tasa de mortalidad por lesiones autoinfligidas intencionalmente | Publicada / derivada con fuente | `OFI-FOR-ICET58-2023` |
+| 59 | Tasa de víctimas directas de homicidio y desaparición forzada registradas en RUV | Relacionada (otra definición) | `RUV-2025-HOMICIDIO-OCURRENCIA` |
+| 60 | Tasa de victimización de hurto a personas | Relacionada (otra definición) | `EXT-POLICIA-HURTO-PERSONAS-2025` |
+| 61 | Tasa de violencia interpersonal | Publicada / derivada con fuente | `OFI-FOR-ICET61-2024` |
+| 62 | Víctimas con atención o acompañamiento psicosocial individual, familiar, comunitaria y/o grupal | Relacionada (otra definición) | `DOC-RUV-atencion` |
+| 63 | Víctimas que superaron la situación de vulnerabilidad (nueva medición) | Receta ejecutable, sin dato de entrada | `/estimador?icet=63` |
+| 64 | Acceso a agua potable adecuado | Relacionada (otra definición) | `TERRI-023` |
+| 65 | Cobertura de energía eléctrica | Publicada / derivada con fuente | `UPME-ICEE-TOTAL-2024` |
+| 66 | Porcentaje de la población con acceso a métodos de saneamiento adecuados | Relacionada (otra definición) | `TERRI-027` |
 
-## Datos masivos integrados
+## Mapa, geoestadística y fuentes
 
-- `src/data/fuentesMasivas76670.json`: 232 observaciones verificadas de código territorial 76670, provenientes de UPME, Datos Abiertos / salud municipal, RUV y registros de prestadores SSPD.
-- `scripts/extraer_fuentes_76670.py`: consulta programable de UPME y RUV, extracción histórica salud 2005–2020, SSPD y metadatos INS/SISPRO.
-- `scripts/extraer_sspd_anexos_2024.py`: lee las bases nacionales de acueducto/alcantarillado/aseo, residuos aprovechados y disposición final 2024; se validaron seis filas de servicios para San Pedro, cuatro de materiales aprovechados y dos de disposición final por municipio atendido 76670.
-- `src/lib/indicadoresCalculados.ts`: fórmulas reproducibles; nunca usar población como denominador de tasas por vivienda.
-- `src/app/icet/ICETDashboard.tsx`: tarjetas reales, explorador, fichas de fuentes, filtro año/tema, catálogo completo. Las estadísticas relacionadas muestran su nombre real.
-- `/api/icet/documentados`: endpoint JSON, sin expedir microdatos personales.
+Ruta **`/mapa`** (archivo `src/app/mapa/page.tsx`) dibuja **8 polígonos reales DANE MGN 2025**, incluido San Pedro, y compara la cobertura ICEE 2024 UPME entre los ocho municipios. Permite elegir municipio, año, sector, clase de dato y búsqueda textual, con fichas de fuente y series temporales. No aplica directamente los datos de comparables a San Pedro.
 
-## Implementación geográfica y motor matemático
+Ruta **`/estimador`** (archivo `src/app/estimador/page.tsx`) contiene 25 recetas editables con numerador, denominador, universo objetivo municipal, vigencia, fuente y municipios de comparación. Sin componentes no ofrece números ficticios, pero siempre proporciona cálculo procedural, exportación JSON y control básico de coherencia.
 
-- **Mapa interactivo** `/mapa`: polígonos oficiales del **DANE MGN 2025**, ocho municipios del entorno, mapa coroplético ICEE 2024 UPME, leyenda, selección municipal con datos propios, filtros de sector/año/naturaleza/nombre, detalle de fuentes y series históricas. Los datos no se trasladan entre localidades ni se dibujan puntos ficticios.
-- **Catálogo de API/servicios** `src/lib/fuentesPublicas.ts`: 18 portales y servicios (DANE ArcGIS, DANE PPED, UPME ArcGIS, Socrata INS/SISPRO/RUV/SSPD, RUNT, CVC/IGAC/MEN, etc). 11 ya tienen extracción aplicada, otras se identifican correctamente como fuentes por integrar o sin dato local.
-- **Motor regional** `src/data/escenariosComparables76670.json` y `scripts/modelar_comparables.py`: mínimos registros por evento SIVIGILA 2018, población DANE comparable, diferencias urbano-rurales, ponderaciones demográficas y validación leave-one-out. ESCENARIOS EXPLORATORIOS no oficiales: **ICET 27 hepatitis B 0,19 notificaciones/100k (2018)**, **ICET 28 malaria 1,72 notificaciones/100k (2018)**. También produce referencia regional ICET 29 tuberculosis 17,30, pero **priorizamos medida local reconstruida 17,70/100k** (3 notificaciones locales INS 2018). Las tasas de infección no equivalen automáticamente a incidencia de residentes confirmados.
-- **RUNT ICET 11 RECHAZADO** por valores territoriales gravemente heterogéneos de matriculación, de 0,00642 a 4,14 vehículos registrados por habitante en comparadores. No presentar falsa cifra de parque automotor para San Pedro.
-- **Estimador** `/estimador`: **25 recetas matemáticas** en `src/lib/recetasEstimacion.ts`, asociadas a las 25 fichas del catálogo. Calcula tasas, proporciones, brechas, escenarios por razón territorial y referencia de tabla de vida cuando se aportan componentes con fuente, año y municipio. Nunca produce cifra numérica con campos vacíos.
-- **ETL y documentos GitHub**: `scripts/extraer_geografia_76670.py`, `scripts/extraer_runt_ins_76670.py`, `scripts/modelar_comparables.py`, `src/data/geografiaMunicipal76670.json`, `src/data/energiaMunicipiosReferencia.json`. Work debe preservar estos recursos y unirlos al dashboard principal al fusionar PR #5.
+El registro `src/lib/fuentesPublicas.ts` inventaría **18 fuentes y APIs**, de las cuales **11 tienen ETL aplicado** y 7 están clasificadas como referencia pendiente o fuente sin registro municipal atribuible. Queda integrado en el geovisor con filtro y enlace al proveedor.
 
-## Priorización del trabajo restante
+### Conjuntos y código implementado
 
-Investigar primero los 25 indicadores sin ningún valor validado/escenario seleccionado en este archivo: fuentes SISPRO/INS/SIVIGILA para enfermedades, mortalidad y recursos de salud; UARIV/MinSalud para atención psicosocial y superación de vulnerabilidad; IGAC/ANT para catastro multipropósito y tierras; MEN/SIMAT para internet educativo y brecha urbano-rural; CVC/IDEAM/SSPD para ambientales; RUNT para parque matriculado.
+- `src/data/geografiaMunicipal76670.json`: polígonos oficiales, obtenidos de ArcGIS DANE.
+- `src/data/energiaMunicipiosReferencia.json`: ICEE 2024 por municipio y viviendas conectadas/totales de UPME.
+- `src/data/fuentesMasivas76670.json`: 232 observaciones agregadas UPME, salud, RUV y SSPD.
+- `src/data/insSivigilaSanPedro76670.json`: notificaciones de 16 eventos INS SIVIGILA 2018.
+- `src/data/escenariosComparables76670.json`: DANE PPED, siete municipios y modelos analógicos con prueba leave-one-out. La estimación del parque automotor RUNT (#11) se **rechazó** porque la tasa de vehículos registrados de los comparadores oscila de 0,00642 a 4,14088 vehículos por residente (sesgo del lugar de matrícula); el dato del municipio no consta en el conjunto RUNT disponible.
+- `src/lib/recetasEstimacion.ts`: 25 fórmulas específicas y fuentes sectoriales, no números falsos.
+- `src/lib/icetVinculos.ts`: mapa único de vínculos directos, relacionados y escenarios.
+- API `/api/icet/documentados` expone observaciones públicas agregadas, sin microdatos individuales; el dashboard `/icet/recuperados` ofrece filtros y fichas de procedencia.
 
-Los 15 relacionados pueden mejorarse hacia un valor que corresponda exactamente al indicador cuando se recuperen nuevos datos. **No eliminar su valor contextual actual ni convertirlo silenciosamente en equivalente.**
+### Próxima extracción prioritaria para conseguir valores NUMÉRICOS que faltan
 
-**Estado de producción:** cambios en PR #5. No se ha comprobado despliegue de este PR en Vercel ni ingesta a Supabase.
+DANE EEVV / SISPRO RUAF por CIE-10, edad y municipio de residencia: #47–#53; MEN SIMAT: #17 y #19; SISPRO/PAI: #30, #33–#40; RETHUS: #31; UARIV superación de vulnerabilidad: #63; CVC/IDEAM: #1, #2, #3, #6. Los modelos para fenómenos sin numeradores, pocos eventos o alta confusión administrativa deben reservarse a escenarios etiquetados y nunca reemplazar reportes oficiales.
+
+**Estado técnico:** todo el trabajo está en PR #5 rama `feat/icet-recuperacion-documental` y requiere conciliación con `main`/Supabase y despliegue, sin afirmar que ya está publicado en producción.

@@ -6,24 +6,24 @@ export type GeoSelection={
  kind:'municipal'|'place';
  name:string;code:string;area?:number;altitude?:number;year?:number;
 };
-type Props={visible:boolean;onSelect:(selection:GeoSelection)=>void;onStatus:(message:string)=>void;onReady?:(ready:boolean)=>void;cameraCommand?:{type:'home'|'in'|'out';nonce:number};focusKey?:string};
+type Props={visible:boolean;onSelect:(selection:GeoSelection)=>void;onStatus:(message:string)=>void;onReady?:(ready:boolean)=>void;onPlaces?:(places:{code:string;name:string}[])=>void;cameraCommand?:{type:'home'|'in'|'out';nonce:number};focusKey?:string};
 const DANE='https://geoportal.dane.gov.co/mparcgis/rest/services/Divipola/Serv_DIVIPOLA_MGN_2025/FeatureServer/305';
 const feature=(municipalGeo as unknown as {features:{properties:{codigo:string};geometry:{type:string;coordinates:number[][][]|number[][][][]}}[]}).features.find(f=>f.properties.codigo==='76670');
 function polygons(){if(!feature)return[];return feature.geometry.type==='Polygon'?[feature.geometry.coordinates as number[][][]]:(feature.geometry.coordinates as number[][][][])}
 const shapes=polygons().flat();
 const extent=shapes.flat().reduce((e,p)=>[Math.min(e[0],p[0]),Math.min(e[1],p[1]),Math.max(e[2],p[0]),Math.max(e[3],p[1])],[180,90,-180,-90]);
 const center:[number,number]=[(extent[0]+extent[2])/2,(extent[1]+extent[3])/2];
-export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focusKey,cameraCommand}:Props){
+export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,onPlaces,focusKey,cameraCommand}:Props){
  const mount=useRef<HTMLDivElement>(null);
  const viewRef=useRef<{destroy:()=>void;goTo:(target:unknown,options?:unknown)=>Promise<unknown>;hitTest:(event:unknown)=>Promise<{results:{graphic?:{attributes?:Record<string,unknown>}}[]}>;on:(event:string,handler:(event:unknown)=>void)=>{remove:()=>void}}|null>(null);
  const graphicsRef=useRef<{visible:boolean}|null>(null);
  const goHome=useRef<(()=>void)|null>(null);
  const zoomRef=useRef<((step:number)=>void)|null>(null);
  const focusRef=useRef<Map<string,()=>void>>(new Map());
- const selectRef=useRef(onSelect),statusRef=useRef(onStatus),readyRef=useRef(onReady);
+ const selectRef=useRef(onSelect),statusRef=useRef(onStatus),readyRef=useRef(onReady),placesRef=useRef(onPlaces);
  const [failure,setFailure]=useState('');
  const [retry,setRetry]=useState(0);
- useEffect(()=>{selectRef.current=onSelect;statusRef.current=onStatus;readyRef.current=onReady},[onSelect,onStatus,onReady]);
+ useEffect(()=>{selectRef.current=onSelect;statusRef.current=onStatus;readyRef.current=onReady;placesRef.current=onPlaces},[onSelect,onStatus,onReady,onPlaces]);
  useEffect(()=>{if(graphicsRef.current)graphicsRef.current.visible=visible},[visible]);
  useEffect(()=>{if(focusKey==='home')goHome.current?.();else if(focusKey)focusRef.current.get(focusKey)?.()},[focusKey]);
  useEffect(()=>{if(!cameraCommand)return;if(cameraCommand.type==='home')goHome.current?.();if(cameraCommand.type==='in')zoomRef.current?.(1);if(cameraCommand.type==='out')zoomRef.current?.(-1)},[cameraCommand]);
@@ -78,7 +78,7 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focus
      const query=remote.createQuery();query.where="MPIO_CDPMP = '76670'";query.outFields=['*'];query.returnGeometry=true;query.outSpatialReference={wkid:4326};
      const features=await remote.queryFeatures(query);
      if(destroyed)return;
-     let count=0;const seen=new Set<string>();
+     let count=0;const seen=new Set<string>();const placeList:{code:string;name:string}[]=[];
      for(const f of features.features){
       const a=f.attributes;const code=String(a.ZU_CDIVI||'');
       if(!code||seen.has(code)||!f.geometry||f.geometry.type!=='polygon')continue;
@@ -87,8 +87,9 @@ export default function ArcGISMapEngine({visible,onSelect,onStatus,onReady,focus
       if(!centroid||!Number.isFinite(centroid.longitude))continue;
       focusRef.current.set(code,()=>{void view.goTo({center:centroid,zoom:15},{duration:650}).catch(()=>{})});
       markerLayer.add(new Graphic.default({geometry:centroid,attributes:{kind:'place',name:String(a.ZU_CNMBRE||'Centro poblado'),code,area:a.ZU_NAREA,altitude:a.ZU_NALTD,year:a.ZU_NANO},symbol:flag('territory',57)}));
-      count++;
+      count++;placeList.push({code,name:String(a.ZU_CNMBRE||'Centro poblado')});
      }
+     placesRef.current?.(placeList);
      statusRef.current(count?count+' lugares DANE con banderas georreferenciadas · 1 portal municipal':'Mapa real disponible · 1 portal municipal');
     }catch(error){
       // The municipal boundary is bundled from the same DANE MGN dataset, independently of this request.

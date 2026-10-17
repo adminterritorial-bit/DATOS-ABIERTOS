@@ -12,12 +12,25 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'tablet',wid
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
   await page.locator('.n5-navigation').waitFor();
   await page.locator('.n5-banner-frame').waitFor();
+  await page.waitForFunction(()=>{
+    const image=document.querySelector('.n5-banner-slide img');
+    return !!image && image.complete && image.naturalWidth===1200 && image.naturalHeight===300;
+  },{timeout:22000}).catch(()=>errors.push(viewport.name+': first supplied banner is missing or not 1200x300'));
+  if(viewport.name==='desktop'){
+    for(let slide=1;slide<4;slide++){
+      await page.getByRole('button',{name:'Banner siguiente'}).click();
+      await page.waitForFunction(()=>{const img=document.querySelector('.n5-banner-slide img');return !!img&&img.complete&&img.naturalWidth===1200&&img.naturalHeight===300},null,{timeout:10000}).catch(()=>errors.push('banner '+slide+': missing original image'));
+    }
+    await page.getByRole('button',{name:'Mostrar: Observatorio de Datos'}).click();
+  }
+
   await page.locator('.n5-data-panel').first().waitFor({state:'visible',timeout:45000});
   if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': expected exactly five stable chart panels');
   const over=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3);
   if(over)errors.push(viewport.name+': horizontal overflow');
 
   await page.locator('.g4-logo img').waitFor({timeout:12000});
+  if(!await page.locator('.g4-logo img').evaluate(el=>el.complete&&el.naturalWidth>200))errors.push(viewport.name+': municipal logo not loading');
   await page.waitForTimeout(1300);
   if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': five-chart layout missing');
   await page.screenshot({path:'artifacts/visual/'+viewport.name+'.png',fullPage:true});

@@ -15,13 +15,13 @@
       "total": 17244
     }
   },
-  "version": "1.0",
+  "version": "1.1",
   "estimaciones": [
     {
       "id": "EST-ICET27-2018",
       "icet": "ICET-27",
       "nombre": "Incidencia territorial de notificaciones de hepatitis B 2018 (referencia analógica)",
-      "valor": 0.0,
+      "valor": 0.19,
       "unidad": "notificaciones por 100.000 hab.",
       "anio": 2018,
       "tipo": "ESTIMACION_EXPLORATORIA_NO_OFICIAL",
@@ -33,36 +33,44 @@
         "76890",
         "76113",
         "76036",
-        "76318"
+        "76318",
+        "76111",
+        "76834"
       ],
-      "n_observaciones_referencia": 5,
+      "n_observaciones_referencia": 7,
       "insumo": "SIVIGILA eventos 340",
       "valores_observados_referencia": {
         "76616": 0,
         "76890": 0,
         "76113": 0,
         "76036": 0,
-        "76318": 0
+        "76318": 0,
+        "76111": 3.0,
+        "76834": 7.0
       },
       "poblaciones_referencia": {
         "76616": 15557,
         "76890": 16016,
         "76113": 24332,
         "76036": 22448,
-        "76318": 33184
+        "76318": 33184,
+        "76111": 127542,
+        "76834": 212677
       },
       "pesos": {
         "76616": 2.960352,
         "76890": 2.48533,
         "76113": 1.409468,
         "76036": 0.877762,
-        "76318": 0.827362
+        "76318": 0.827362,
+        "76111": 0.326438,
+        "76834": 0.287278
       },
       "rango_tasas_referencia": [
         0.0,
-        0.0
+        3.291
       ],
-      "error_abs_loo_mediano": 0.239,
+      "error_abs_loo_mediano": 0.478,
       "escala_error_loo": "diferencia en razón por 100.000 habitantes (no intervalo predictivo)",
       "formula": "Tasa esperada = suma[peso_i * (conteo_i / población_i)] / suma[peso_i]; peso_i = 1 / (0,20 + |ln(P_i/P_sp)| + 2*|urb_i/P_i - urb_sp/P_sp|)",
       "nota": "ESCENARIO EXPLORATORIO. SIVIGILA 2018 notificaciones por municipio de origen/ocurrencia (no se confirma residencia ni incidencia real). La ausencia de fila se asume cero notificaciones en el extracto completo únicamente para estimar tasas vecinales; no es un cero oficial de San Pedro."
@@ -71,7 +79,7 @@
       "id": "EST-ICET28-2018",
       "icet": "ICET-28",
       "nombre": "Incidencia territorial de notificaciones de malaria 2018 (referencia analógica)",
-      "valor": 1.81,
+      "valor": 1.72,
       "unidad": "notificaciones por 100.000 hab.",
       "anio": 2018,
       "tipo": "ESTIMACION_EXPLORATORIA_NO_OFICIAL",
@@ -83,36 +91,44 @@
         "76890",
         "76113",
         "76036",
-        "76318"
+        "76318",
+        "76111",
+        "76834"
       ],
-      "n_observaciones_referencia": 5,
+      "n_observaciones_referencia": 7,
       "insumo": "SIVIGILA eventos 465,470,480,490",
       "valores_observados_referencia": {
         "76616": 0,
         "76890": 1.0,
         "76113": 0,
         "76036": 0,
-        "76318": 0
+        "76318": 0,
+        "76111": 0,
+        "76834": 2.0
       },
       "poblaciones_referencia": {
         "76616": 15557,
         "76890": 16016,
         "76113": 24332,
         "76036": 22448,
-        "76318": 33184
+        "76318": 33184,
+        "76111": 127542,
+        "76834": 212677
       },
       "pesos": {
         "76616": 2.960352,
         "76890": 2.48533,
         "76113": 1.409468,
         "76036": 0.877762,
-        "76318": 0.827362
+        "76318": 0.827362,
+        "76111": 0.326438,
+        "76834": 0.287278
       },
       "rango_tasas_referencia": [
         0.0,
         6.244
       ],
-      "error_abs_loo_mediano": 1.283,
+      "error_abs_loo_mediano": 1.256,
       "escala_error_loo": "diferencia en razón por 100.000 habitantes (no intervalo predictivo)",
       "formula": "Tasa esperada = suma[peso_i * (conteo_i / población_i)] / suma[peso_i]; peso_i = 1 / (0,20 + |ln(P_i/P_sp)| + 2*|urb_i/P_i - urb_sp/P_sp|)",
       "nota": "ESCENARIO EXPLORATORIO. SIVIGILA 2018 notificaciones por municipio de origen/ocurrencia (no se confirma residencia ni incidencia real). La ausencia de fila se asume cero notificaciones en el extracto completo únicamente para estimar tasas vecinales; no es un cero oficial de San Pedro."
@@ -121,7 +137,7 @@
       "id": "EST-ICET29-2018",
       "icet": "ICET-29",
       "nombre": "Incidencia territorial de tuberculosis 2018 (referencia comparativa)",
-      "valor": 15.77,
+      "valor": 17.3,
       "unidad": "notificaciones por 100.000 hab.",
       "anio": 2018,
       "tipo": "ESTIMACION_EXPLORATORIA_NO_OFICIAL",
@@ -133,89 +149,57 @@
         "76890",
         "76113",
         "76036",
-        "76318"
+        "76318",
+        "76111",
+        "76834"
       ],
-      "n_observaciones_referencia": 5,
+      "n_observaciones_referencia": 7,
       "insumo": "SIVIGILA eventos 810,820",
       "valores_observados_referencia": {
         "76616": 3.0,
         "76890": 2.0,
         "76113": 3.0,
         "76036": 5.0,
-        "76318": 4.0
+        "76318": 4.0,
+        "76111": 51.0,
+        "76834": 79.0
       },
       "poblaciones_referencia": {
         "76616": 15557,
         "76890": 16016,
         "76113": 24332,
         "76036": 22448,
-        "76318": 33184
+        "76318": 33184,
+        "76111": 127542,
+        "76834": 212677
       },
       "pesos": {
         "76616": 2.960352,
         "76890": 2.48533,
         "76113": 1.409468,
         "76036": 0.877762,
-        "76318": 0.827362
+        "76318": 0.827362,
+        "76111": 0.326438,
+        "76834": 0.287278
       },
       "rango_tasas_referencia": [
         12.054,
-        22.274
+        39.987
       ],
-      "error_abs_loo_mediano": 5.889,
+      "error_abs_loo_mediano": 6.435,
       "escala_error_loo": "diferencia en razón por 100.000 habitantes (no intervalo predictivo)",
       "formula": "Tasa esperada = suma[peso_i * (conteo_i / población_i)] / suma[peso_i]; peso_i = 1 / (0,20 + |ln(P_i/P_sp)| + 2*|urb_i/P_i - urb_sp/P_sp|)",
       "nota": "ESCENARIO EXPLORATORIO. SIVIGILA 2018 notificaciones por municipio de origen/ocurrencia (no se confirma residencia ni incidencia real). La ausencia de fila se asume cero notificaciones en el extracto completo únicamente para estimar tasas vecinales; no es un cero oficial de San Pedro."
-    },
+    }
+  ],
+  "rechazadas": [
     {
-      "id": "EST-ICET11-2026",
       "icet": "ICET-11",
-      "nombre": "Parque automotor registrado, esperado desde municipios comparables",
-      "valor": 14052.68,
-      "unidad": "vehículos estimados",
-      "anio": 2026,
-      "tipo": "ESTIMACION_EXPLORATORIA_NO_OFICIAL",
-      "nivel": "D",
-      "fuente": "https://www.datos.gov.co/d/u3vn-bdcy",
-      "fuente_poblacion": "https://www.dane.gov.co/files/censo2018/proyecciones-de-poblacion/Municipal/PPED-AreaMun-2018-2042_VP.xlsx",
-      "municipios_referencia": [
-        "76890",
-        "76113",
-        "76036",
-        "76318",
-        "76834"
-      ],
-      "n_observaciones_referencia": 5,
-      "insumo": "RUNT estado activo e inconsistente, corte octubre 2026",
-      "valores_observados_referencia": {
-        "76890": 1133.0,
-        "76113": 164.0,
-        "76036": 39745.0,
-        "76318": 143850.0,
-        "76834": 153438.0
-      },
-      "poblaciones_referencia": {
-        "76890": 16843,
-        "76113": 25527,
-        "76036": 25109,
-        "76318": 34739,
-        "76834": 225868
-      },
-      "pesos": {
-        "76890": 2.969161,
-        "76113": 1.430741,
-        "76036": 0.841338,
-        "76318": 0.83282,
-        "76834": 0.290095
-      },
-      "rango_tasas_referencia": [
-        0.006,
-        4.141
-      ],
-      "error_abs_loo_mediano": 138113.405,
-      "escala_error_loo": "diferencia en razón por 100.000 habitantes (no intervalo predictivo)",
-      "formula": "Tasa esperada = suma[peso_i * (conteo_i / población_i)] / suma[peso_i]; peso_i = 1 / (0,20 + |ln(P_i/P_sp)| + 2*|urb_i/P_i - urb_sp/P_sp|)",
-      "nota": "ESCENARIO EXPLORATORIO, NO VEHÍCULOS REALES REGISTRADOS EN SAN PEDRO. No hay filas directas del municipio en este conjunto RUNT. Extrapolación de intensidad de matriculación por habitante entre municipios cercanos, ajustada por estructura urbana y tamaño. No supone que los vehículos circulen físicamente en San Pedro."
+      "motivo": "RUNT tiene sesgo de municipio de matriculación: tasas vecinales difieren más de 8 veces o hay escasa cobertura. Modelo rechazado, no publicar total municipal estimado.",
+      "rango_vehiculos_por_habitante": [
+        0.00642,
+        4.14088
+      ]
     }
   ],
   "observaciones_comparadores": []

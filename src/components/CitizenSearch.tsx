@@ -2,11 +2,14 @@
 import {useEffect,useMemo,useRef,useState} from 'react';
 import Link from 'next/link';
 import {BookOpen,Database,FileSearch,Home,Search,ShieldCheck,Users2,X,ArrowUpRight,Compass} from 'lucide-react';
+import {reunirEstadisticas} from '@/lib/territorialDataset';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import type {FeedPublico} from '@/lib/publicFeed';
 
 type Entrada={id:string;titulo:string;descripcion:string;href:string;clase:'ruta'|'indicador'|'dato';anio?:number};
 const rutas:Entrada[]=[
+ {id:'rendicion',titulo:'Rendición de cuentas 2025',descripcion:'Inversión, beneficiarios, programas y compromisos',href:'/rendicion/',clase:'ruta'},
+ {id:'territorios',titulo:'Comparadores territoriales',descripcion:'San Pedro, Valle del Cauca y Colombia · UPME, MinTIC y DANE',href:'/territorios/',clase:'ruta'},
  {id:'inicio',titulo:'Inicio y panorama',descripcion:'Visión general del municipio',href:'/',clase:'ruta'},
  {id:'icet',titulo:'66 indicadores territoriales',descripcion:'Diccionario ICET del DANE',href:'/icet/',clase:'ruta'},
  {id:'catalogo',titulo:'Explorar los datos abiertos',descripcion:'Estadísticas, fuentes y períodos',href:'/catalogo/',clase:'ruta'},
@@ -33,7 +36,7 @@ export default function CitizenSearch({feed}:{feed:FeedPublico|null}){
   const items:Entrada[]=[
    ...rutas,
    ...indicadoresICET.map(i=>({id:i.codigo,titulo:i.nombre,descripcion:i.codigo+' · '+i.area,href:'/icet/?q='+encodeURIComponent(i.codigo),clase:'indicador' as const})),
-   ...(feed?.registros||[]).map(r=>({id:'registro-'+r.id+'-'+r.anio,titulo:r.nombre,descripcion:r.tema+' · '+r.anio+' · '+r.fuente,href:'/catalogo/?buscar='+encodeURIComponent(r.nombre),clase:'dato' as const,anio:r.anio}))
+   ...reunirEstadisticas(feed).map(r=>({id:'registro-'+r.id+'-'+r.anio,titulo:r.nombre,descripcion:r.sector+' · '+r.anio+' · '+r.fuente,href:(r.origen==='Gestión municipal'?'/rendicion/?buscar=':'/catalogo/?buscar=')+encodeURIComponent(r.nombre),clase:'dato' as const,anio:r.anio}))
   ];
   return items.filter(e=>normalizar(e.titulo+' '+e.descripcion).includes(term)).slice(0,14);
  },[feed,q]);

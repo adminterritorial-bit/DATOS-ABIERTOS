@@ -9,3 +9,5 @@ coverage/
 out/
 artifacts/
 *.tsbuildinfo
+
+supabase/.temp/

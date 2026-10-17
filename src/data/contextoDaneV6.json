@@ -1,0 +1,19 @@
+{
+ "fuente":"DANE · Encuesta Nacional de Calidad de Vida 2025",
+ "url":"https://www.dane.gov.co/files/operaciones/ECV/bol-ECV-2025.pdf",
+ "publicado":"2026-04-20",
+ "alcance":"Colombia",
+ "nota":"Resultados nacionales de encuesta. No son estimaciones para San Pedro. No calcular brechas con cifras municipales de otra vigencia o definición.",
+ "series":[
+  {"nombre":"Déficit habitacional","unidad":"% de hogares","pagina":9,"valores":[32.8,31.4,31.0,30.4,28.9,26.8,25.6]},
+  {"nombre":"Déficit cuantitativo de vivienda","unidad":"% de hogares","pagina":9,"valores":[8.2,8.0,7.5,7.3,6.8,6.8,6.3]},
+  {"nombre":"Déficit cualitativo de vivienda","unidad":"% de hogares","pagina":9,"valores":[24.6,23.4,23.5,23.1,22.1,20.0,19.3]},
+  {"nombre":"Personas por hogar","unidad":"personas / hogar","pagina":3,"valores":[3.10,3.08,3.00,2.95,2.90,2.86,2.82]},
+  {"nombre":"Uso de internet en personas de 5 años y más","unidad":"% de personas de 5 años y más","pagina":21,"valores":[65.0,69.8,73.0,72.8,77.3,79.3,82.3]},
+  {"nombre":"Uso de computador en personas de 5 años y más","unidad":"% de personas de 5 años y más","pagina":21,"valores":[39.6,34.0,31.8,33.9,34.1,35.1,36.1]},
+  {"nombre":"Uso de celular en personas de 5 años y más","unidad":"% de personas de 5 años y más","pagina":21,"valores":[86.3,89.2,90.9,90.0,90.4,90.6,91.9]}
+ ],
+ "anios":[2019,2020,2021,2022,2023,2024,2025],
+ "conectividad2025":[{"territorio":"Colombia","valor":73.9},{"territorio":"Cabeceras de Colombia","valor":78.8},{"territorio":"Centros poblados y rural disperso de Colombia","valor":56.9}],
+ "paginaConectividad":11
+}

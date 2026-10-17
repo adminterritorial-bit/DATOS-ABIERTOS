@@ -3,7 +3,7 @@ export const PUBLIC_FEED_URL = 'https://dvdpgllezrmttrknbcjq.supabase.co/functio
 export interface ObservacionPublica {
  id: string; codigo: string; nombre: string; tema: string; grupo: string;
  anio: number; valor: number; unidad: string; pagina: number | null;
- fuente: string; fuente_url: string; tipo: string; nota: string;
+ fuente: string; fuente_url: string; tipo: string; nota: string; precision?:string;
 }
 export interface VinculoICET {codigo:string;fuente_codigo:string;equivalencia:'directa'|'derivada';justificacion:string}
 export interface FeedPublico {

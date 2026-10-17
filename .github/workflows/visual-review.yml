@@ -18,7 +18,7 @@ jobs:
           node-version: '22'
       - name: Install dependencies and browser
         run: |
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
           npm install --no-save playwright@1.56.1 --no-audit --no-fund
           npx playwright install --with-deps chromium
       - name: Build static GitHub Pages site

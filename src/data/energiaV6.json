@@ -1,0 +1,66 @@
+{
+  "fuente": "https://geo.upme.gov.co/server/rest/services/Capas_EnergiaElectrica/indice_cobertura_energia_electrica_mpio/FeatureServer/26/query",
+  "anio": 2024,
+  "consulta": "2026-10-17",
+  "metodo": "100 × suma viviendas con servicio / suma viviendas totales. Agregado ponderado de la capa UPME, no promedio simple municipal.",
+  "agregados": [
+    {
+      "nombre": "Colombia",
+      "codigo": "CO",
+      "numerador": 17423181,
+      "denominador": 19293841,
+      "valor": 90.304367077556,
+      "municipios": 1122
+    },
+    {
+      "nombre": "Valle del Cauca",
+      "codigo": "76",
+      "numerador": 1561861,
+      "denominador": 1689454,
+      "valor": 92.44767836235849,
+      "municipios": 42
+    }
+  ],
+  "municipios": [
+    {
+      "cod_mpio": "76036",
+      "municipio": "Andalucía",
+      "cod_dpto": "76",
+      "vcstotal": 7352,
+      "vttotal": 9131,
+      "iceetotal": 80.51692038
+    },
+    {
+      "cod_mpio": "76113",
+      "municipio": "Bugalagrande",
+      "cod_dpto": "76",
+      "vcstotal": 8229,
+      "vttotal": 9031,
+      "iceetotal": 91.11947736
+    },
+    {
+      "cod_mpio": "76306",
+      "municipio": "Ginebra",
+      "cod_dpto": "76",
+      "vcstotal": 8300,
+      "vttotal": 8525,
+      "iceetotal": 97.36070381
+    },
+    {
+      "cod_mpio": "76670",
+      "municipio": "San Pedro",
+      "cod_dpto": "76",
+      "vcstotal": 5812,
+      "vttotal": 6164,
+      "iceetotal": 94.28942245
+    },
+    {
+      "cod_mpio": "76890",
+      "municipio": "Yotoco",
+      "cod_dpto": "76",
+      "vcstotal": 6389,
+      "vttotal": 6389,
+      "iceetotal": 100.0
+    }
+  ]
+}

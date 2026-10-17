@@ -1,0 +1,465 @@
+{
+  "fuente": "https://www.datos.gov.co/resource/n48w-gutb.json",
+  "organismo": "MinTIC · Colombia TIC",
+  "consulta": "2026-10-17T20:10:25.515Z",
+  "metodo": "Suma de no_de_accesos por año y trimestre, entre proveedores, tecnologías y segmentos. Stocks trimestrales: no sumar trimestres. No equivale a hogares ni personas conectadas.",
+  "criterioComparables": "Mismo departamento del Valle del Cauca, municipios no capitales del centro del departamento: Andalucía, Bugalagrande, Ginebra y Yotoco. Contexto geográfico, sin afirmar equivalencia socioeconómica ni ranking de cobertura.",
+  "municipal": [
+    {
+      "anno": "2017",
+      "trimestre": "1",
+      "accesos": "10"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "2",
+      "accesos": "907"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "3",
+      "accesos": "880"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "4",
+      "accesos": "925"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "1",
+      "accesos": "955"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "2",
+      "accesos": "955"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "3",
+      "accesos": "1037"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "4",
+      "accesos": "1040"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "1",
+      "accesos": "1057"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "2",
+      "accesos": "1056"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "3",
+      "accesos": "1050"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "4",
+      "accesos": "1031"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "1",
+      "accesos": "1034"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "2",
+      "accesos": "1044"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "3",
+      "accesos": "1023"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "4",
+      "accesos": "945"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "1",
+      "accesos": "919"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "2",
+      "accesos": "893"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "3",
+      "accesos": "1007"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "4",
+      "accesos": "1034"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "1",
+      "accesos": "929"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "2",
+      "accesos": "844"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "3",
+      "accesos": "971"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "4",
+      "accesos": "939"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "1",
+      "accesos": "889"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "2",
+      "accesos": "883"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "3",
+      "accesos": "978"
+    }
+  ],
+  "departamental": [
+    {
+      "anno": "2017",
+      "trimestre": "1",
+      "accesos": "332797"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "2",
+      "accesos": "685493"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "3",
+      "accesos": "698081"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "4",
+      "accesos": "707051"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "1",
+      "accesos": "719755"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "2",
+      "accesos": "731687"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "3",
+      "accesos": "741593"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "4",
+      "accesos": "749987"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "1",
+      "accesos": "763692"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "2",
+      "accesos": "768930"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "3",
+      "accesos": "779626"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "4",
+      "accesos": "782539"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "1",
+      "accesos": "797025"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "2",
+      "accesos": "827014"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "3",
+      "accesos": "850112"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "4",
+      "accesos": "864090"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "1",
+      "accesos": "879946"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "2",
+      "accesos": "886005"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "3",
+      "accesos": "886712"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "4",
+      "accesos": "892963"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "1",
+      "accesos": "927515"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "2",
+      "accesos": "907928"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "3",
+      "accesos": "915612"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "4",
+      "accesos": "918562"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "1",
+      "accesos": "926376"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "2",
+      "accesos": "925771"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "3",
+      "accesos": "916250"
+    }
+  ],
+  "nacional": [
+    {
+      "anno": "2016",
+      "trimestre": "1",
+      "accesos": "68"
+    },
+    {
+      "anno": "2016",
+      "trimestre": "2",
+      "accesos": "84"
+    },
+    {
+      "anno": "2016",
+      "trimestre": "3",
+      "accesos": "118"
+    },
+    {
+      "anno": "2016",
+      "trimestre": "4",
+      "accesos": "193"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "1",
+      "accesos": "2421640"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "2",
+      "accesos": "6193671"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "3",
+      "accesos": "6284576"
+    },
+    {
+      "anno": "2017",
+      "trimestre": "4",
+      "accesos": "6353017"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "1",
+      "accesos": "6479739"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "2",
+      "accesos": "6578874"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "3",
+      "accesos": "6660353"
+    },
+    {
+      "anno": "2018",
+      "trimestre": "4",
+      "accesos": "6732273"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "1",
+      "accesos": "6801729"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "2",
+      "accesos": "6912042"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "3",
+      "accesos": "7014041"
+    },
+    {
+      "anno": "2019",
+      "trimestre": "4",
+      "accesos": "6985051"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "1",
+      "accesos": "7169878"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "2",
+      "accesos": "7495742"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "3",
+      "accesos": "7706345"
+    },
+    {
+      "anno": "2020",
+      "trimestre": "4",
+      "accesos": "7848024"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "1",
+      "accesos": "8139284"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "2",
+      "accesos": "8306838"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "3",
+      "accesos": "8357720"
+    },
+    {
+      "anno": "2021",
+      "trimestre": "4",
+      "accesos": "8470457"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "1",
+      "accesos": "8742347"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "2",
+      "accesos": "8718273"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "3",
+      "accesos": "8821760"
+    },
+    {
+      "anno": "2022",
+      "trimestre": "4",
+      "accesos": "8910502"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "1",
+      "accesos": "9022909"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "2",
+      "accesos": "9026709"
+    },
+    {
+      "anno": "2023",
+      "trimestre": "3",
+      "accesos": "8946322"
+    }
+  ],
+  "comparables": [
+    {
+      "cod_municipio": "76036",
+      "municipio": "ANDALUCÍA",
+      "accesos": "1682"
+    },
+    {
+      "cod_municipio": "76113",
+      "municipio": "BUGALAGRANDE",
+      "accesos": "2484"
+    },
+    {
+      "cod_municipio": "76306",
+      "municipio": "GINEBRA",
+      "accesos": "3442"
+    },
+    {
+      "cod_municipio": "76670",
+      "municipio": "SAN PEDRO",
+      "accesos": "978"
+    },
+    {
+      "cod_municipio": "76890",
+      "municipio": "YOTOCO",
+      "accesos": "1180"
+    }
+  ]
+}

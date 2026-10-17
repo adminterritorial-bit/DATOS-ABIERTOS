@@ -1,0 +1,25 @@
+name: DANE · Población oficial San Pedro
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/**']
+    paths: ['scripts/fuentes_dane_pped.py','.github/workflows/fuente-dane-poblacion.yml']
+permissions:
+  contents: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install python-calamine==0.6.1
+      - name: Fetch official 2018-2042 population projections
+        run: python scripts/fuentes_dane_pped.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dane-pped-76670-fuente-original
+          path: out/dane/
+          retention-days: 14

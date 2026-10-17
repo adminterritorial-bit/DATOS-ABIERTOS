@@ -104,6 +104,8 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   if(await page.locator('.v6-energy-rates>div').count()!==7)errors.push('Energy territories missing');
   await page.screenshot({path:'artifacts/visual/comparadores-'+viewport.name+'.png',fullPage:true});
   await page.getByRole('tab',{name:'Internet fijo · MinTIC'}).click();
+  await page.locator('.recharts-line').nth(2).waitFor({state:'attached',timeout:15000});
+  await page.screenshot({path:'artifacts/visual/internet-'+viewport.name+'.png',fullPage:true});
   if(await page.locator('.recharts-line').count()!==3)errors.push('MinTIC series missing');
   await page.getByRole('tab',{name:'Contexto nacional · DANE 2025'}).click();
   await page.locator('.v6-series-label select').selectOption('4');

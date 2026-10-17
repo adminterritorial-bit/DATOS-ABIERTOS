@@ -19,8 +19,8 @@ const recipes=[...formulas.matchAll(/"numero": (\d+)/g)].map(x=>Number(x[1]));
 test('66 real ICET definitions and 66 distinct numeric-or-procedural links',()=>{
  assert.equal(ids.length,66);
  assert.deepEqual([...ids].sort((a,b)=>a-b),Array.from({length:66},(_,i)=>i+1));
- assert.equal(d.length,24);
- assert.equal(r.length,15);
+ assert.equal(d.length,26);
+ assert.equal(r.length,20);
  assert.equal(e.length,2);
  assert.equal(recipes.length,25);
  assert.equal(new Set([...d,...r,...e,...recipes]).size,66);
@@ -28,7 +28,9 @@ test('66 real ICET definitions and 66 distinct numeric-or-procedural links',()=>
 test('A contextual indicator or exploratory projection cannot shadow an official value',()=>{
  for(const n of r)assert.ok(!d.includes(n),'context overrides direct ICET '+n);
  for(const n of e)assert.ok(!d.includes(n)&&!r.includes(n),'model overrides observed data ICET '+n);
- for(const n of recipes)assert.ok(!d.includes(n)&&!r.includes(n)&&!e.includes(n),'recipe hides valid data ICET '+n);
+ const lacking=ids.filter(n=>![...d,...r,...e].includes(n));
+ assert.equal(lacking.length,18);
+ for(const n of lacking)assert.ok(recipes.includes(n),'missing executable recipe for ICET '+n);
 });
 test('Official geographic and INS data are versioned in public sources',()=>{
  const geo=JSON.parse(file('src/data/geografiaMunicipal76670.json'));

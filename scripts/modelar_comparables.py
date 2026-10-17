@@ -115,7 +115,8 @@ def main():
   if not v or len(v['vecinos'])<min_neighbors:return
   target=pop[('76670',year)]['total']
   result=v['proporcion']*target if scale=='cuenta' else v['proporcion']*scale
-  observed=[vals[c]/pop[(c,year)]['total']*scale for c in v['vecinos']]
+  multiplier=1 if scale=='cuenta' else scale
+  observed=[vals[c]/pop[(c,year)]['total']*multiplier for c in v['vecinos']]
   errors=loo(vals,pop,year)
   record={'id':'EST-'+icet.replace('-','')+'-'+str(year),'icet':icet,'nombre':label,'valor':round(result,2),
    'unidad':unit,'anio':year,'tipo':'ESTIMACION_EXPLORATORIA_NO_OFICIAL','nivel':'D',
@@ -124,7 +125,7 @@ def main():
    'poblaciones_referencia':{c:pop[(c,year)]['total'] for c in v['vecinos']},
    'pesos':v['pesos'],'rango_tasas_referencia':[round(min(observed),3),round(max(observed),3)],
    'error_abs_loo_mediano':round(statistics.median(errors),3) if errors else None,
-   'escala_error_loo':'por 100.000 habitantes' if scale==100000 else 'proporción por persona',
+   'escala_error_loo':'diferencia en razón por 100.000 habitantes (no intervalo predictivo)',
    'formula':'Tasa esperada = suma[peso_i * (conteo_i / población_i)] / suma[peso_i]; peso_i = 1 / (0,20 + |ln(P_i/P_sp)| + 2*|urb_i/P_i - urb_sp/P_sp|)',
    'nota':note}
   data['estimaciones'].append(record)

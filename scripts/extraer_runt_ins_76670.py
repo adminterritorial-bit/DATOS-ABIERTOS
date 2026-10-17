@@ -18,8 +18,12 @@ def runt():
   if not isinstance(rows,list):raise ValueError('Respuesta RUNT no tabular')
   result+=rows
   if len(rows)<5000:break
+ print('RUNT_COINCIDENCIAS_NOMBRE',[(x.get('nombre_departamento'),x.get('nombre_municipio')) for x in result[:24]])
+ result=[x for x in result if 'VALLE' in str(x.get('nombre_departamento','')).upper() and str(x.get('nombre_municipio','')).upper().strip() in ('SAN PEDRO','SAN PEDRO (VALLE)')]
  print('RUNT_SAN_PEDRO_FILAS',len(result))
- if not result:raise ValueError('RUNT no devolvió San Pedro Valle')
+ if not result:
+  (OUT/'runtSanPedro76670.json').write_text(json.dumps({'dataset':'https://www.datos.gov.co/d/u3vn-bdcy','divipola':'76670','municipio':'San Pedro','estado':'municipio_sin_filas_en_dataset','registros':[]},ensure_ascii=False,indent=2),encoding='utf-8')
+  return
  cuts=sorted(set((str(x.get('a_o_de_publicacion','')),str(x.get('mes_de_publicacion',''))) for x in result))
  print('RUNT_CORTES',cuts[-12:])
  # Latest publication year, but month strings could be labels names. Choose most frequent/month if sortable.

@@ -1,0 +1,22 @@
+name: Inspección mortalidad DANE 2024
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/icet-recuperacion-documental']
+    paths:
+      - scripts/diagnostico_dane_eevv2024.py
+      - .github/workflows/dane-eevv2024-inspect.yml
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: 
+          python-version: '3.12'
+      - run: pip install python-calamine==0.6.1
+      - name: Inspeccionar tabla DANE por municipio de residencia y causa
+        run: python scripts/diagnostico_dane_eevv2024.py

@@ -2,7 +2,7 @@
 import {useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {Activity,ArrowDownToLine,ArrowRight,BarChart3,BookOpen,Check,ChevronDown,Database,ExternalLink,FileBarChart2,FileText,Filter,Globe2,Home,Info,Layers3,MapPinned,Menu,Search,ShieldCheck,SlidersHorizontal,TrendingUp,Users2,X} from 'lucide-react';
+import {Calculator,Activity,ArrowDownToLine,ArrowRight,BarChart3,BookOpen,Check,ChevronDown,Database,ExternalLink,FileBarChart2,FileText,Filter,Globe2,Home,Info,Layers3,MapPinned,Menu,Search,ShieldCheck,SlidersHorizontal,TrendingUp,Users2,X} from 'lucide-react';
 import type {FeedPublico,ObservacionPublica} from '@/lib/publicFeed';
 import {encontrar,formatear,reducirSerie} from '@/lib/publicFeed';
 import LineChart from '@/components/charts/LineChart';
@@ -64,7 +64,7 @@ export default function TerritorialDashboard({feed,error}:Props){
    <p className="ot-side-caption">INTELIGENCIA TERRITORIAL</p>
    <nav className="ot-nav">{SECTORES.map(navItem)}</nav>
    <p className="ot-side-caption ot-side-secondary">GESTIÓN DE INFORMACIÓN</p>
-   <nav className="ot-nav"><Link className="ot-nav-item" href="/poblacion" onClick={()=>setMenu(false)}><Users2 size={18}/><span>Series demográficas</span></Link><Link className="ot-nav-item" href="/icet" onClick={()=>setMenu(false)}><BookOpen size={18}/><span>Indicadores ICET</span></Link><Link className="ot-nav-item" href="/seguridad" onClick={()=>setMenu(false)}><ShieldCheck size={18}/><span>Seguridad 2025</span></Link><Link className="ot-nav-item" href="/catalogo" onClick={()=>setMenu(false)}><Database size={18}/><span>Catálogo de datos</span></Link></nav>
+   <nav className="ot-nav"><Link className="ot-nav-item" href="/mapa" onClick={()=>setMenu(false)}><MapPinned size={18}/><span>Mapa interactivo</span></Link><Link className="ot-nav-item" href="/estimador" onClick={()=>setMenu(false)}><Calculator size={18}/><span>Estimador territorial</span></Link><Link className="ot-nav-item" href="/poblacion" onClick={()=>setMenu(false)}><Users2 size={18}/><span>Series demográficas</span></Link><Link className="ot-nav-item" href="/icet" onClick={()=>setMenu(false)}><BookOpen size={18}/><span>Indicadores ICET</span></Link><Link className="ot-nav-item" href="/seguridad" onClick={()=>setMenu(false)}><ShieldCheck size={18}/><span>Seguridad 2025</span></Link><Link className="ot-nav-item" href="/catalogo" onClick={()=>setMenu(false)}><Database size={18}/><span>Catálogo de datos</span></Link></nav>
    <div className="ot-side-bottom"><div className="ot-secure"><span className="ot-led"/> <span>Datos oficiales documentados<small>DIVIPOLA 76670</small></span></div><p>Información estadística agregada con vigencia y procedencia identificables.</p></div>
   </aside>
   {menu&&<button className="ot-menu-mask" aria-label="Cerrar navegación" onClick={()=>setMenu(false)}/>}

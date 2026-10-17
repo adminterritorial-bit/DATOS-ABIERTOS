@@ -1,0 +1,22 @@
+name: Diagnóstico de comparadores DANE INS RUNT
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/icet-recuperacion-documental']
+    paths:
+      - scripts/diagnosticar_comparables.py
+      - .github/workflows/diagnostico-comparables.yml
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install python-calamine==0.6.1
+      - name: Inspeccionar municipios comparables en fuentes primarias
+        run: python scripts/diagnosticar_comparables.py

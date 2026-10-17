@@ -1,0 +1,103 @@
+{
+  "fuente": "https://www.datos.gov.co/d/xd2n-cu8j",
+  "filtro": "cod_mun_o=670 AND cod_dpto_o=76",
+  "geografia": "notificacion ocurrencia (según variable original)",
+  "eventos": [
+    {
+      "anio": 2018,
+      "codigo_evento": "110",
+      "evento": "BAJO PESO AL NACER",
+      "casos_notificados": 2.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "113",
+      "evento": "DESNUTRICIÓN AGUDA EN MENORES DE 5 AÑOS",
+      "casos_notificados": 1.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "228",
+      "evento": "EXPOSICIÓN A FLÚOR",
+      "casos_notificados": 10.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "300",
+      "evento": "AGRESIONES POR ANIMALES POTENCIALMENTE TRANSMISORES DE RABIA",
+      "casos_notificados": 98.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "348",
+      "evento": "INFECCION RESPIRATORIA AGUDA GRAVE IRAG INUSITADA",
+      "casos_notificados": 1.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "356",
+      "evento": "INTENTO DE SUICIDIO",
+      "casos_notificados": 8.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "360",
+      "evento": "INTOXICACION POR PLAGUICIDAS",
+      "casos_notificados": 1.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "414",
+      "evento": "INTOXICACION POR SUSTANCIAS PSICOACTIVAS",
+      "casos_notificados": 4.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "452",
+      "evento": "LESIONES POR ARTEFACTOS EXPLOSIVOS (PÓLVORA Y MINAS ANTIPERSONAL)",
+      "casos_notificados": 5.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "549",
+      "evento": "MORBILIDAD MATERNA EXTREMA",
+      "casos_notificados": 2.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "560",
+      "evento": "MORTALIDAD PERINATAL Y NEONATAL TARDÍA",
+      "casos_notificados": 1.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "810",
+      "evento": "TUBERCULOSIS EXTRA PULMONAR",
+      "casos_notificados": 1.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "820",
+      "evento": "TUBERCULOSIS PULMONAR",
+      "casos_notificados": 2.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "831",
+      "evento": "VARICELA INDIVIDUAL",
+      "casos_notificados": 8.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "850",
+      "evento": "VIH/SIDA/MORTALIDAD POR SIDA",
+      "casos_notificados": 3.0
+    },
+    {
+      "anio": 2018,
+      "codigo_evento": "875",
+      "evento": "VCM VIF VSX",
+      "casos_notificados": 52.0
+    }
+  ]
+}

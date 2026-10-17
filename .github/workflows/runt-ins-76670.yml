@@ -1,0 +1,43 @@
+name: RUNT e INS municipal
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/icet-recuperacion-documental']
+    paths:
+      - 'scripts/extraer_runt_ins_76670.py'
+      - '.github/workflows/runt-ins-76670.yml'
+permissions:
+  contents: write
+concurrency:
+  group: runt-ins-76670
+  cancel-in-progress: false
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/icet-recuperacion-documental
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Agregar parque RUNT y vigilancia epidemiológica del INS
+        run: python scripts/extraer_runt_ins_76670.py
+      - name: Persistir estadísticas públicas en la rama del Observatorio
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A src/data/runtSanPedro76670.json src/data/insSivigilaSanPedro76670.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'data: registros RUNT e INS del municipio 76670'
+          git pull --rebase origin feat/icet-recuperacion-documental
+          git push origin HEAD:feat/icet-recuperacion-documental
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runt-ins-76670
+          path: |
+            src/data/runtSanPedro76670.json
+            src/data/insSivigilaSanPedro76670.json
+          retention-days: 30

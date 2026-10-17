@@ -1,0 +1,63 @@
+name: Publish Observatorio to GitHub Pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/serve-static.mjs'
+      - 'package.json'
+      - 'next.config.ts'
+      - '.github/workflows/deploy-github-pages.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages-production
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate source and indicators
+        run: |
+          npm test
+          npm run lint
+          python3 scripts/check_statistical_integrity.py
+      - name: Export static Next.js site
+        env:
+          GITHUB_PAGES: 'true'
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: npm run build
+      - name: Validate export
+        run: |
+          test -f out/index.html
+          test -f out/icet/index.html
+          test -f out/catalogo/index.html
+          test -f out/seguridad/index.html
+          test -f out/admin/index.html
+          test -f out/escudo-san-pedro.png
+          printf 'No Jekyll processing needed\n' > out/.nojekyll
+          echo 'GitHub Pages artifact ready'
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

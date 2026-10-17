@@ -68,6 +68,7 @@ export default function HomePage() {
    <header className="topbar"><div className="topbar-left"><button className="mobile-menu" onClick={()=>setSidebar(true)} aria-label="Abrir menú"><Menu size={22}/></button><span className="crumb">Observatorio <span>/</span> {seccion}</span></div><div className="topbar-right"><span className="jurisdiction"><MapPinned size={15}/> San Pedro, Valle del Cauca</span><span className="top-divider"/><span className="environment"><span/> Datos documentados</span></div></header>
    <main className="content"><div style={{display:'flex',flexWrap:'wrap',gap:9,margin:'0 0 16px'}}>
  <a href="/icet" style={{background:'#0c66cc',color:'#fff',borderRadius:9,padding:'10px 13px',fontSize:11,fontWeight:800}}>66 indicadores DANE ↗</a>
+ <a href="/poblacion" style={{background:'#e8f2ff',color:'#0759af',borderRadius:9,padding:'10px 13px',fontSize:11,fontWeight:800}}>Serie DANE de población ↗</a>
  <a href="/catalogo" style={{background:'#e8f2ff',color:'#0759af',borderRadius:9,padding:'10px 13px',fontSize:11,fontWeight:800}}>65 datos TerriData ↗</a>
  <a href="/seguridad" style={{background:'#e8f2ff',color:'#0759af',borderRadius:9,padding:'10px 13px',fontSize:11,fontWeight:800}}>Seguridad 2025 ↗</a>
  </div>

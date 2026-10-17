@@ -8,6 +8,7 @@ on:
       - feat/icet-recuperacion-documental
     paths:
       - 'scripts/extraer_fuentes_76670.py'
+      - 'scripts/extraer_sspd_anexos_2024.py'
       - '.github/workflows/extraer-fuentes-76670.yml'
 permissions:
   contents: write
@@ -20,6 +21,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Instalar lector de libros oficiales
+        run: python -m pip install python-calamine==0.6.1
+      - name: Extraer anexos nacionales SSPD 2024
+        run: python scripts/extraer_sspd_anexos_2024.py
       - name: Descargar respuestas de UPME y UARIV y buscar fuentes INS/SISPRO/SSPD
         run: python scripts/extraer_fuentes_76670.py
       - name: Guardar registros agregados en la rama de investigación
@@ -39,5 +44,7 @@ jobs:
         if: always()
         with:
           name: fuentes-gubernamentales-76670
-          path: out/masivo_76670/respuesta_gubernamental_76670.json
+          path: |
+            out/masivo_76670/respuesta_gubernamental_76670.json
+            out/sspd_76670/extracto_76670.json
           retention-days: 30

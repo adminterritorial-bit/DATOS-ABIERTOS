@@ -1,7 +1,7 @@
 name: Visual regression and responsive review
 on:
   push:
-    branches: ['feat/github-pages-deploy','feat/observatorio-qa-admin']
+    branches: ['feat/github-pages-deploy','feat/observatorio-qa-admin','feat/observatorio-navegacion']
   workflow_dispatch:
 permissions:
   contents: read
@@ -33,6 +33,7 @@ jobs:
             sleep 2
           done
           node scripts/visual-review.mjs
+          node scripts/smoke-citizen.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

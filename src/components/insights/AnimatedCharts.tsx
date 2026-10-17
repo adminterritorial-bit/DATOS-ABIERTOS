@@ -13,14 +13,30 @@ const tooltipStyle={background:'rgba(255,255,255,.98)',border:'1px solid #e6edf7
 interface Props {datos:DatoExplorador[];titulo?:string;onOpen:(r:DatoExplorador)=>void}
 export default function AnimatedCharts({datos,titulo,onOpen}:Props){
  const reduced=useReducedMotion();
- const [tipo,setTipo]=useState<ChartMode>('ranking');
+ const [tipo,setTipo]=useState<ChartMode>('tendencia');
  const [seleccion,setSeleccion]=useState<string>('');
  const grupos=useMemo(()=>{
   const m=new Map<string,DatoExplorador[]>();
   for(const d of datos.filter(x=>x.clase==='Publicado'||x.clase==='Calculado')){
    const key=cleanUnit(d);const arr=m.get(key)||[];arr.push(d);m.set(key,arr);
   }
-  return [...m.entries()].sort((a,b)=>b[1].length-a[1].length);
+  const relevance=(entry:[string,DatoExplorador[]])=>{
+   const [unit,rows]=entry;
+   const byName=new Map<string,Set<number>>();
+   for(const r of rows){
+    const years=byName.get(r.nombre)||new Set<number>();
+    years.add(r.anio);
+    byName.set(r.nombre,years);
+   }
+   const maxYears=Math.max(0,...[...byName.values()].map(ys=>ys.size));
+   const current=Math.max(...rows.map(r=>r.anio));
+   const contemporary=rows.filter(r=>r.anio===current).length;
+   const population=rows.some(r=>/proyecci[oó]n.*poblaci[oó]n|poblaci[oó]n.*proyectad/i.test(r.nombre))
+       &&/personas|habitantes/i.test(unit)?1500:0;
+   const geographyOnly=/^regiones$|^municipios$|^tipos$/.test(unit)?-900:0;
+   return population+geographyOnly+maxYears*14+Math.min(contemporary,12)*5+Math.min(rows.length,40);
+  };
+  return [...m.entries()].sort((a,b)=>relevance(b)-relevance(a));
  },[datos]);
  const unidad=grupos.some(g=>g[0]===seleccion)?seleccion:(grupos[0]?.[0]||'');
  const base=grupos.find(x=>x[0]===unidad)?.[1]||[];

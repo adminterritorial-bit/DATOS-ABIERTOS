@@ -69,3 +69,5 @@
 .n5-rolling-text{display:inline-block;overflow:hidden;vertical-align:bottom}.n5-rolling-text>span{display:inline-block;will-change:transform,opacity}
 
 .n5-place-popup p,.n5-place-popup dt,.n5-place-popup dd{font-size:12px;line-height:1.7}.n5-place-context button span{font-size:12px}.n5-folder-trigger,.n5-more-topics{min-height:44px}
+
+.n5-banner-fallback{z-index:0}.n5-banner-fallback-kicker{font-size:clamp(9px,1vw,13px);letter-spacing:2.1px;color:#a6f5e5;font-weight:800;margin-bottom:14px}.n5-banner-fallback h2{font-size:clamp(20px,3.8vw,48px);max-width:74%;letter-spacing:-1px;position:relative;z-index:1}.n5-banner-fallback p{font-size:clamp(10px,1.3vw,17px);position:relative;z-index:1}.n5-banner-slide>img.n5-banner-image{position:absolute;inset:0;z-index:1;transition:opacity .5s ease}.n5-banner-hit{z-index:2}

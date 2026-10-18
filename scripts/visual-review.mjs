@@ -42,10 +42,11 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
     const image=document.querySelector('.n5-banner-slide img');
     return !!image && image.complete && image.naturalWidth>=2000;
   },{timeout:22000}).catch(()=>errors.push(viewport.name+': first supplied banner is missing or not high resolution'));
-  if(viewport.name==='desktop'){
+  if(['desktop','mobile-small'].includes(viewport.name)){
     for(let slide=1;slide<4;slide++){
       await page.getByRole('button',{name:'Banner siguiente'}).click();
       await page.waitForFunction(()=>{const img=document.querySelector('.n5-banner-slide img');return !!img&&img.complete&&img.naturalWidth>=2000},null,{timeout:10000}).catch(()=>errors.push('banner '+slide+': missing original image'));
+      if(viewport.name==='mobile-small'){if(await page.locator('.n5-banner-mobile-caption').evaluate(el=>el.scrollHeight>el.clientHeight+1))errors.push('Mobile banner '+slide+' has clipped text');await page.locator('.n5-banner-frame').screenshot({path:'artifacts/visual/mobile-slide-'+slide+'.png'});}
     }
     await page.getByRole('button',{name:'Mostrar: Observatorio de Datos'}).click();
   }
@@ -147,7 +148,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
     await page.getByRole('button',{name:'Copiar enlace de este lugar'}).click();
     if(!await page.getByRole('textbox',{name:'Enlace para compartir este lugar'}).inputValue().then(v=>v.includes('lugar=76670008')&&v.includes('tema=educacion')))errors.push('Shared place URL lost its selection');
     await page.keyboard.press('Escape');
-    if(await page.getByRole('dialog').count())errors.push('Deep linked place did not close with Escape');
+    await page.getByRole('dialog',{name:/Información del lugar SAN JOSÉ/i}).waitFor({state:'hidden',timeout:5000}).catch(()=>errors.push('Deep linked place did not close with Escape'));
     await page.goto(base+'/temas/',{waitUntil:'domcontentloaded',timeout:70000});
     await page.locator('.n5-themes-grid .n5-tile').first().waitFor({timeout:16000});
     if(await page.locator('.n5-themes-grid .n5-tile').count()!==14)errors.push('theme explorer: expected fourteen topic cards');

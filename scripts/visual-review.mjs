@@ -186,7 +186,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.locator('.ic-controls select').first().selectOption('internet');
   await page.locator('.ic-controls select').nth(1).selectOption('2022');
   if(!await page.locator('.ic-conclusion').textContent().then(t=>t.includes('2022')))errors.push('Interactive comparison year did not update');
-  await page.locator('.ic-territories label').filter({hasText:'Guacarí'}).locator('input').check();
+  await page.locator('.ic-territories label').filter({hasText:'Ginebra'}).locator('input').check();
   if(await page.locator('.ic-controls select').nth(1).inputValue()!=='2023')errors.push('Peer comparison retained a non-common year');
   if(['desktop','mobile'].includes(viewport.name))await page.locator('.ic-panel').screenshot({path:'artifacts/visual/interactive-comparison-'+viewport.name+'.png'});
   await page.locator('.ic-controls select').first().selectOption('energia');

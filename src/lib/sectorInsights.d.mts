@@ -1,0 +1,10 @@
+import type {DatoExplorador} from './territorialDataset';
+export function normalizeSectorText(value:unknown):string;
+export function sectorFamily(topic:string):'education'|'health'|'environment'|'economy'|null;
+export function sectorRows(rows:DatoExplorador[],topic:string):DatoExplorador[];
+export function sectorSeriesKey(row:DatoExplorador):string;
+export function sectorSeries(rows:DatoExplorador[]):{key:string;points:DatoExplorador[]}[];
+export function latestSectorRows(rows:DatoExplorador[]):DatoExplorador[];
+export function sectorChange(previous?:DatoExplorador,latest?:DatoExplorador):{delta:number;percent:number|null;unit:string;from:number;to:number}|null;
+export function formatSectorValue(row:DatoExplorador):string;
+export function sectorBudget(rows:DatoExplorador[]):{complete:boolean;total:number|null;rows:(DatoExplorador & {share:number|null})[]};

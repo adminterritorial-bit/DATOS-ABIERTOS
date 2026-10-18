@@ -8,7 +8,8 @@ import {usePublicFeed} from '@/lib/usePublicFeed';
 import CitizenSearch from '@/components/CitizenSearch';
 import MunicipalPanorama from './MunicipalPanorama';
 import {useDialogFocus} from '@/components/useDialogFocus';
-import TopBannerCarousel from './TopBannerCarousel';
+import ImmersiveHero from './ImmersiveHero';
+import DiscoveryDoorways from './DiscoveryDoorways';
 import SidebarTree from './SidebarTree';
 import RollingTitle from './RollingTitle';
 const ChartWall=dynamic(()=>import('./ChartWall'),{ssr:false,loading:()=> <div className="g4-skeleton">Preparando múltiples gráficas interactivas…</div>});
@@ -85,6 +86,7 @@ export default function ObservatoryExperience(){
  const [detalle,setDetalle]=useState<DatoExplorador|null>(null);
  const detailRef=useDialogFocus(!!detalle,()=>setDetalle(null));
  const [menu,setMenu]=useState(false);
+ const [searchRequest,setSearchRequest]=useState({id:0,query:''});
  const [verMas,setVerMas]=useState(false);
  const [tituloClic,setTituloClic]=useState(false);
  useEffect(()=>{const requested=new URLSearchParams(window.location.search).get('tema');if(requested&&temasTerritoriales.some(t=>t.id===requested))setTema(requested)},[]);
@@ -97,7 +99,7 @@ export default function ObservatoryExperience(){
  const catalogo=indicadoresICET.filter(i=>tema==='Todos'||numeroTema.get(i.numero)?.id===tema).filter(i=>macro==='Todos'||numeroTema.get(i.numero)?.macro===macro).filter(i=>!buscar||(i.nombre+' '+i.codigo).toLowerCase().includes(buscar.toLowerCase()));
  const count=(t:TemaTerritorial)=>all.filter(d=>mapear.get(d.id)===t.id).length;
  const reset=()=>{setMacro('Todos');setTema('Todos');setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false)};
- const seleccionarTema=(id:string)=>{setTema(id);setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false);setVista('historias');setMenu(false)};
+ const seleccionarTema=(id:string)=>{setMacro(temasTerritoriales.find(t=>t.id===id)?.macro||'Todos');setTema(id);setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false);setVista('historias');setMenu(false)};
  return <div className="xp-app">
   <a className="xp-skip" href="#xp-main">Ir al contenido estadístico</a>
   <aside className={'xp-side '+(menu?'is-open':'')} aria-label="Navegación temática del Observatorio">
@@ -107,14 +109,14 @@ export default function ObservatoryExperience(){
   </aside>
   {menu&&<div className="xp-menu-overlay" onClick={()=>setMenu(false)}/>}
   <main className="xp-main" id="xp-main">
-   <header className="xp-header"><div className="xp-breadcrumb"><button className="xp-mobile-nav" onClick={()=>setMenu(!menu)} aria-label="Abrir navegación"><Menu size={21}/></button><span>Observatorio</span><ArrowRight size={13}/><strong>{topic?.nombre||(macro==='Todos'?'Panorama territorial':macro)}</strong></div><div className="xp-header-actions"><CitizenSearch feed={feed}/><span className="xp-period"><span/> Última consulta · {new Date().getFullYear()}</span><Link href="/comparar/" title="Explorador de series">Comparar datos <ArrowUpRight size={15}/></Link></div></header>
+   <header className="xp-header"><div className="xp-breadcrumb"><button className="xp-mobile-nav" onClick={()=>setMenu(!menu)} aria-label="Abrir navegación"><Menu size={21}/></button><span>Observatorio</span><ArrowRight size={13}/><strong>{topic?.nombre||(macro==='Todos'?'Panorama territorial':macro)}</strong></div><div className="xp-header-actions"><CitizenSearch feed={feed} openRequest={searchRequest.id} initialQuery={searchRequest.query}/><span className="xp-period"><span/> Última consulta · {new Date().getFullYear()}</span><Link href="/comparar/" title="Explorador de series">Comparar datos <ArrowUpRight size={15}/></Link></div></header>
+   <ImmersiveHero onSearch={(query='')=>setSearchRequest(r=>({id:r.id+1,query}))} onExplore={()=>document.getElementById('panorama-title')?.scrollIntoView({behavior:'smooth',block:'start'})} onMap={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}/>
    <div className="xp-body">
-    <TopBannerCarousel/>
-    <div className="n5-under-banner"><div><span className="xp-overline">OBSERVATORIO MUNICIPAL · SAN PEDRO, VALLE DEL CAUCA</span><h1>Nuestro territorio, en perspectiva.</h1><p>Comprende las cifras, compara su evolución y descubre las historias que hay detrás de San Pedro.</p></div><div className="n5-hero-links"><Link href="/rendicion/">Gestión 2025 <ArrowUpRight size={15}/></Link><Link href="/temas/">Explorar categorías <ArrowRight size={16}/></Link><button onClick={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}>Abrir mapa interactivo <MapPinned size={16}/></button></div></div>
     <MunicipalPanorama/>
     <div className="panorama-catalog-summary"><Database size={16}/><span>{all.length} observaciones</span><span>{temasTerritoriales.length} categorías</span><span>66 preguntas DANE</span><span>{years.length} vigencias documentadas</span><Link href="/catalogo/">Abrir catálogo <ArrowRight size={14}/></Link></div>
+    <DiscoveryDoorways active={macro} onChoose={value=>{setMacro(value);setTema('Todos');setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false);document.getElementById('n5-charts')?.scrollIntoView({behavior:'smooth'})}}/>
     <div id="n5-charts"><div className="n5-topic-panel"><div><span className="xp-overline">SELECCIONA EL TEMA DEL TABLERO</span><h2><RollingTitle text={topic?.nombre||"Panorama municipal"}/></h2><p>{topic?.descripcion||"Elige una categoría y afina la consulta por año, naturaleza o palabra clave."}</p></div><label>Temática <select aria-label="Elegir temática para las cinco gráficas" value={tema} onChange={e=>seleccionarTema(e.target.value)}><option value="Todos">Todas las categorías</option>{temasTerritoriales.map(t=><option key={t.id} value={t.id}>{t.nombre}</option>)}</select></label></div><div className="xp-filterbar"><label className="xp-searchbox"><Search size={19}/><input value={buscar} onChange={e=>setBuscar(e.target.value)} placeholder="Buscar cifras, temas, fuentes…" aria-label="Buscar en estadísticas del municipio"/>{buscar&&<button onClick={()=>setBuscar('')} aria-label="Limpiar búsqueda"><X size={14}/></button>}</label><label className="xp-dropdown"><span>Vigencia</span><select value={anio} onChange={e=>setAnio(e.target.value)}><option value="Todos">Todos los años</option>{years.map(y=><option key={y} value={y}>{y}</option>)}</select></label><label className="xp-dropdown"><span>Naturaleza</span><select value={clase} onChange={e=>setClase(e.target.value as 'Todas'|ClaseDato)}>{['Todas','Publicado','Calculado','Relacionado','Estimación'].map(x=><option key={x}>{x}</option>)}</select></label><button className="xp-reset" onClick={reset} aria-label="Restablecer todos los filtros"><SlidersHorizontal size={18}/></button></div><p className="panorama-filter-result" role="status">{filtered.length} observaciones en la selección · {anio==='Todos'?'todas las vigencias':anio} · {clase==='Todas'?'todas las naturalezas':clase}</p><ChartWall datos={filtered} onOpen={setDetalle} title={topic?"Cinco gráficas: "+topic.nombre:"Explora los datos de San Pedro"}/></div>
-    <div className="n5-go-themes"><div><span className="xp-overline">DESCUBRE MÁS</span><h2>14 categorías, una sola forma sencilla de explorarlas.</h2><p>Abre la biblioteca temática y elige educación, salud, ambiente, seguridad o cualquier otra área. El tablero adaptará las cinco gráficas.</p></div><Link href="/temas/">Ver biblioteca de temas <ArrowUpRight size={17}/></Link></div>
+
     <section className="xp-workspace" id="xp-lab"><div className="xp-section-heading"><div><span className="xp-overline">EL LABORATORIO DEL TERRITORIO</span><h2>{topic?topic.nombre:'Descubre qué cuentan las cifras.'}</h2><p>{topic?.descripcion||'Visualizaciones que puedes explorar, filtrar y consultar a detalle.'}</p></div><div className="xp-workspace-view" role="group" aria-label="Modo de exploración">{[['historias','Gráficas'],['territorio','Geografía'],['catalogo','Indicadores']].map(([k,v])=><button key={k} className={vista===k?'active':''} aria-pressed={vista===k} onClick={()=>setVista(k as typeof vista)}>{v}</button>)}</div></div>
 
     {vista==='historias'&&<>
@@ -123,7 +125,7 @@ export default function ObservatoryExperience(){
      {verMas&&<div className="xp-stat-grid">{cards.map(d=><StoryCard key={d.id} item={d} onClick={()=>setDetalle(d)}/>)}</div>}
      {!cards.length&&<div className="xp-empty">No hay cifras compatibles con los filtros seleccionados. Prueba otra vigencia o temática.</div>}
     </>}
-    {vista==='territorio'&&<ArcgisLocalMap datos={all} activeTopic={tema} onTopicChange={(v)=>{setTema(v);setBuscar('');setAnio('Todos')}}/>}
+    {vista==='territorio'&&<ArcgisLocalMap datos={all} activeTopic={tema} onTopicChange={(v)=>{setMacro(temasTerritoriales.find(t=>t.id===v)?.macro||'Todos');setTema(v);setBuscar('');setAnio('Todos')}}/>}
     {vista==='catalogo'&&<section className="xp-indicator-panel"><p className="xp-overline">DICCIONARIO DE 66 PREGUNTAS DANE · CLASIFICACIÓN CIUDADANA</p><div className="xp-indicator-grid">{catalogo.map(i=>{const t=numeroTema.get(i.numero);const relacionados=itemsPorIndicador(all,i.codigo);return <button key={i.codigo} className="xp-indicator-row" onClick={()=>{setTema(t?.id||'Todos');setVista('historias');setBuscar(i.nombre.split(' ').slice(0,3).join(' '))}}><span className="xp-indicator-code">{i.codigo}</span><span><strong>{i.nombre}</strong><small>{t?.nombre} · {relacionados.length?relacionados.length+' registros con relación explícita':'Consultar estadísticas del sector'}</small></span><ArrowUpRight size={16}/></button>})}</div><Link className="xp-indicator-more" href="/icet/recuperados/">Consultar batería y fuentes documentales <ArrowRight size={16}/></Link></section>}
     </section>
     <section className="xp-visit-map"><div><span className="xp-overline">GEOVISOR ARC GIS</span><h2>Del dato al lugar.</h2><p>Explora centros poblados del MGN 2025 sobre el contorno real de San Pedro y consulta su ficha territorial.</p><button onClick={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}>Entrar al mapa interactivo <ArrowUpRight size={16}/></button></div><div className="xp-map-illustration"><MapPinned size={100} strokeWidth={1}/><span>LAT 4° · LON −76°</span></div></section>

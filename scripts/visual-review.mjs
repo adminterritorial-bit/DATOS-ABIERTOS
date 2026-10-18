@@ -13,6 +13,28 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
   await page.locator('.n5-navigation').waitFor();
   await page.locator('.n5-banner-frame').waitFor();
+  await page.getByRole('heading',{name:'Un territorio. Miles de historias.',exact:true}).waitFor();
+  const heroSize=await page.locator('.n5-banner-frame').boundingBox();
+  if(viewport.width>=1440&&heroSize.width<Math.min(viewport.width*.7,2100))errors.push(viewport.name+': banner remains constrained instead of filling the stage');
+  await page.getByRole('button',{name:'Buscar en todos los datos',exact:true}).click();
+  await page.getByRole('dialog',{name:'Búsqueda global de datos'}).waitFor();
+  const searchBackdrop=await page.locator('.ot-cmd-backdrop').boundingBox();
+  if(!searchBackdrop||Math.abs(searchBackdrop.width-viewport.width)>2||Math.abs(searchBackdrop.height-viewport.height)>2)errors.push('Global search backdrop does not cover the viewport');
+  await page.keyboard.press('Escape');
+  if(await page.getByRole('dialog',{name:'Búsqueda global de datos'}).count())errors.push('Hero search does not close');
+  if(!await page.getByRole('button',{name:'Buscar en todos los datos',exact:true}).evaluate(el=>el===document.activeElement))errors.push('Hero search did not restore focus');
+  await page.getByRole('button',{name:'Buscar Educación',exact:true}).click();
+  if(await page.getByRole('textbox',{name:'Escribe tu búsqueda'}).inputValue()!=='Educación')errors.push('Hero topic search did not preserve the requested query');
+  if(!await page.locator('.ot-cmd-results .ot-cmd-result').count())errors.push('Hero topic search returned no education results');
+  await page.keyboard.press('Escape');
+  await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+  await page.screenshot({path:'artifacts/visual/home-stage-'+viewport.name+'.png'});
+  if(await page.locator('.discovery-doorway').count()!==4)errors.push('Four thematic entry points missing');
+  await page.locator('.discovery-doorway').first().click();
+  if(await page.locator('.discovery-doorway').first().getAttribute('aria-pressed')!=='true')errors.push('Thematic entry point did not apply its filter');
+  await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).selectOption('educacion');
+  if(parseInt(await page.locator('.panorama-filter-result').textContent(),10)===0)errors.push('Changing category after macro selection incorrectly erased compatible observations');
+  await page.getByRole('button',{name:'Ver todas las miradas',exact:true}).click();
   if(viewport.width>900&&await page.evaluate(()=>document.querySelector('.xp-main').getBoundingClientRect().left<document.querySelector('.xp-side').getBoundingClientRect().right-1))errors.push(viewport.name+': main content overlaps institutional sidebar');
   await page.waitForFunction(()=>{
     const image=document.querySelector('.n5-banner-slide img');

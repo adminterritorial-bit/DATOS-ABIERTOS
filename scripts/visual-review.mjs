@@ -26,6 +26,28 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
     await page.getByRole('button',{name:'Mostrar: Observatorio de Datos'}).click();
   }
 
+  await page.getByRole('heading',{name:'Así está San Pedro.'}).waitFor();
+  if(await page.locator('.panorama-kpi').count()!==4)errors.push(viewport.name+': four headline indicators missing');
+  await page.getByRole('tab',{name:'Cobertura eléctrica',exact:true}).click();
+  if(await page.locator('.panorama-energy>div').count()!==3)errors.push('Panorama: comparable energy territories missing');
+  await page.locator('.panorama-table summary').click();
+  if(await page.locator('.panorama-table tbody tr').count()!==3)errors.push('Panorama: energy denominators missing');
+  await page.locator('.panorama-table summary').click();
+  if(['desktop','mobile'].includes(viewport.name))await page.locator('.panorama').screenshot({path:'artifacts/visual/panorama-energy-'+viewport.name+'.png'});
+  await page.getByRole('tab',{name:'Inversión municipal',exact:true}).click();
+  if(await page.locator('.panorama-investment>div').count()!==8)errors.push('Panorama: eight department shares missing');
+  await page.locator('.panorama-table summary').click();
+  if(await page.locator('.panorama-table tbody tr').count()!==8)errors.push('Panorama: investment values missing');
+  await page.locator('.panorama-table summary').click();
+  if(['desktop','mobile'].includes(viewport.name))await page.locator('.panorama').screenshot({path:'artifacts/visual/panorama-investment-'+viewport.name+'.png'});
+  await page.getByRole('tab',{name:'Inversión municipal',exact:true}).press('Home');
+  if(await page.getByRole('tab',{name:'Conectividad',exact:true}).getAttribute('aria-selected')!=='true')errors.push('Panorama: keyboard tab navigation failed');
+  await page.locator('.panorama-table summary').click();
+  if(await page.locator('.panorama-table tbody tr').count()!==7)errors.push('Panorama: same-quarter historical series missing');
+  await page.locator('.panorama-table summary').click();
+  await page.locator('.panorama').screenshot({path:'artifacts/visual/panorama-'+viewport.name+'.png'});
+  const filterPosition=await page.evaluate(()=>document.querySelector('.xp-filterbar').getBoundingClientRect().top<document.querySelector('.n5-chart-wall').getBoundingClientRect().top);
+  if(!filterPosition)errors.push('Panorama: filters do not precede affected charts');
   await page.locator('.n5-data-panel').first().waitFor({state:'visible',timeout:45000});
   if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': expected exactly five stable chart panels');
   const over=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3);

@@ -50,6 +50,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   if(['desktop','mobile'].includes(viewport.name))await page.locator('.panorama').screenshot({path:'artifacts/visual/panorama-investment-'+viewport.name+'.png'});
   await page.getByRole('tab',{name:'Inversión municipal',exact:true}).press('Home');
   if(await page.getByRole('tab',{name:'Conectividad',exact:true}).getAttribute('aria-selected')!=='true')errors.push('Panorama: keyboard tab navigation failed');
+  if(!await page.getByRole('tab',{name:'Conectividad',exact:true}).evaluate(el=>el===document.activeElement))errors.push('Panorama: keyboard focus did not follow the selected tab');
   await page.locator('.panorama-table summary').click();
   if(await page.locator('.panorama-table tbody tr').count()!==7)errors.push('Panorama: same-quarter historical series missing');
   await page.locator('.panorama-table summary').click();

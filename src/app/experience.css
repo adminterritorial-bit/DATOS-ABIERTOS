@@ -2,7 +2,7 @@
 .xp-app{--xp-primary:#2469d6;--xp-ink:#193454;--xp-muted:#7a90a9;--xp-stroke:#e5ebf5;--xp-paper:#fff;--xp-bg:#f5f7fb;min-height:100vh;display:flex;background:var(--xp-bg);color:var(--xp-ink);font-family:"Century Gothic","DM Sans",Arial,sans-serif}
 .xp-app *{box-sizing:border-box}.xp-app button,.xp-app input,.xp-app select{font:inherit}.xp-app a{text-decoration:none;color:inherit}.xp-app button{cursor:pointer}
 .xp-app button:focus-visible,.xp-app a:focus-visible,.xp-app input:focus-visible,.xp-app select:focus-visible{outline:3px solid #78adff;outline-offset:3px}
-.xp-skip{position:fixed;left:10px;top:-80px;z-index:200;background:#fff;padding:13px}.xp-skip:focus{top:8px}
+.xp-skip{position:fixed;left:10px;top:8px;z-index:200;background:#fff;padding:13px}.xp-skip:not(:focus){clip-path:inset(50%);width:1px;height:1px;overflow:hidden;white-space:nowrap;padding:0}
 .xp-side{position:fixed;z-index:35;inset:0 auto 0 0;width:284px;background:radial-gradient(ellipse at 12% 0%,#207971aa 0%,transparent 45%),radial-gradient(ellipse at 120% 56%,#3375b775 0%,transparent 48%),linear-gradient(150deg,#071c36 0%,#10395a 51%,#083c47 100%);color:#e9f6ff;display:flex;flex-direction:column;padding:28px 19px;overflow-y:auto;scrollbar-color:#385976 transparent;box-shadow:12px 0 45px #0f385e25}
 .xp-logo{display:flex;align-items:center;gap:12px;padding:4px 7px 30px;border-bottom:1px solid rgba(255,255,255,.12)}
 .xp-logo-mark{width:66px;height:66px;display:grid;place-items:center;background:linear-gradient(155deg,#fff,#eafaf7);border-radius:18px;box-shadow:0 12px 32px #081e4666,inset 0 0 0 2px #a7e8c8;color:white}

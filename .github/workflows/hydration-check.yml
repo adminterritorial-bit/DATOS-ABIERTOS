@@ -2,7 +2,7 @@ name: Diagnose regional map hydration
 on:
   push:
     branches: [fix/initial-navigation-hydration]
-    paths: ['.github/workflows/hydration-check.yml', 'scripts/hydration-diagnostics.mjs']
+    paths: ['.github/workflows/hydration-check.yml', 'scripts/hydration-diagnostics.mjs', 'src/app/mapa/region/page.tsx']
   workflow_dispatch:
 permissions:
   contents: read

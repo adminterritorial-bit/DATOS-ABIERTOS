@@ -133,7 +133,7 @@ export default function MapaEstadistico(){
           onClick={()=>{setMunicipio(p.id);setTema('Todos');setClase('Todos');setAnio('Todos');}}
           tabIndex={0} role="button" aria-label={'Seleccionar '+p.nombre}
           onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setMunicipio(p.id);setTema('Todos');setClase('Todos');setAnio('Todos');}}}>
-         <title>{p.nombre} · {v===undefined?'sin ICEE':num(v)+' % ICEE 2024'}</title>
+         <title>{`${p.nombre} · ${v===undefined?'sin ICEE':num(v)+' % ICEE 2024'}`}</title>
         </path>
         <text x={p.label[0]} y={p.label[1]} textAnchor="middle" fontSize={p.id==='76670'?13:10} fontWeight={p.id==='76670'?750:600} fill="#244563" pointerEvents="none">{p.nombre.length>17?p.nombre.slice(0,17)+'…':p.nombre}</text>
        </g>;

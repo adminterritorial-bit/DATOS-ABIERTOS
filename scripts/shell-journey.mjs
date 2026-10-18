@@ -46,6 +46,7 @@ for(const device of [{name:'desktop',width:1440,height:900},{name:'mobile',width
   if(device.name==='desktop'){
    for(const route of ['icet/recuperados','poblacion','seguridad','comparar','pdt','estimador','mapa/region','admin']){
     await page.goto(base+'/'+route+'/',{waitUntil:'domcontentloaded'});await page.locator('#xp-main h1').first().waitFor({timeout:20000});
+    if(route==='mapa/region'){const labels=await page.locator('.gm-geoview title').allTextContents();if(labels.length!==8||labels.some(label=>!label.trim()))errors.push('Regional map polygons are missing their tooltips');}
     if(await page.locator('.shell-sidebar').count()!==1)errors.push(route+': shared sidebar missing');
     if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))errors.push(route+': page overflow inside persistent layout');
    }

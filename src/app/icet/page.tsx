@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import {useEffect} from 'react';
+import {Suspense,useEffect} from 'react';
 import {useSearchParams} from 'next/navigation';
 import {formatear} from '@/lib/publicFeed';
 import {usePublicFeed} from '@/lib/usePublicFeed';
@@ -9,7 +9,7 @@ import {indicadoresICET} from '@/lib/icetCatalog';
 import {temasTerritoriales,numeroTema} from '@/lib/territorialTaxonomy';
 import {ICET_TOTAL,icetVigenciaActual,vincularICET} from '@/lib/icetMapping';
 import {ArrowLeft,ExternalLink,Database,TrendingUp} from 'lucide-react';
-export default function ICET(){
+function ICETContent(){
  const {feed}=usePublicFeed();const searchParams=useSearchParams();
  useEffect(()=>{const codigo=searchParams.get('q');if(codigo&&/^ICET-\d{2}$/.test(codigo)){const target=document.getElementById(codigo);const group=target?.closest('details');if(group)group.open=true;target?.scrollIntoView({behavior:'smooth',block:'center'})}},[searchParams]);
 
@@ -47,3 +47,4 @@ export default function ICET(){
  <p className="ot-fineprint">La presencia de una estadística pública no acredita por sí misma la disponibilidad histórica que evalúa el cuestionario ICET del DANE.</p></section>
  </div></main>
 }
+export default function ICET(){return <Suspense fallback={<div className="shell-loading" role="status">Abriendo los indicadores…</div>}><ICETContent/></Suspense>}

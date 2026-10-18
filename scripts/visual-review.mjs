@@ -10,6 +10,8 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
  try{
   const r=await page.goto(base+'/',{waitUntil:'domcontentloaded',timeout:70000});
   if(r?.status()!==200)errors.push(viewport.name+': HTTP '+r?.status());
+  await page.locator('.xp-home[data-ready="true"]').waitFor({state:'visible',timeout:20000});
+  await page.waitForFunction(()=>document.querySelectorAll('.xp-home').length===1&&document.querySelectorAll('.n5-banner-frame').length===1,null,{timeout:15000});
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
   await page.locator('.n5-navigation').waitFor({state:'attached'});
   await page.locator('.n5-banner-frame').waitFor();

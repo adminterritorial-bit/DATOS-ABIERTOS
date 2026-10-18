@@ -1,0 +1,38 @@
+name: Diagnose regional map hydration
+on:
+  push:
+    branches: [fix/initial-navigation-hydration]
+    paths: ['.github/workflows/hydration-check.yml', 'scripts/hydration-diagnostics.mjs', 'src/app/mapa/region/page.tsx']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regional-map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser dependencies
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --no-save playwright@1.56.1 --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Capture development hydration details
+        run: |
+          GITHUB_PAGES=true npm run dev -- --port 3000 > /tmp/region-dev.log 2>&1 &
+          server_pid=$!
+          trap 'cat /tmp/region-dev.log; kill $server_pid 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:3000/DATOS-ABIERTOS/ -o /dev/null; then break; fi
+            sleep 2
+          done
+          node scripts/hydration-diagnostics.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regional-hydration-details
+          path: artifacts/hydration/
+          retention-days: 7

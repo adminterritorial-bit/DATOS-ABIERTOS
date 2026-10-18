@@ -1,5 +1,5 @@
 'use client';
-import {Suspense,useEffect,useMemo,useRef,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import {usePathname,useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {ArrowRight,ArrowUpRight,BookOpen,ChevronRight,Menu,Search,X} from 'lucide-react';
@@ -53,7 +53,7 @@ function PersistentFrame({children}:{children:React.ReactNode}){
   <div className="xp-main shell-main">
    <header className="xp-header shell-header"><div className="shell-location"><button className="xp-mobile-nav" onClick={()=>setMenu(v=>!v)} aria-label="Abrir navegación" aria-expanded={menu} aria-controls="observatory-navigation"><Menu size={21}/></button><div><span className="shell-section-label">{isHome?'SAN PEDRO · VALLE DEL CAUCA':section.group}</span><nav className="xp-breadcrumb" aria-label="Ruta de navegación"><Link href="/" onClick={e=>{if(isHome){e.preventDefault();homeAction('home')}}}>Observatorio</Link><ChevronRight size={13}/><strong aria-current="page">{title}</strong></nav></div></div><div className="xp-header-actions"><CitizenSearch feed={feed} openRequest={searchRequest.id} initialQuery={searchRequest.query}/><span className="xp-period" title="La consulta del servicio no actualiza la vigencia de cada observación"><span/>{loading?'Consultando servicio':formatSourceDate(feed?.actualizado_consulta)?'Servicio consultado: '+formatSourceDate(feed?.actualizado_consulta):'Fuentes versionadas'}</span><Link href="/territorios/" title="Comparador territorial">Comparar datos <ArrowUpRight size={15}/></Link></div></header>
    <div className="shell-route-tools" aria-label="Herramientas para encontrar información"><span>Tu observatorio, siempre a mano.</span><nav aria-label="Herramientas de consulta"><Link href="/catalogo/">Consultar datos <ArrowRight size={13}/></Link><Link href="/documentos/">Ver fuentes <ArrowRight size={13}/></Link><button onClick={()=>api.openSearch()}><Search size={13}/> Buscar información</button></nav></div>
-   <div id="xp-main" className="shell-page-area" tabIndex={-1}><Suspense fallback={<div className="shell-loading" role="status">Abriendo la sección del observatorio…</div>}>{children}</Suspense></div>
+   <div id="xp-main" className="shell-page-area" tabIndex={-1}>{children}</div>
   </div>
  </div></ShellContext.Provider>;
 }

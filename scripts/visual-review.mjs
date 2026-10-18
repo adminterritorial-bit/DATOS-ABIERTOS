@@ -256,6 +256,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   }
  }catch(e){errors.push(viewport.name+': '+String(e).slice(0,300))}
  await page.close();
+ if(errors.length)break;
 }
 await browser.close();
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}

@@ -5,7 +5,7 @@ const base=(process.env.OBSERVATORIO_BASE_URL||'http://localhost:3000/DATOS-ABIE
 const errors=[];fs.mkdirSync('artifacts/visual',{recursive:true});
 for(const device of [{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
  const page=await browser.newPage({viewport:{width:device.width,height:device.height}});let feedRequests=0;
- page.on('request',r=>{if(r.url().includes('/functions/v1/observatorio-public-feed'))feedRequests++});page.on('pageerror',e=>errors.push(device.name+': '+e.message.slice(0,300)));
+ page.on('request',r=>{if(r.url().includes('/functions/v1/observatorio-public-feed'))feedRequests++});page.on('pageerror',e=>errors.push(device.name+' '+page.url()+': '+e.message.slice(0,500)));
  const showMenu=async()=>{if(device.width<=900&&await page.getByRole('button',{name:'Abrir navegación',exact:true}).getAttribute('aria-expanded')!=='true')await page.getByRole('button',{name:'Abrir navegación',exact:true}).click()};
  try{
   await page.goto(base+'/',{waitUntil:'domcontentloaded'});await page.getByRole('heading',{name:'Un territorio. Miles de historias.',exact:true}).waitFor();

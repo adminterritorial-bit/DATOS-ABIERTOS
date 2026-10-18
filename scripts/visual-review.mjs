@@ -31,6 +31,27 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.keyboard.press('Escape');
   await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
   await page.screenshot({path:'artifacts/visual/home-stage-'+viewport.name+'.png'});
+  if(await page.locator('.n5-data-panel').count()!==0)errors.push('Expensive charts were mounted before opening analysis');
+  if(await page.locator('.citizen-questions button').count()!==4)errors.push('Citizen questions missing');
+  await page.getByRole('button',{name:'¿Cómo va la educación?',exact:true}).click();
+  await page.locator('.sector-dashboard').waitFor();
+  if(!await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).inputValue().then(v=>v==='educacion'))errors.push('Citizen question did not select education');
+  if(['desktop','mobile'].includes(viewport.name)){
+    await page.locator('.saved-queries .sq-save').click();
+    await page.locator('.sq-list a').first().waitFor();
+    const savedHome=await page.locator('.sq-list a').first().getAttribute('href');
+    if(!savedHome.includes('tema=educacion'))errors.push('Saved home query lost the selected topic');
+    await page.reload({waitUntil:'domcontentloaded'});
+    await page.locator('.sector-dashboard').waitFor();
+    if(await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).inputValue()!=='educacion')errors.push('Reload did not restore home filters');
+    await page.locator('.sq-toggle').click();
+    if(!await page.locator('.sq-list a').count())errors.push('Device saved query did not persist');
+    await page.locator('.sector-dashboard .sd-record:visible').first().click();
+    await page.getByRole('region',{name:'Vigencia y fechas de la fuente'}).waitFor();
+    await page.keyboard.press('Escape');
+    await page.getByRole('dialog',{name:'Detalle estadístico'}).waitFor({state:'hidden'});
+  }
+  await page.locator('.citizen-library>summary').click();
   if(await page.locator('.discovery-doorway').count()!==4)errors.push('Four thematic entry points missing');
   await page.locator('.discovery-doorway').first().click();
   if(await page.locator('.discovery-doorway').first().getAttribute('aria-pressed')!=='true')errors.push('Thematic entry point did not apply its filter');
@@ -44,7 +65,10 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   },{timeout:22000}).catch(()=>errors.push(viewport.name+': first supplied banner is missing or not high resolution'));
   if(['desktop','mobile-small'].includes(viewport.name)){
     for(let slide=1;slide<4;slide++){
-      await page.getByRole('button',{name:'Banner siguiente'}).click();
+      const slideNames=['Observatorio de Datos','San Pedro en el mapa','Un nuevo futuro se avecina','Creado por Juan E. Perez T.'];
+      await page.getByRole('button',{name:'Mostrar: '+slideNames[slide],exact:true}).click();
+      await page.getByRole('img',{name:slideNames[slide],exact:true}).waitFor();
+      await page.waitForFunction(()=>{const el=document.querySelector('.n5-banner-slide');return !!el&&Number(getComputedStyle(el).opacity)>.99});
       await page.waitForFunction(()=>{const img=document.querySelector('.n5-banner-slide img');return !!img&&img.complete&&img.naturalWidth>=2000},null,{timeout:10000}).catch(()=>errors.push('banner '+slide+': missing original image'));
       if(viewport.name==='mobile-small'){if(await page.locator('.n5-banner-mobile-caption').evaluate(el=>el.scrollHeight>el.clientHeight+1))errors.push('Mobile banner '+slide+' has clipped text');await page.locator('.n5-banner-frame').screenshot({path:'artifacts/visual/mobile-slide-'+slide+'.png'});}
     }
@@ -80,6 +104,9 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   if(await page.locator('.panorama-table tbody tr').count()!==7)errors.push('Panorama: same-quarter historical series missing');
   await page.locator('.panorama-table summary').click();
   await page.locator('.panorama').screenshot({path:'artifacts/visual/panorama-'+viewport.name+'.png'});
+  const analysisToggle=page.locator('.citizen-analysis-toggle');
+  if(await analysisToggle.getAttribute('aria-expanded')!=='true')await analysisToggle.click();
+  await page.locator('.n5-chart-wall').waitFor();
   const filterPosition=await page.evaluate(()=>document.querySelector('.xp-filterbar').getBoundingClientRect().top<document.querySelector('.n5-chart-wall').getBoundingClientRect().top);
   if(!filterPosition)errors.push('Panorama: filters do not precede affected charts');
   await page.locator('.n5-data-panel').first().waitFor({state:'visible',timeout:45000});
@@ -143,6 +170,9 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
 
 
   if(viewport.name==='desktop'){
+    await page.goto(base+'/?tema=educacion&anio=2023&buscar=cobertura&vista=territorio',{waitUntil:'domcontentloaded',timeout:70000});
+    await page.locator('.n5-place-list button').first().waitFor({timeout:45000});
+    if(await page.getByRole('combobox',{name:'Vigencia',exact:true}).inputValue()!=='2023'||await page.getByRole('textbox',{name:'Buscar en estadísticas del municipio'}).inputValue()!=='cobertura')errors.push('Map initialization erased restored home filters');
     await page.goto(base+'/mapa/?lugar=76670008&tema=educacion',{waitUntil:'domcontentloaded',timeout:70000});
     await page.getByRole('dialog',{name:/Información del lugar SAN JOSÉ/i}).waitFor({timeout:45000});
     await page.getByRole('button',{name:'Copiar enlace de este lugar'}).click();
@@ -190,6 +220,21 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.locator('.ic-territories label').filter({hasText:'Ginebra'}).locator('input').check();
   if(await page.locator('.ic-controls select').nth(1).inputValue()!=='2023')errors.push('Peer comparison retained a non-common year');
   if(['desktop','mobile'].includes(viewport.name))await page.locator('.ic-panel').screenshot({path:'artifacts/visual/interactive-comparison-'+viewport.name+'.png'});
+  if(['desktop','mobile'].includes(viewport.name)){
+    await page.getByRole('button',{name:'Copiar enlace de comparación',exact:true}).click();
+    const shareUrl=await page.getByTestId('comparison-share-url').inputValue();
+    if(!shareUrl.includes('periodo=2023-T3')||!shareUrl.includes('indicador=internet'))errors.push('Comparison share URL lost its selection');
+    await page.locator('.ic-panel .sq-save').click();
+    await page.goto(shareUrl,{waitUntil:'domcontentloaded'});
+    await page.locator('.ic-controls select').first().waitFor();
+    await page.waitForFunction(()=>document.querySelector('.ic-controls select')?.value==='internet');
+    if(await page.locator('.ic-controls select').nth(1).inputValue()!=='2023')errors.push('Shared URL did not restore the comparison year');
+    if(!await page.getByRole('checkbox',{name:'Ginebra',exact:true}).isChecked())errors.push('Shared URL lost the selected municipality');
+    await page.locator('.ic-panel .sq-toggle').click();
+    if(await page.locator('.ic-panel .sq-list a').count()<2)errors.push('Saved queries did not retain both home and comparison');
+    await page.locator('.ic-panel .sq-remove').first().click();
+    if(await page.locator('.ic-panel .sq-list a').count()!==1)errors.push('Removing an individual saved query failed');
+  }
   await page.locator('.ic-controls select').first().selectOption('energia');
   await page.getByRole('tab',{name:'Energía · UPME 2024'}).click();
   await page.getByRole('heading',{name:'San Pedro, en perspectiva.'}).waitFor();
@@ -211,6 +256,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   }
  }catch(e){errors.push(viewport.name+': '+String(e).slice(0,300))}
  await page.close();
+ if(errors.length)break;
 }
 await browser.close();
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}

@@ -1,9 +1,11 @@
 'use client';
-import {useId,useState} from 'react';
-import {ArrowUpRight,SlidersHorizontal} from 'lucide-react';
+import {useEffect,useId,useState} from 'react';
+import {ArrowUpRight,Copy,SlidersHorizontal} from 'lucide-react';
 import energy from '@/data/energiaV6.json';
 import internet from '@/data/conectividadV6.json';
 import {commonPeriods,compareTerritories,createComparisonData,type Indicator} from '@/lib/interactiveComparison.mjs';
+import {buildComparisonUrl,buildSavedComparisonPath,readComparisonQuery} from '@/lib/comparisonLinks.mjs';
+import SavedQueries from './SavedQueries';
 import './interactive-comparison.css';
 
 const data=createComparisonData(energy,internet);
@@ -17,6 +19,9 @@ export default function InteractiveComparison(){
  const [indicator,setIndicator]=useState<Indicator>('energia');
  const [selected,setSelected]=useState(defaults);
  const [chosenPeriod,setChosenPeriod]=useState('2024');
+ const [ready,setReady]=useState(false);
+ const [shareUrl,setShareUrl]=useState('');
+ const [copyStatus,setCopyStatus]=useState('');
  const periods=commonPeriods(data,indicator,selected);
  const period=periods.includes(chosenPeriod)?chosenPeriod:periods.at(-1)??'';
  const years=[...new Set(periods.map(p=>p.slice(0,4)))];
@@ -28,6 +33,35 @@ export default function InteractiveComparison(){
  const other=rows.find(r=>r.code!==base?.code);
  const max=indicator==='energia'?100:Math.max(...rows.map(r=>r.value),1);
  const hasPeers=selected.some(code=>!defaults.includes(code));
+ useEffect(()=>{
+  const restore=()=>{
+   const restored=readComparisonQuery(window.location.search,data);
+   setIndicator(restored.indicator);setSelected(restored.territories);setChosenPeriod(restored.period);setCopyStatus('');setReady(true);
+  };
+  restore();
+  window.addEventListener('popstate',restore);window.addEventListener('observatorio:source-tab-change',restore);
+  return ()=>{window.removeEventListener('popstate',restore);window.removeEventListener('observatorio:source-tab-change',restore);};
+ },[]);
+ useEffect(()=>{
+  if(!ready)return;
+  const selection={indicator,period,territories:selected};
+  const url=buildComparisonUrl(window.location.href,selection,data);
+  if(url!==window.location.href)window.history.replaceState(window.history.state,'',url);
+  setShareUrl(url);setCopyStatus('');
+  window.dispatchEvent(new CustomEvent('observatorio:comparison-change',{detail:{url,selection}}));
+ },[ready,indicator,period,selected]);
+ const copyLink=async()=>{
+  // Read the current URL so a source-tab query or anchor set elsewhere is preserved.
+  const url=buildComparisonUrl(window.location.href,{indicator,period,territories:selected},data);
+  setShareUrl(url);
+  try{
+   if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');
+   await navigator.clipboard.writeText(url);
+   setCopyStatus('Enlace copiado. Al abrirlo se recupera esta comparación.');
+  }catch{
+   setCopyStatus('Selecciona y copia el enlace del campo de abajo.');
+  }
+ };
  const toggle=(code:string)=>{
   const next=selected.includes(code)?selected.filter(c=>c!==code):[...selected,code];
   if(next.length){setSelected(next);const available=commonPeriods(data,indicator,next);if(!available.includes(period))setChosenPeriod(available.at(-1)??'');}
@@ -45,6 +79,8 @@ export default function InteractiveComparison(){
   </div>
   <fieldset className="ic-territories" aria-describedby={`${id}-availability`}><legend>Territorios <span>· el primero seleccionado es la referencia</span></legend><div>{data.territories.map(t=><label key={t.code} className={selected.includes(t.code)?'is-selected':''}><input type="checkbox" checked={selected.includes(t.code)} disabled={selected.length===1&&selected.includes(t.code)} onChange={()=>toggle(t.code)}/>{t.name}{selected[0]===t.code&&<span className="ic-base">Referencia</span>}</label>)}</div></fieldset>
   <p className="ic-availability" id={`${id}-availability`}>{indicator==='energia'?'Vigencia disponible: 2024. Coberturas calculadas con viviendas con servicio y viviendas totales.':hasPeers?'Con municipios de referencia, el único período común disponible es 2023 T3. Retíralos para explorar 2017–2023 con San Pedro, Valle y Colombia.':'Períodos comunes disponibles: 2017 T1–2023 T3. Cada dato es un stock trimestral; los trimestres no se suman.'}</p>
+  <div className="ic-share"><div className="ic-share-heading"><span>Comparte esta selección</span><button type="button" onClick={copyLink} disabled={!ready} data-testid="comparison-copy-link"><Copy size={15} aria-hidden="true"/> Copiar enlace de comparación</button></div><label htmlFor={`${id}-share-url`}>Enlace de la comparación</label><input id={`${id}-share-url`} data-testid="comparison-share-url" type="url" readOnly value={shareUrl} onFocus={e=>e.currentTarget.select()} aria-describedby={`${id}-copy-status`} spellCheck={false}/><p id={`${id}-copy-status`} role="status" aria-live="polite">{copyStatus||'Conserva el indicador, el período y el orden de los territorios.'}</p></div>
+  {ready&&shareUrl&&<SavedQueries url={buildSavedComparisonPath(shareUrl,{indicator,period,territories:selected},data)} label={`${indicator==='energia'?'Energía eléctrica':'Internet fijo'} · ${displayPeriod(period)} · ${selected.map(code=>data.territories.find(t=>t.code===code)?.name??code).join(', ')}`}/>}
   <div className="ic-results" aria-live="polite" aria-atomic="true"><div className="ic-result-heading"><h3>{indicator==='energia'?'Cobertura eléctrica':'Accesos a internet fijo'}</h3><span>{displayPeriod(period)} · {rows.length} territorios</span></div>
    <div className="ic-bars" aria-hidden="true">{rows.map(r=><div className="ic-bar-row" key={r.code}><div><span>{r.name}</span><strong>{nf(r.value)} {unit}</strong></div><div className="ic-bar-track"><i className={r.code===base?.code?'ic-reference-bar':''} style={{width:`${r.value/max*100}%`}}/></div></div>)}</div>
    <p className="ic-conclusion">{conclusion}</p>

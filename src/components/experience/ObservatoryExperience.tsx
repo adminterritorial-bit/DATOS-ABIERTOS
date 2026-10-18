@@ -118,7 +118,7 @@ export default function ObservatoryExperience(){
  const count=(t:TemaTerritorial)=>all.filter(d=>mapear.get(d.id)===t.id).length;
  const reset=()=>{setMacro('Todos');setTema('Todos');setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false)};
  const seleccionarTema=(id:string)=>{setMacro(temasTerritoriales.find(t=>t.id===id)?.macro||'Todos');setTema(id);setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false);setVista('historias')};
- return <main className="xp-home">
+ return <main className="xp-home" data-ready={queryReady}>
    <ImmersiveHero onSearch={openSearch} onExplore={()=>document.getElementById('panorama-title')?.scrollIntoView({behavior:'smooth',block:'start'})} onMap={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}/>
    <div className="xp-body">
     <MunicipalPanorama/>

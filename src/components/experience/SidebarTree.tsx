@@ -3,13 +3,14 @@ import {useEffect,useState} from 'react';
 import Link from 'next/link';
 import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
 import {BookOpen,ChevronDown,Compass,Folder,FolderOpen,Heart,LayoutDashboard,MapPinned,PanelLeftClose,Pin,PinOff,Sparkles} from 'lucide-react';
+import {sectionForPath} from '@/lib/shellNavigation.mjs';
 import {macroDimensiones,temasTerritoriales} from '@/lib/territorialTaxonomy';
-type Props={active:string;onTopic:(id:string)=>void;onMap:()=>void;onExplore:()=>void;onHome:()=>void};
+type Props={path?:string;active:string;onTopic:(id:string)=>void;onMap:()=>void;onExplore:()=>void;onHome:()=>void};
 const STORAGE='sanpedro-observatorio-pinned-topics-v1';
-export default function SidebarTree({active,onTopic,onMap,onExplore,onHome}:Props){
+export default function SidebarTree({path='/',active,onTopic,onMap,onExplore,onHome}:Props){
  const [folders,setFolders]=useState<string[]>([]);
  const [pinned,setPinned]=useState<string[]>([]);
- const [showAll,setShowAll]=useState(false);
+ const route=sectionForPath(path).id;
  const reduced=useReducedMotion();
  useEffect(()=>{try{const p=JSON.parse(localStorage.getItem(STORAGE)||'[]');if(Array.isArray(p))setPinned(p.filter(v=>typeof v==='string'))}catch{}},[]);
  const toggleFolder=(id:string)=>setFolders(v=>v.includes(id)?v.filter(x=>x!==id):[...v,id]);
@@ -24,13 +25,16 @@ export default function SidebarTree({active,onTopic,onMap,onExplore,onHome}:Prop
  return <div className="n5-navigation">
   <div className="n5-navigation-heading"><span>ACCESOS PRINCIPALES</span><Sparkles size={15}/></div>
   <nav className="n5-toplinks" aria-label="Navegación principal">
-   <button aria-current={active==='Todos'?'page':undefined} onClick={onHome}><LayoutDashboard size={20}/><span>Inicio · Mi Observatorio</span></button>
-   <button onClick={onExplore}><BookOpen size={20}/><span>Explorar los 14 temas</span></button>
-   <button onClick={onMap}><MapPinned size={20}/><span>Mapa de San Pedro</span></button>
-   <Link href="/rendicion/"><LayoutDashboard size={20}/><span>Gestión municipal 2025</span></Link>
-   <Link href="/territorios/"><MapPinned size={20}/><span>Comparar territorios</span></Link>
-   <Link href="/icet/recuperados/"><Compass size={20}/><span>Indicadores DANE</span></Link>
+   <button aria-current={route==='inicio'&&active==='Todos'?'page':undefined} onClick={onHome}><LayoutDashboard size={20}/><span>Inicio · Mi Observatorio</span></button>
+   <button aria-current={route==='temas'?'page':undefined} onClick={onExplore}><BookOpen size={20}/><span>Explorar los 14 temas</span></button>
+   <button aria-current={route==='mapa'?'page':undefined} onClick={onMap}><MapPinned size={20}/><span>Mapa de San Pedro</span></button>
+   <Link href="/catalogo/" aria-current={route==='catalogo'?'page':undefined}><BookOpen size={20}/><span>Catálogo de datos</span></Link>
+   <Link href="/rendicion/" aria-current={route==='rendicion'?'page':undefined}><LayoutDashboard size={20}/><span>Gestión municipal 2025</span></Link>
+   <Link href="/territorios/" aria-current={route==='territorios'||route==='comparar'?'page':undefined}><MapPinned size={20}/><span>Comparar territorios</span></Link>
+   <Link href="/icet/recuperados/" aria-current={route==='icet'?'page':undefined}><Compass size={20}/><span>Indicadores DANE</span></Link>
+   <Link href="/documentos/" aria-current={route==='documentos'?'page':undefined}><BookOpen size={20}/><span>Fuentes y documentos</span></Link>
   </nav>
+  <details className="shell-additional-tools"><summary>Más herramientas del observatorio</summary><nav aria-label="Más herramientas">{[['/poblacion/','Población y demografía'],['/seguridad/','Seguridad ciudadana'],['/comparar/','Comparar series históricas'],['/pdt/','Plan de Desarrollo'],['/estimador/','Laboratorio estadístico']].map(([href,label])=><Link key={href} href={href} aria-current={path.startsWith(href)?'page':undefined}>{label}</Link>)}</nav></details>
   <div className="n5-navigation-heading"><span>MIS TEMAS FAVORITOS</span><Heart size={15}/></div>
   <motion.div layout className="n5-pinned" aria-label="Temas fijados arriba">{pinned.length?pinned.map(id=>topicItem(id)):<p>Fija aquí tus temas preferidos con el icono de chincheta.</p>}</motion.div>
   <div className="n5-navigation-heading"><span>BIBLIOTECA DE TEMAS</span><Folder size={15}/></div>

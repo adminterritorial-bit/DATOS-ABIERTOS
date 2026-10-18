@@ -75,7 +75,6 @@ export default function ICETDashboard(){
  const sociales=observacionesDocumentales.filter(d=>d.anio===null);
  return <div className="ci-app">
   <header className="ci-topbar">
-   <div className="ci-brand"><Image src="/escudo-san-pedro.png" alt="Identidad institucional de la Alcaldía de San Pedro" width={137} height={60}/><div><strong>OBSERVATORIO <span>SAN PEDRO</span></strong><small>Inteligencia territorial · Valle del Cauca</small></div></div>
    <nav className="ci-toplinks" aria-label="Secciones del observatorio"><Link href="/">Panorama</Link><Link className="ci-active" href="/icet">Indicadores DANE</Link><Link href="/documentos">Documentos</Link><Link href="/pdt">Plan de Desarrollo</Link></nav>
    <Link href="/" className="ci-back"><ArrowLeft size={17}/> Volver</Link>
   </header>

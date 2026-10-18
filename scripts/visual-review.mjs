@@ -11,7 +11,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   const r=await page.goto(base+'/',{waitUntil:'domcontentloaded',timeout:70000});
   if(r?.status()!==200)errors.push(viewport.name+': HTTP '+r?.status());
   await page.getByRole('heading',{level:1}).first().waitFor({timeout:15000});
-  await page.locator('.n5-navigation').waitFor();
+  await page.locator('.n5-navigation').waitFor({state:'attached'});
   await page.locator('.n5-banner-frame').waitFor();
   await page.getByRole('heading',{name:'Un territorio. Miles de historias.',exact:true}).waitFor();
   if(!await page.locator('.immersive-hero').evaluate(el=>getComputedStyle(el).backgroundImage.includes('255, 255, 255')||getComputedStyle(el).backgroundColor==='rgb(255, 255, 255)'))errors.push('Main hero does not use a white background');
@@ -26,7 +26,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   if(await page.getByRole('dialog',{name:'Búsqueda global de datos'}).count())errors.push('Hero search does not close');
   if(!await page.getByRole('button',{name:'Buscar en todos los datos',exact:true}).evaluate(el=>el===document.activeElement))errors.push('Hero search did not restore focus');
   await page.getByRole('button',{name:'Buscar Educación',exact:true}).click();
-  if(await page.getByRole('textbox',{name:'Escribe tu búsqueda'}).inputValue()!=='Educación')errors.push('Hero topic search did not preserve the requested query');
+  if(await page.getByRole('combobox',{name:'Escribe tu búsqueda'}).inputValue()!=='Educación')errors.push('Hero topic search did not preserve the requested query');
   if(!await page.locator('.ot-cmd-results .ot-cmd-result').count())errors.push('Hero topic search returned no education results');
   await page.keyboard.press('Escape');
   await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
@@ -114,7 +114,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   const over=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3);
   if(over)errors.push(viewport.name+': horizontal overflow');
 
-  await page.locator('.g4-logo img').waitFor({timeout:12000});
+  await page.locator('.g4-logo img').waitFor({state:'attached',timeout:12000});
   if(!await page.locator('.g4-logo img').evaluate(el=>el.complete&&el.naturalWidth>200))errors.push(viewport.name+': municipal logo not loading');
   await page.getByRole('button',{name:'Mostrar: Observatorio de Datos'}).click();
   await page.waitForFunction(()=>{const img=document.querySelector('.n5-banner-image');return img&&img.complete&&img.naturalWidth>=2000&&getComputedStyle(img).opacity==='1'},null,{timeout:15000});
@@ -260,5 +260,6 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
 }
 await browser.close();
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}
+await import('./shell-journey.mjs');
 console.log('Verified URL: '+base);
 console.log('PASS: 4:1 timed carousel, 5 charts, 14 separate topic cards, ArcGIS popup, mobile folder sidebar and no page overflow');

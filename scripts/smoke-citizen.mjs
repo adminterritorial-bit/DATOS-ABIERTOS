@@ -9,7 +9,7 @@ for(const device of [{name:'desktop',width:1440,height:900},{name:'mobile',width
   await page.goto(base+'/',{waitUntil:'networkidle',timeout:60000});
   await page.getByRole('button',{name:'Buscar en el Observatorio'}).click();
   await page.getByRole('dialog',{name:'Búsqueda global de datos'}).waitFor();
-  await page.getByRole('textbox',{name:'Escribe tu búsqueda'}).fill('ICET-16');
+  await page.getByRole('combobox',{name:'Escribe tu búsqueda'}).fill('ICET-16');
   await page.getByText('ICET-16',{exact:false}).first().waitFor();
   await page.keyboard.press('Escape');
   if(await page.getByRole('dialog',{name:'Búsqueda global de datos'}).count())errors.push(device.name+': Escape did not close command palette');

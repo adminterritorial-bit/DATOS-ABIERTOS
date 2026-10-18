@@ -5,17 +5,17 @@ import Link from 'next/link';
 import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
 import {Activity,ArrowDownRight,ArrowRight,ArrowUpRight,BookOpen,ChartNoAxesCombined,Check,ChevronDown,Compass,Database,ExternalLink,Filter,Flag,Globe2,GraduationCap,HeartPulse,House,Landmark,Layers3,Leaf,Map as MapIcon,MapPinned,Menu,Search,ShieldCheck,SlidersHorizontal,Sparkles,Users,X} from 'lucide-react';
 import {usePublicFeed} from '@/lib/usePublicFeed';
-import CitizenSearch from '@/components/CitizenSearch';
 import MunicipalPanorama from './MunicipalPanorama';
 import {useDialogFocus} from '@/components/useDialogFocus';
 import ImmersiveHero from './ImmersiveHero';
+import InformationGuide from './InformationGuide';
+import {useObservatoryShell} from './ShellContext';
 import DiscoveryDoorways from './DiscoveryDoorways';
-import SidebarTree from './SidebarTree';
 import RollingTitle from './RollingTitle';
 import CitizenQuestions from './CitizenQuestions';
 import DataProvenance from './DataProvenance';
 import SavedQueries from './SavedQueries';
-import {readHomeQuery,homeQueryUrl,formatSourceDate} from '@/lib/citizenNavigation.mjs';
+import {readHomeQuery,homeQueryUrl} from '@/lib/citizenNavigation.mjs';
 const SectorDashboard=dynamic(()=>import('./SectorDashboard'),{loading:()=> <p role="status">Preparando la lectura sectorial…</p>});
 const ChartWall=dynamic(()=>import('./ChartWall'),{ssr:false,loading:()=> <div className="g4-skeleton">Preparando múltiples gráficas interactivas…</div>});
 import {reunirEstadisticas,filtrarEstadisticas,itemsPorIndicador} from '@/lib/territorialDataset';
@@ -80,6 +80,7 @@ function StoryCard({item,onClick}:{item:DatoExplorador;onClick:()=>void}){
 export default function ObservatoryExperience(){
  const {feed,loading,error}=usePublicFeed();
  const reduced=useReducedMotion();
+ const {openSearch}=useObservatoryShell();
  const all=useMemo(()=>{const existing=reunirEstadisticas(feed);return [...existing,...derivarProporciones(existing)]},[feed]);
  const [macro,setMacro]=useState<string>('Todos');
  const [tema,setTema]=useState<string>('Todos');
@@ -89,8 +90,6 @@ export default function ObservatoryExperience(){
  const [vista,setVista]=useState<'historias'|'territorio'|'catalogo'>('historias');
  const [detalle,setDetalle]=useState<DatoExplorador|null>(null);
  const detailRef=useDialogFocus(!!detalle,()=>setDetalle(null));
- const [menu,setMenu]=useState(false);
- const [searchRequest,setSearchRequest]=useState({id:0,query:''});
  const [verMas,setVerMas]=useState(false);
  const [analysisOpen,setAnalysisOpen]=useState(false),[queryReady,setQueryReady]=useState(false);
  const [tituloClic,setTituloClic]=useState(false);
@@ -99,8 +98,15 @@ export default function ObservatoryExperience(){
   restore();window.addEventListener('popstate',restore);return()=>window.removeEventListener('popstate',restore);
  },[]);
  const queryUrl=homeQueryUrl({tema,macro,anio,clase,buscar,vista});
- useEffect(()=>{if(queryReady)window.history.replaceState(window.history.state,'',queryUrl+window.location.hash)},[queryUrl,queryReady]);
- useEffect(()=>{if(!menu)return;const close=(e:KeyboardEvent)=>{if(e.key==='Escape')setMenu(false)};window.addEventListener('keydown',close);return()=>window.removeEventListener('keydown',close)},[menu]);
+ useEffect(()=>{if(queryReady){window.history.replaceState(window.history.state,'',queryUrl+window.location.hash);window.dispatchEvent(new CustomEvent('observatorio:home-context',{detail:{tema,macro}}))}},[queryUrl,queryReady,tema,macro]);
+ useEffect(()=>{
+  const handle=(event:Event)=>{const detail=(event as CustomEvent).detail;if(!detail)return;
+   if(detail.kind==='home'){reset();setAnalysisOpen(false);setVista('historias');window.scrollTo({top:0,behavior:'smooth'})}
+   else if(detail.kind==='map'){setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}
+   else if(detail.kind==='topic'&&temasTerritoriales.some(t=>t.id===detail.topic)){seleccionarTema(detail.topic);document.getElementById('n5-charts')?.scrollIntoView({behavior:'smooth'})}
+  };
+  window.addEventListener('observatorio:home-action',handle);return()=>window.removeEventListener('observatorio:home-action',handle);
+ },[]);
 
  const mapear=useMemo(()=>new Map(all.map(x=>[x.id,clasificarDato(x)])),[all]);
  const tematicos=useMemo(()=>all.filter(d=>(tema==='Todos'||mapear.get(d.id)===tema)&&(macro==='Todos'||temasTerritoriales.find(t=>t.id===mapear.get(d.id))?.macro===macro)),[all,tema,macro,mapear]);
@@ -111,21 +117,13 @@ export default function ObservatoryExperience(){
  const catalogo=indicadoresICET.filter(i=>tema==='Todos'||numeroTema.get(i.numero)?.id===tema).filter(i=>macro==='Todos'||numeroTema.get(i.numero)?.macro===macro).filter(i=>!buscar||(i.nombre+' '+i.codigo).toLowerCase().includes(buscar.toLowerCase()));
  const count=(t:TemaTerritorial)=>all.filter(d=>mapear.get(d.id)===t.id).length;
  const reset=()=>{setMacro('Todos');setTema('Todos');setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false)};
- const seleccionarTema=(id:string)=>{setMacro(temasTerritoriales.find(t=>t.id===id)?.macro||'Todos');setTema(id);setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false);setVista('historias');setMenu(false)};
- return <div className="xp-app">
-  <a className="xp-skip" href="#xp-main">Ir al contenido estadístico</a>
-  <aside id="observatory-navigation" className={'xp-side '+(menu?'is-open':'')} aria-label="Navegación temática del Observatorio">
-   <div className="xp-logo n5-official-logo"><div className="g4-logo n5-crest-wrapper"><img src="/DATOS-ABIERTOS/escudo-san-pedro.png" alt="Alcaldía de San Pedro, Valle del Cauca: escudo y denominación oficial" width="234" height="95"/></div><small>OBSERVATORIO DE DATOS ABIERTOS</small></div>
-   <SidebarTree active={tema} onTopic={id=>{seleccionarTema(id);document.getElementById('n5-charts')?.scrollIntoView({behavior:'smooth'})}} onMap={()=>{setVista('territorio');setMenu(false);document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}} onExplore={()=>{window.location.assign('/DATOS-ABIERTOS/temas/')}} onHome={()=>{reset();setAnalysisOpen(false);setVista('historias');setMenu(false);window.scrollTo({top:0,behavior:'smooth'})}}/>
-   <div className="xp-sidebar-bottom"><small>Alcaldía de San Pedro · Valle del Cauca</small><Link href="/documentos/">Biblioteca documental <ExternalLink size={13}/></Link></div>
-  </aside>
-  {menu&&<div className="xp-menu-overlay" onClick={()=>setMenu(false)}/>}
-  <main className="xp-main" id="xp-main">
-   <header className="xp-header"><div className="xp-breadcrumb"><button className="xp-mobile-nav" onClick={()=>setMenu(!menu)} aria-label="Abrir navegación" aria-expanded={menu} aria-controls="observatory-navigation"><Menu size={21}/></button><span>Observatorio</span><ArrowRight size={13}/><strong>{topic?.nombre||(macro==='Todos'?'Panorama territorial':macro)}</strong></div><div className="xp-header-actions"><CitizenSearch feed={feed} openRequest={searchRequest.id} initialQuery={searchRequest.query}/><span className="xp-period" title="La consulta del servicio no actualiza la vigencia de cada observación"><span/>{loading?'Consultando servicio':formatSourceDate(feed?.actualizado_consulta)?'Servicio consultado: '+formatSourceDate(feed?.actualizado_consulta):'Fuentes versionadas'}</span><Link href="/comparar/" title="Explorador de series">Comparar datos <ArrowUpRight size={15}/></Link></div></header>
-   <ImmersiveHero onSearch={(query='')=>setSearchRequest(r=>({id:r.id+1,query}))} onExplore={()=>document.getElementById('panorama-title')?.scrollIntoView({behavior:'smooth',block:'start'})} onMap={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}/>
+ const seleccionarTema=(id:string)=>{setMacro(temasTerritoriales.find(t=>t.id===id)?.macro||'Todos');setTema(id);setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false);setVista('historias')};
+ return <main className="xp-home">
+   <ImmersiveHero onSearch={openSearch} onExplore={()=>document.getElementById('panorama-title')?.scrollIntoView({behavior:'smooth',block:'start'})} onMap={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}/>
    <div className="xp-body">
     <MunicipalPanorama/>
     <div className="panorama-catalog-summary"><Database size={16}/><span>{all.length} observaciones</span><span>{temasTerritoriales.length} categorías</span><span>66 preguntas DANE</span><span>{years.length} vigencias documentadas</span><Link href="/catalogo/">Abrir catálogo <ArrowRight size={14}/></Link></div>
+    <InformationGuide/>
     <CitizenQuestions onChoose={id=>{seleccionarTema(id);document.getElementById('n5-charts')?.scrollIntoView({behavior:reduced?'auto':'smooth'})}}/>
     <details className="citizen-library"><summary>Explorar las 14 categorías por área</summary><DiscoveryDoorways active={macro} onChoose={value=>{setMacro(value);setTema('Todos');setAnio('Todos');setClase('Todas');setBuscar('');setVerMas(false);document.getElementById('n5-charts')?.scrollIntoView({behavior:'smooth'})}}/></details>
     <div id="n5-charts"><div className="n5-topic-panel"><div><span className="xp-overline">SELECCIONA EL TEMA DEL TABLERO</span><h2><RollingTitle text={topic?.nombre||"Panorama municipal"}/></h2><p>{topic?.descripcion||"Elige una categoría y afina la consulta por año, naturaleza o palabra clave."}</p></div><label>Temática <select aria-label="Elegir temática para las cinco gráficas" value={tema} onChange={e=>seleccionarTema(e.target.value)}><option value="Todos">Todas las categorías</option>{temasTerritoriales.map(t=><option key={t.id} value={t.id}>{t.nombre}</option>)}</select></label></div><div className="xp-filterbar"><label className="xp-searchbox"><Search size={19}/><input value={buscar} onChange={e=>setBuscar(e.target.value)} placeholder="Buscar cifras, temas, fuentes…" aria-label="Buscar en estadísticas del municipio"/>{buscar&&<button onClick={()=>setBuscar('')} aria-label="Limpiar búsqueda"><X size={14}/></button>}</label><label className="xp-dropdown"><span>Vigencia</span><select value={anio} onChange={e=>setAnio(e.target.value)}><option value="Todos">Todos los años</option>{years.map(y=><option key={y} value={y}>{y}</option>)}</select></label><label className="xp-dropdown"><span>Naturaleza</span><select value={clase} onChange={e=>setClase(e.target.value as 'Todas'|ClaseDato)}>{['Todas','Publicado','Calculado','Relacionado','Estimación'].map(x=><option key={x}>{x}</option>)}</select></label><button className="xp-reset" onClick={reset} aria-label="Restablecer todos los filtros"><SlidersHorizontal size={18}/></button></div><p className="panorama-filter-result" role="status">{filtered.length} observaciones en la selección · {anio==='Todos'?'todas las vigencias':anio} · {clase==='Todas'?'todas las naturalezas':clase}</p><SectorDashboard datos={filtrarEstadisticas(all,buscar,anio==='Todos'?'Todos':Number(anio),clase)} tema={tema} onOpen={setDetalle}/><SavedQueries url={queryUrl} label={(topic?.nombre||(macro==='Todos'?'Panorama municipal':macro))+' · '+(anio==='Todos'?'todas las vigencias':anio)+(buscar?' · '+buscar:'')}/><div className="citizen-analysis-heading"><div><h3>Profundiza a tu ritmo.</h3><p>Despliega tendencias, magnitudes y coberturas. Las gráficas se cargan al abrirlas.</p></div><button className="citizen-analysis-toggle" aria-expanded={analysisOpen} aria-controls="citizen-analysis-panels" onClick={()=>setAnalysisOpen(v=>!v)}>{analysisOpen?'Ocultar cinco perspectivas':'Explorar cinco perspectivas'} <ChevronDown size={16}/></button></div>{analysisOpen&&<div id="citizen-analysis-panels"><ChartWall datos={filtered} onOpen={setDetalle} title={topic?"Cinco gráficas: "+topic.nombre:"Explora los datos de San Pedro"}/></div>}</div>
@@ -144,7 +142,6 @@ export default function ObservatoryExperience(){
     <section className="xp-visit-map"><div><span className="xp-overline">GEOVISOR ARC GIS</span><h2>Del dato al lugar.</h2><p>Explora centros poblados del MGN 2025 sobre el contorno real de San Pedro y consulta su ficha territorial.</p><button onClick={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}>Entrar al mapa interactivo <ArrowUpRight size={16}/></button></div><div className="xp-map-illustration"><MapPinned size={80} strokeWidth={1}/><span>SIETE LUGARES · UN TERRITORIO</span><Link href="/mapa/?lugar=76670000">Abrir la cabecera ↗</Link><Link href="/mapa/?lugar=76670008&tema=educacion">San José · educación ↗</Link></div></section>
     <footer className="xp-footer"><div><Globe2 size={22}/><b>OBSERVATORIO SAN PEDRO</b></div><p>Datos abiertos para entender y transformar nuestro territorio. Las cifras observadas y los cálculos conservan sus vigencias.</p><nav><Link href="/documentos/">Fuentes</Link><Link href="/mapa/">Geovisor completo</Link><Link href="/estimador/">Estimaciones</Link><Link href="/icet/">ICET</Link></nav></footer>
    </div>
-  </main>
   <AnimatePresence>{detalle&&<motion.div className="xp-detail-backdrop" onClick={()=>setDetalle(null)} initial={reduced?false:{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}><motion.section ref={detailRef} role="dialog" aria-modal="true" aria-label="Detalle estadístico" className="xp-detail-modal" onClick={e=>e.stopPropagation()} initial={reduced?false:{opacity:0,y:35}} animate={{opacity:1,y:0}} exit={{opacity:0,y:35}}><button className="xp-modal-close" onClick={()=>setDetalle(null)} aria-label="Cerrar detalle"><X size={18}/></button><span className="xp-overline">{detalle.sector} · {detalle.anio}</span><h2>{detalle.nombre}</h2><strong className="xp-detail-big">{detalle.precision==='superior a'?'> ':['aproximado','estimación institucional'].includes(detalle.precision||'')?'≈ ':''}{nf(detalle.valor,2)} <span>{detalle.unidad}</span></strong><div className="xp-detail-fields"><div><span>Vigencia del registro</span><strong>{detalle.anio}</strong></div><div><span>Naturaleza y procedencia</span><strong>{detalle.clase} · {detalle.origen||'Estadística documentada'}</strong></div><div><span>Fuente estadística</span><strong>{detalle.fuente}</strong></div>{detalle.codigoICET&&<div><span>Vínculo</span><strong>{detalle.codigoICET}</strong></div>}</div>{detalle.nota&&<p>{detalle.nota}</p>}<DataProvenance datum={detalle}/><div className="xp-modal-actions">{detalle.fuenteUrl?<a target="_blank" rel="noopener noreferrer" href={detalle.fuenteUrl}>Consultar fuente <ExternalLink size={15}/></a>:<Link href="/documentos/" onClick={()=>setDetalle(null)}>Ir a biblioteca <BookOpen size={15}/></Link>}<button onClick={()=>setDetalle(null)}>Cerrar ficha <Check size={15}/></button></div></motion.section></motion.div>}</AnimatePresence>
- </div>;
+ </main>;
 }

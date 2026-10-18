@@ -1,10 +1,11 @@
 'use client';
-import {useEffect,useMemo,useRef,useState} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
 import {BookOpen,Database,FileSearch,Home,Search,ShieldCheck,Users2,X,ArrowUpRight,Compass} from 'lucide-react';
 import {reunirEstadisticas} from '@/lib/territorialDataset';
 import {indicadoresICET} from '@/lib/icetCatalog';
 import type {FeedPublico} from '@/lib/publicFeed';
+import {useDialogFocus} from '@/components/useDialogFocus';
 
 type Entrada={id:string;titulo:string;descripcion:string;href:string;clase:'ruta'|'indicador'|'dato';anio?:number};
 const rutas:Entrada[]=[
@@ -18,9 +19,10 @@ const rutas:Entrada[]=[
  {id:'documentos',titulo:'Biblioteca de fuentes',descripcion:'Enlaces documentales y metadatos',href:'/documentos/',clase:'ruta'},
 ];
 const normalizar=(s:string)=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-export default function CitizenSearch({feed}:{feed:FeedPublico|null}){
+export default function CitizenSearch({feed,openRequest=0}:{feed:FeedPublico|null;openRequest?:number}){
  const [abierto,setAbierto]=useState(false),[q,setQ]=useState('');
- const input=useRef<HTMLInputElement>(null);
+ const dialogRef=useDialogFocus(abierto,()=>setAbierto(false));
+ useEffect(()=>{if(openRequest>0)setAbierto(true)},[openRequest]);
  useEffect(()=>{
   const handle=(e:KeyboardEvent)=>{
    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setAbierto(s=>!s);}
@@ -29,7 +31,7 @@ export default function CitizenSearch({feed}:{feed:FeedPublico|null}){
   document.addEventListener('keydown',handle);
   return ()=>document.removeEventListener('keydown',handle);
  },[]);
- useEffect(()=>{if(abierto)input.current?.focus();else setQ('')},[abierto]);
+ useEffect(()=>{if(!abierto)setQ('')},[abierto]);
  const resultados=useMemo(()=>{
   const term=normalizar(q.trim());
   if(!term)return rutas;
@@ -46,8 +48,8 @@ export default function CitizenSearch({feed}:{feed:FeedPublico|null}){
    <Search size={16}/><span>Buscar datos, indicadores...</span><kbd>Ctrl K</kbd>
   </button>
   {abierto&&<div className="ot-cmd-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)cerrar()}}>
-   <section className="ot-cmd-dialog" role="dialog" aria-modal="true" aria-label="Búsqueda global de datos">
-    <div className="ot-cmd-head"><Search size={21}/><input autoFocus ref={input} value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar indicador, fuente o sector..." aria-label="Escribe tu búsqueda" onKeyDown={e=>{if(e.key==='Enter'&&resultados.length){window.location.assign('/DATOS-ABIERTOS'+resultados[0].href);}}}/><button type="button" onClick={cerrar} aria-label="Cerrar buscador"><X size={18}/></button></div>
+   <section ref={dialogRef} className="ot-cmd-dialog" role="dialog" aria-modal="true" aria-label="Búsqueda global de datos">
+    <div className="ot-cmd-head"><Search size={21}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar indicador, fuente o sector..." aria-label="Escribe tu búsqueda" onKeyDown={e=>{if(e.key==='Enter'&&resultados.length){window.location.assign('/DATOS-ABIERTOS'+resultados[0].href);}}}/><button type="button" onClick={cerrar} aria-label="Cerrar buscador"><X size={18}/></button></div>
     <div className="ot-cmd-results">
      <p className="ot-cmd-caption">{q?'RESULTADOS DEL OBSERVATORIO':'ACCESOS DIRECTOS'}</p>
      {resultados.map(item=><Link key={item.id} href={item.href} className="ot-cmd-result" onClick={cerrar}>

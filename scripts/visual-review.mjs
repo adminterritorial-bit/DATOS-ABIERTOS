@@ -190,23 +190,23 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
     await page.goto(base+'/',{waitUntil:'domcontentloaded',timeout:70000});
   }
   await page.goto(base+'/rendicion/?vista=ejecucion',{waitUntil:'domcontentloaded'});
-  await page.locator('.v6-tabs [aria-selected="true"]').filter({hasText:'Ejecución'}).waitFor();
+  await page.locator('.rc-tabs [aria-selected="true"]').filter({hasText:'Ejecución'}).waitFor();
   await page.getByRole('tab',{name:'Inversión',exact:true}).click();
   await page.getByRole('heading',{name:'Las cifras detrás de la gestión.'}).waitFor();
-  if(await page.locator('.v6-budget-bars>button').count()!==8)errors.push(viewport.name+': budget components missing');
-  await page.locator('.v6-budget-bars>button').first().click();
+  if(await page.locator('.rc-budget-bars>button').count()!==8)errors.push(viewport.name+': budget components missing');
+  await page.locator('.rc-budget-bars>button').first().click();
   await page.getByRole('dialog',{name:'Detalle de gestión municipal'}).waitFor();
   await page.keyboard.press('Escape');
   if(await page.getByRole('dialog').count())errors.push(viewport.name+': municipal dialog Escape failed');
   await page.getByRole('combobox',{name:'Dependencia',exact:true}).selectOption('Hacienda');
-  const fraction=await page.locator('.v6-budget-stack>button').evaluate(el=>el.getBoundingClientRect().width/el.parentElement.getBoundingClientRect().width);
+  const fraction=await page.locator('.rc-bar-track>i').evaluate(el=>el.getBoundingClientRect().width/el.parentElement.getBoundingClientRect().width);
   if(fraction<0.03||fraction>0.05)errors.push('Budget filter changed total denominator');
   await page.getByRole('button',{name:'Restablecer',exact:true}).click();
   await page.getByRole('tab',{name:'Ejecución',exact:true}).click();
-  if(await page.locator('.v6-execution [role=progressbar]').count()!==10)errors.push('Execution figures missing');
+  if(await page.locator('.rc-execution [role=progressbar]').count()!==10)errors.push('Execution figures missing');
   await page.screenshot({path:'artifacts/visual/gestion-'+viewport.name+'.png',fullPage:true});
   await page.getByRole('tab',{name:'Alcance social'}).click();
-  if(await page.locator('.v6-reach>button').count()!==8)errors.push('Reach figures missing');
+  if(await page.locator('.rc-outcomes').first().getByRole('button').count()!==8)errors.push('Reach figures missing');
   await page.getByRole('textbox',{name:'Buscar en rendición de cuentas'}).fill('esterilizaciones');
   if(await page.locator('tbody tr').count()!==1)errors.push('Municipal search failed');
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))errors.push(viewport.name+': municipal page overflow');
@@ -263,5 +263,6 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
 await browser.close();
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}
 await import('./shell-journey.mjs');
+await import('./rendicion-journey.mjs');
 console.log('Verified URL: '+base);
 console.log('PASS: 4:1 timed carousel, 5 charts, 14 separate topic cards, ArcGIS popup, mobile folder sidebar and no page overflow');

@@ -4,7 +4,7 @@ const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 fs.mkdirSync('artifacts/visual',{recursive:true});
 const errors=[];
 const base=(process.env.OBSERVATORIO_BASE_URL||'http://localhost:3000/DATOS-ABIERTOS').replace(/\/$/,'');
-for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2560,height:1440},{name:'4k',width:3840,height:2160},{name:'desktop',width:1440,height:900},{name:'tablet',width:1024,height:768},{name:'mobile',width:390,height:844}]){
+for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2560,height:1440},{name:'4k',width:3840,height:2160},{name:'desktop',width:1440,height:900},{name:'tablet',width:1024,height:768},{name:'mobile',width:390,height:844},{name:'mobile-small',width:320,height:812}]){
  const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height},deviceScaleFactor:1});
  page.on('pageerror',e=>errors.push(viewport.name+': '+e.message.slice(0,250)));
  try{
@@ -15,7 +15,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.locator('.n5-banner-frame').waitFor();
   await page.getByRole('heading',{name:'Un territorio. Miles de historias.',exact:true}).waitFor();
   if(!await page.locator('.immersive-hero').evaluate(el=>getComputedStyle(el).backgroundImage.includes('255, 255, 255')||getComputedStyle(el).backgroundColor==='rgb(255, 255, 255)'))errors.push('Main hero does not use a white background');
-  if(viewport.width<=720){const mobileBanner=await page.locator('.n5-banner-frame').boundingBox();if(mobileBanner.height<mobileBanner.width*.95)errors.push('Mobile banner is still panoramic');await page.locator('.n5-banner-mobile-caption h2').waitFor({state:'visible'});}
+  if(viewport.width<=720){const mobileBanner=await page.locator('.n5-banner-frame').boundingBox();if(mobileBanner.height<mobileBanner.width*.95)errors.push('Mobile banner is still panoramic');await page.locator('.n5-banner-mobile-caption h2').waitFor({state:'visible'});const captionOverflow=await page.locator('.n5-banner-mobile-caption').evaluate(el=>el.scrollHeight>el.clientHeight+1);if(captionOverflow)errors.push('Mobile banner caption is clipped');}
   const heroSize=await page.locator('.n5-banner-frame').boundingBox();
   if(viewport.width>=1440&&heroSize.width<Math.min(viewport.width*.7,2100))errors.push(viewport.name+': banner remains constrained instead of filling the stage');
   await page.getByRole('button',{name:'Buscar en todos los datos',exact:true}).click();

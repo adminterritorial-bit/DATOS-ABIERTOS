@@ -46,7 +46,7 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
     if(await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).inputValue()!=='educacion')errors.push('Reload did not restore home filters');
     await page.locator('.sq-toggle').click();
     if(!await page.locator('.sq-list a').count())errors.push('Device saved query did not persist');
-    await page.locator('.sd-record').first().click();
+    await page.locator('.sector-dashboard .sd-record:visible').first().click();
     await page.getByRole('region',{name:'Vigencia y fechas de la fuente'}).waitFor();
     await page.keyboard.press('Escape');
     await page.getByRole('dialog',{name:'Detalle estadístico'}).waitFor({state:'hidden'});

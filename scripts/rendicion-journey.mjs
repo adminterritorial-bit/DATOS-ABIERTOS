@@ -12,6 +12,12 @@ for(const device of [{name:'desktop',width:1440,height:1000},{name:'mobile',widt
   if(await page.locator('.rc-donut-plot circle[role="button"]').count()!==8)errors.push('The overview donut must preserve eight departments');
   if(await page.locator('.rc-preview-rings .rc-ring-card').count()!==4)errors.push('The overview is missing four program gauges');
   if(await page.locator('.rc-finance-grid .rc-card').count()!==2)errors.push('Revenue and IBR visuals are missing');
+  await page.getByRole('combobox',{name:'Dependencia',exact:true}).selectOption('Salud');
+  if(!await page.locator('.rc-outcomes').first().textContent().then(x=>x.includes('8.353')))errors.push('Filtered health reach was hidden by the overview preview');
+  await page.getByRole('button',{name:'Restablecer',exact:true}).click();
+  await page.getByRole('textbox',{name:'Buscar en rendición de cuentas'}).fill('deporte y recreación');
+  if(!await page.locator('.rc-outcomes').first().textContent().then(x=>x.includes('1.000')))errors.push('Filtered sports reach was hidden by the overview preview');
+  await page.getByRole('button',{name:'Restablecer',exact:true}).click();
   await page.screenshot({path:`artifacts/visual/rendicion-panorama-${device.name}.png`,fullPage:true});
   await page.locator('.rc-donut-plot circle[role="button"]').last().focus();await page.keyboard.press('Enter');
   await page.getByRole('dialog',{name:'Detalle de gestión municipal'}).waitFor();

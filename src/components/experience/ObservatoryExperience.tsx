@@ -86,7 +86,7 @@ export default function ObservatoryExperience(){
  const [detalle,setDetalle]=useState<DatoExplorador|null>(null);
  const detailRef=useDialogFocus(!!detalle,()=>setDetalle(null));
  const [menu,setMenu]=useState(false);
- const [searchRequest,setSearchRequest]=useState(0);
+ const [searchRequest,setSearchRequest]=useState({id:0,query:''});
  const [verMas,setVerMas]=useState(false);
  const [tituloClic,setTituloClic]=useState(false);
  useEffect(()=>{const requested=new URLSearchParams(window.location.search).get('tema');if(requested&&temasTerritoriales.some(t=>t.id===requested))setTema(requested)},[]);
@@ -109,8 +109,8 @@ export default function ObservatoryExperience(){
   </aside>
   {menu&&<div className="xp-menu-overlay" onClick={()=>setMenu(false)}/>}
   <main className="xp-main" id="xp-main">
-   <header className="xp-header"><div className="xp-breadcrumb"><button className="xp-mobile-nav" onClick={()=>setMenu(!menu)} aria-label="Abrir navegación"><Menu size={21}/></button><span>Observatorio</span><ArrowRight size={13}/><strong>{topic?.nombre||(macro==='Todos'?'Panorama territorial':macro)}</strong></div><div className="xp-header-actions"><CitizenSearch feed={feed} openRequest={searchRequest}/><span className="xp-period"><span/> Última consulta · {new Date().getFullYear()}</span><Link href="/comparar/" title="Explorador de series">Comparar datos <ArrowUpRight size={15}/></Link></div></header>
-   <ImmersiveHero onSearch={()=>setSearchRequest(r=>r+1)} onExplore={()=>document.getElementById('panorama-title')?.scrollIntoView({behavior:'smooth',block:'start'})} onMap={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}/>
+   <header className="xp-header"><div className="xp-breadcrumb"><button className="xp-mobile-nav" onClick={()=>setMenu(!menu)} aria-label="Abrir navegación"><Menu size={21}/></button><span>Observatorio</span><ArrowRight size={13}/><strong>{topic?.nombre||(macro==='Todos'?'Panorama territorial':macro)}</strong></div><div className="xp-header-actions"><CitizenSearch feed={feed} openRequest={searchRequest.id} initialQuery={searchRequest.query}/><span className="xp-period"><span/> Última consulta · {new Date().getFullYear()}</span><Link href="/comparar/" title="Explorador de series">Comparar datos <ArrowUpRight size={15}/></Link></div></header>
+   <ImmersiveHero onSearch={(query='')=>setSearchRequest(r=>({id:r.id+1,query}))} onExplore={()=>document.getElementById('panorama-title')?.scrollIntoView({behavior:'smooth',block:'start'})} onMap={()=>{setVista('territorio');document.getElementById('xp-lab')?.scrollIntoView({behavior:'smooth'})}}/>
    <div className="xp-body">
     <MunicipalPanorama/>
     <div className="panorama-catalog-summary"><Database size={16}/><span>{all.length} observaciones</span><span>{temasTerritoriales.length} categorías</span><span>66 preguntas DANE</span><span>{years.length} vigencias documentadas</span><Link href="/catalogo/">Abrir catálogo <ArrowRight size={14}/></Link></div>

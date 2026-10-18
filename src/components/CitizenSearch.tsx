@@ -1,6 +1,7 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
+import {createPortal} from 'react-dom';
 import {BookOpen,Database,FileSearch,Home,Search,ShieldCheck,Users2,X,ArrowUpRight,Compass} from 'lucide-react';
 import {reunirEstadisticas} from '@/lib/territorialDataset';
 import {indicadoresICET} from '@/lib/icetCatalog';
@@ -19,10 +20,10 @@ const rutas:Entrada[]=[
  {id:'documentos',titulo:'Biblioteca de fuentes',descripcion:'Enlaces documentales y metadatos',href:'/documentos/',clase:'ruta'},
 ];
 const normalizar=(s:string)=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-export default function CitizenSearch({feed,openRequest=0}:{feed:FeedPublico|null;openRequest?:number}){
+export default function CitizenSearch({feed,openRequest=0,initialQuery=''}:{feed:FeedPublico|null;openRequest?:number;initialQuery?:string}){
  const [abierto,setAbierto]=useState(false),[q,setQ]=useState('');
  const dialogRef=useDialogFocus(abierto,()=>setAbierto(false));
- useEffect(()=>{if(openRequest>0)setAbierto(true)},[openRequest]);
+ useEffect(()=>{if(openRequest>0){setQ(initialQuery);setAbierto(true)}},[openRequest,initialQuery]);
  useEffect(()=>{
   const handle=(e:KeyboardEvent)=>{
    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setAbierto(s=>!s);}
@@ -47,7 +48,7 @@ export default function CitizenSearch({feed,openRequest=0}:{feed:FeedPublico|nul
   <button type="button" className="ot-global-search" onClick={()=>setAbierto(true)} aria-haspopup="dialog" aria-label="Buscar en el Observatorio">
    <Search size={16}/><span>Buscar datos, indicadores...</span><kbd>Ctrl K</kbd>
   </button>
-  {abierto&&<div className="ot-cmd-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)cerrar()}}>
+  {abierto&&createPortal(<div className="ot-cmd-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)cerrar()}}>
    <section ref={dialogRef} className="ot-cmd-dialog" role="dialog" aria-modal="true" aria-label="Búsqueda global de datos">
     <div className="ot-cmd-head"><Search size={21}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar indicador, fuente o sector..." aria-label="Escribe tu búsqueda" onKeyDown={e=>{if(e.key==='Enter'&&resultados.length){window.location.assign('/DATOS-ABIERTOS'+resultados[0].href);}}}/><button type="button" onClick={cerrar} aria-label="Cerrar buscador"><X size={18}/></button></div>
     <div className="ot-cmd-results">
@@ -59,6 +60,6 @@ export default function CitizenSearch({feed,openRequest=0}:{feed:FeedPublico|nul
      {!resultados.length&&<p className="ot-cmd-empty">No hay coincidencias. Prueba con un sector, un código ICET o una palabra más general.</p>}
     </div><p className="ot-cmd-foot">Atajo Ctrl/⌘ K · Enter abre el primer resultado · Esc cierra</p>
    </section>
-  </div>}
+  </div>,document.body)}
  </>;
 }

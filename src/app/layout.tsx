@@ -7,12 +7,12 @@ import './geo-v4.css';
 import './ux-v5.css';
 import './refinements-v6.css';
 import '@arcgis/core/assets/esri/themes/light/main.css';
-import GlobalNavigation from '@/components/GlobalNavigation';
+import ObservatoryShell from '@/components/experience/ObservatoryShell';
 export const metadata:Metadata={
  title:'Observatorio Territorial | Alcaldía de San Pedro',
  description:'Datos públicos del territorio de San Pedro, Valle del Cauca, con información oficial del DANE, TerriData y fuentes documentadas.',
  robots:{index:true,follow:true}
 };
 export default function RootLayout({children}:{children:React.ReactNode}){
- return <html lang="es"><body>{children}<GlobalNavigation/></body></html>;
+ return <html lang="es"><body><ObservatoryShell>{children}</ObservatoryShell></body></html>;
 }

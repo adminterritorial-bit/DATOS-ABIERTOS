@@ -14,6 +14,8 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.locator('.n5-navigation').waitFor();
   await page.locator('.n5-banner-frame').waitFor();
   await page.getByRole('heading',{name:'Un territorio. Miles de historias.',exact:true}).waitFor();
+  if(!await page.locator('.immersive-hero').evaluate(el=>getComputedStyle(el).backgroundImage.includes('255, 255, 255')||getComputedStyle(el).backgroundColor==='rgb(255, 255, 255)'))errors.push('Main hero does not use a white background');
+  if(viewport.width<=720){const mobileBanner=await page.locator('.n5-banner-frame').boundingBox();if(mobileBanner.height<mobileBanner.width*.95)errors.push('Mobile banner is still panoramic');await page.locator('.n5-banner-mobile-caption h2').waitFor({state:'visible'});}
   const heroSize=await page.locator('.n5-banner-frame').boundingBox();
   if(viewport.width>=1440&&heroSize.width<Math.min(viewport.width*.7,2100))errors.push(viewport.name+': banner remains constrained instead of filling the stage');
   await page.getByRole('button',{name:'Buscar en todos los datos',exact:true}).click();
@@ -101,6 +103,10 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   }
   await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).selectOption('educacion');
   if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': topic swap altered panel count');
+  await page.locator('.sector-dashboard').waitFor();
+  if(await page.locator('.chart-conclusion').count()!==5)errors.push('Chart conclusions are missing');
+  if(['desktop','mobile'].includes(viewport.name))await page.locator('.sector-dashboard').screenshot({path:'artifacts/visual/education-'+viewport.name+'.png'});
+  for(const sector of ['atencion','ambiente','economia']){await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).selectOption(sector);await page.locator('.sector-dashboard').waitFor();if(sector==='economia'&&await page.locator('.sd-budget-total').count()!==1)errors.push('Sector budget composition missing');if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))errors.push(sector+': sector dashboard overflow');}
   await page.getByRole('button',{name:'Indicadores',exact:true}).click();
   if(!await page.locator('.xp-indicator-row').count())errors.push(viewport.name+': no indicator catalog');
   await page.getByRole('button',{name:'Geografía',exact:true}).click();
@@ -128,10 +134,20 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   if(await page.locator('.g4-map-error').count())errors.push(viewport.name+': cartography failed');
   const firstPlace=page.locator('.n5-place-list button').first();
   if(await firstPlace.count()){await firstPlace.click();await page.getByRole('dialog',{name:/Información del lugar/}).waitFor({timeout:10000});await page.locator('.n5-place-popup').screenshot({path:'artifacts/visual/popup-'+viewport.name+'.png'});await page.getByRole('button',{name:'Cerrar información del lugar'}).click()}
+  await page.getByRole('textbox',{name:'Buscar lugares DANE'}).fill('san jose');
+  if(await page.locator('.n5-place-list button').count()!==1)errors.push('Accent-insensitive place search failed');
+  await page.getByRole('button',{name:'Ver todos los lugares (7)'}).click();
+  if(await page.locator('.n5-place-list button').count()!==7)errors.push('Reset did not restore seven places');
   await page.locator('.g4-map-viewport').screenshot({path:'artifacts/visual/geo-'+viewport.name+'.png'});
 
 
   if(viewport.name==='desktop'){
+    await page.goto(base+'/mapa/?lugar=76670008&tema=educacion',{waitUntil:'domcontentloaded',timeout:70000});
+    await page.getByRole('dialog',{name:/Información del lugar SAN JOSÉ/i}).waitFor({timeout:45000});
+    await page.getByRole('button',{name:'Copiar enlace de este lugar'}).click();
+    if(!await page.getByRole('textbox',{name:'Enlace para compartir este lugar'}).inputValue().then(v=>v.includes('lugar=76670008')&&v.includes('tema=educacion')))errors.push('Shared place URL lost its selection');
+    await page.keyboard.press('Escape');
+    if(await page.getByRole('dialog').count())errors.push('Deep linked place did not close with Escape');
     await page.goto(base+'/temas/',{waitUntil:'domcontentloaded',timeout:70000});
     await page.locator('.n5-themes-grid .n5-tile').first().waitFor({timeout:16000});
     if(await page.locator('.n5-themes-grid .n5-tile').count()!==14)errors.push('theme explorer: expected fourteen topic cards');
@@ -166,6 +182,14 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   if(!await page.getByText('> 8.000',{exact:false}).count())errors.push('Catalog lost greater-than precision');
   await page.goto(base+'/territorios/?vista=internet',{waitUntil:'domcontentloaded'});
   await page.locator('.v6-tabs [aria-selected="true"]').filter({hasText:'Internet fijo'}).waitFor();
+  await page.locator('.ic-panel').waitFor();
+  await page.locator('.ic-controls select').first().selectOption('internet');
+  await page.locator('.ic-controls select').nth(1).selectOption('2022');
+  if(!await page.locator('.ic-conclusion').textContent().then(t=>t.includes('2022')))errors.push('Interactive comparison year did not update');
+  await page.locator('.ic-territories label').filter({hasText:'Guacarí'}).locator('input').check();
+  if(await page.locator('.ic-controls select').nth(1).inputValue()!=='2023')errors.push('Peer comparison retained a non-common year');
+  if(['desktop','mobile'].includes(viewport.name))await page.locator('.ic-panel').screenshot({path:'artifacts/visual/interactive-comparison-'+viewport.name+'.png'});
+  await page.locator('.ic-controls select').first().selectOption('energia');
   await page.getByRole('tab',{name:'Energía · UPME 2024'}).click();
   await page.getByRole('heading',{name:'San Pedro, en perspectiva.'}).waitFor();
   if(await page.locator('.v6-energy-rates>div').count()!==7)errors.push('Energy territories missing');

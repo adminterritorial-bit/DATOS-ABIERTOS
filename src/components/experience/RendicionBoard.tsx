@@ -12,7 +12,7 @@ const color=['#087e8b','#1fa889','#497cc7','#8a69c4','#b27a3b','#c45d78','#3b9db
 export default function RendicionBoard(){
  const [tab,setTab]=useState('inversion'),[dep,setDep]=useState('Todas'),[q,setQ]=useState(''),[detail,setDetail]=useState<Registro|null>(null);
  const ref=useDialogFocus(Boolean(detail),()=>setDetail(null));
- useEffect(()=>{const params=new URLSearchParams(location.search);setQ(params.get('buscar')||'');const requested=params.get('vista');if(requested&&['inversion','ejecucion','alcance','compromisos'].includes(requested))setTab(requested)},[]);
+ useEffect(()=>{const params=new URLSearchParams(location.search);setQ(params.get('buscar')||'');const requested=params.get('vista');if(requested&&['inversion','ejecucion','alcance','compromisos'].includes(requested))setTab(requested);const record=rendicion.registros.find(r=>r.id===params.get('dato'));if(record)setDetail(record)},[]);
  const deps=[...new Set(rendicion.registros.map(r=>r.dependencia))];
  const rows=useMemo(()=>rendicion.registros.filter(r=>(dep==='Todas'||r.dependencia===dep)&&(!q||(r.nombre+' '+r.dependencia+' '+r.grupo).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(q.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()))),[dep,q]);
  const budgets=rows.filter(r=>r.grupo==='dependencias');

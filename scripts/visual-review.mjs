@@ -27,6 +27,14 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   }
 
   await page.getByRole('heading',{name:'Así está San Pedro.'}).waitFor();
+  if(viewport.name==='desktop'){
+    await page.locator('.panorama-kpi').nth(3).click();
+    await page.getByRole('dialog',{name:'Detalle de gestión municipal'}).waitFor();
+    if(!await page.getByRole('dialog').getByText('Índice de Transparencia y Acceso a la Información',{exact:true}).count())errors.push('ITA headline link opened a different record');
+    await page.keyboard.press('Escape');
+    await page.goto(base+'/',{waitUntil:'domcontentloaded'});
+    await page.getByRole('heading',{name:'Así está San Pedro.'}).waitFor();
+  }
   if(await page.locator('.panorama-kpi').count()!==4)errors.push(viewport.name+': four headline indicators missing');
   await page.getByRole('tab',{name:'Cobertura eléctrica',exact:true}).click();
   if(await page.locator('.panorama-energy>div').count()!==3)errors.push('Panorama: comparable energy territories missing');
@@ -61,6 +69,13 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.locator('.n5-banner-frame').screenshot({path:'artifacts/visual/banner-'+viewport.name+'.png'});
   if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': five-chart layout missing');
   await page.screenshot({path:'artifacts/visual/'+viewport.name+'.png',fullPage:true});
+  const history=page.getByRole('combobox',{name:'Elegir serie histórica del tablero'});
+  if(await history.count()){
+    const second=await history.locator('option').nth(1).getAttribute('value');
+    await history.selectOption(second);
+    const chosen=await history.locator('option:checked').textContent();
+    if(await page.locator('.n5-panel-0 header p').textContent()!==chosen)errors.push('Historical series selection lost context');
+  }
   await page.getByRole('combobox',{name:'Elegir temática para las cinco gráficas'}).selectOption('educacion');
   if(await page.locator('.n5-data-panel').count()!==5)errors.push(viewport.name+': topic swap altered panel count');
   await page.getByRole('button',{name:'Indicadores',exact:true}).click();
@@ -102,7 +117,9 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
     await page.screenshot({path:'artifacts/visual/topics-desktop.png',fullPage:true});
     await page.goto(base+'/',{waitUntil:'domcontentloaded',timeout:70000});
   }
-  await page.goto(base+'/rendicion/',{waitUntil:'domcontentloaded'});
+  await page.goto(base+'/rendicion/?vista=ejecucion',{waitUntil:'domcontentloaded'});
+  await page.locator('.v6-tabs [aria-selected="true"]').filter({hasText:'Ejecución'}).waitFor();
+  await page.getByRole('tab',{name:'Inversión',exact:true}).click();
   await page.getByRole('heading',{name:'Las cifras detrás de la gestión.'}).waitFor();
   if(await page.locator('.v6-budget-bars>button').count()!==8)errors.push(viewport.name+': budget components missing');
   await page.locator('.v6-budget-bars>button').first().click();
@@ -124,7 +141,9 @@ for(const viewport of [{name:'fullhd',width:1920,height:1080},{name:'2k',width:2
   await page.goto(base+'/catalogo/?buscar=Personas%20beneficiadas%20por%20cultura',{waitUntil:'domcontentloaded'});
   await page.getByRole('table').waitFor();
   if(!await page.getByText('> 8.000',{exact:false}).count())errors.push('Catalog lost greater-than precision');
-  await page.goto(base+'/territorios/',{waitUntil:'domcontentloaded'});
+  await page.goto(base+'/territorios/?vista=internet',{waitUntil:'domcontentloaded'});
+  await page.locator('.v6-tabs [aria-selected="true"]').filter({hasText:'Internet fijo'}).waitFor();
+  await page.getByRole('tab',{name:'Energía · UPME 2024'}).click();
   await page.getByRole('heading',{name:'San Pedro, en perspectiva.'}).waitFor();
   if(await page.locator('.v6-energy-rates>div').count()!==7)errors.push('Energy territories missing');
   await page.screenshot({path:'artifacts/visual/comparadores-'+viewport.name+'.png',fullPage:true});

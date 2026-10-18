@@ -13,9 +13,9 @@ export type ClaseDato='Publicado'|'Calculado'|'Relacionado'|'Estimación';
 export interface DatoExplorador {
  id:string;nombre:string;sector:string;valor:number;unidad:string;
  anio:number;fuente:string;fuenteUrl?:string;codigoICET?:string;
- clase:ClaseDato;nota?:string;pagina?:number;tipoFuente?:string;codigoSerie?:string;precision?:string;origen?:'Gestión municipal'|'Estadística oficial'|'Contexto';
+ clase:ClaseDato;nota?:string;publicadoEn?:string;consultadoEn?:string;pagina?:number;tipoFuente?:string;codigoSerie?:string;precision?:string;origen?:'Gestión municipal'|'Estadística oficial'|'Contexto';
 }
-type Entrada={id:string;nombre:string;sector:string;valor:number;unidad:string;anio:number|null;fuente:string;nota?:string;codigoIcet?:string|null;vinculacion?:string};
+type Entrada={id:string;nombre:string;sector:string;valor:number;unidad:string;anio:number|null;fuente:string;nota?:string;codigoIcet?:string|null;vinculacion?:string;consultadoEn?:string};
 const publicados:Entrada[]=[
  ...observacionesTerriData.filter(r=>r.divipola==='76670').map(r=>({id:r.id,nombre:r.titulo,sector:r.sector,valor:r.valor,unidad:r.unidad,anio:r.anio,fuente:r.fuente})),
  ...observacionesDocumentalesConAnio.map(r=>({id:r.id,nombre:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,anio:r.anio,fuente:r.fuente,codigoIcet:r.codigoIcet})),
@@ -26,7 +26,7 @@ const publicados:Entrada[]=[
 ];
 const adicionales=datosMasivos.observaciones.filter(r=>r.divipola==='76670'&&Number.isFinite(r.valor)).map(r=>({
  id:r.id,nombre:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,anio:r.anio,
- fuente:r.fuente,nota:r.nota,codigoIcet:r.icet,
+ fuente:r.fuente,nota:r.nota,codigoIcet:r.icet,consultadoEn:datosMasivos.fecha_extraccion_utc,
  vinculacion:r.clase==='relacionada'?'relacionada':r.metodo==='CALCULADO'?'calculada':'directa'
 }));
 function clase(row:Entrada):ClaseDato{
@@ -39,7 +39,7 @@ export function reunirEstadisticas(feed:FeedPublico|null):DatoExplorador[]{
  const map=new Map<string,DatoExplorador>();
  for(const r of [...publicados,...adicionales]){
   if(typeof r.anio!=='number'||r.anio<1900||r.anio>2100||!Number.isFinite(r.valor))continue;
-  map.set(r.id,{id:r.id,nombre:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,anio:r.anio,fuente:r.fuente,fuenteUrl:r.fuente.startsWith('https://')?r.fuente:undefined,origen:'Estadística oficial',nota:r.nota,codigoICET:r.codigoIcet||undefined,clase:clase(r)});
+  map.set(r.id,{id:r.id,nombre:r.nombre,sector:r.sector,valor:r.valor,unidad:r.unidad,anio:r.anio,fuente:r.fuente,fuenteUrl:r.fuente.startsWith('https://')?r.fuente:undefined,origen:'Estadística oficial',consultadoEn:r.consultadoEn,nota:r.nota,codigoICET:r.codigoIcet||undefined,clase:clase(r)});
  }
  for(const r of feed?.registros||[]){
   // Preserve source record IDs and avoid translating different units to a common measure.

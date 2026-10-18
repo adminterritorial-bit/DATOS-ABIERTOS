@@ -1,0 +1,11 @@
+export type SavedQuery={url:string;label:string;savedAt:string};
+export const SAVED_QUERIES_KEY:string;
+export const SAVED_QUERIES_EVENT:string;
+export const MAX_SAVED_QUERIES:number;
+export function normalizeSavedQueryUrl(input:unknown):string|null;
+export function normalizeSavedQueryLabel(value:unknown):string|null;
+export function parseSavedQueries(raw:unknown):{items:SavedQuery[];invalid:boolean};
+export function addSavedQuery(items:SavedQuery[],url:string,label:string,savedAt:string):SavedQuery[]|null;
+export function removeSavedQuery(items:SavedQuery[],url:string):SavedQuery[];
+export function serializeSavedQueries(items:SavedQuery[]):string;
+export function writeSavedQueries(storage:Pick<Storage,'setItem'>,items:SavedQuery[]):boolean;

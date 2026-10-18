@@ -1,5 +1,5 @@
 'use client';
-import {useMemo,useState} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
 import {ArrowLeft,ArrowUpRight,Globe2,Info,Activity,Zap} from 'lucide-react';
 import {ResponsiveContainer,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,Legend} from 'recharts';
@@ -11,6 +11,7 @@ const colors=['#078d83','#397cc4','#8c65bd'];
 const period=(r:{anno:string;trimestre:string})=>r.anno+' T'+r.trimestre;
 export default function TerritorialComparators(){
  const [tab,setTab]=useState('energia'),[serie,setSerie]=useState(0),[index,setIndex]=useState(true),[from,setFrom]=useState('2018'),[to,setTo]=useState('2023');
+ useEffect(()=>{const requested=new URLSearchParams(location.search).get('vista');if(requested&&['energia','internet','contexto'].includes(requested))setTab(requested)},[]);
  const rates=useMemo(()=>[
   ...energy.municipios.map(r=>({nombre:r.municipio,codigo:r.cod_mpio,numerador:r.vcstotal,denominador:r.vttotal,valor:100*r.vcstotal/r.vttotal,metodo:'Calculado con componentes municipales UPME'})),
   ...energy.agregados.map(r=>({...r,metodo:'Agregado ponderado de '+r.municipios+' municipios UPME'}))
